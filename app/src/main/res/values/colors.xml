@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!---->
+    <!--Main Screen Start-->
+    <color name="backgroundActivity">#3498db</color>
+    <color name="backgroundBulbButton">#44BC94</color>
+    <color name="backgroundMusicButton">#F04E4B</color>
+    <color name="backgroundDiscoButton">#FEC70B</color>
+
+    <!--Partial Toolbar-->
+    <color name="toolbar">#34495e</color>
+
+    <!--Partial View Stub Sidebar-->
+    <color name="backgroundGroup">#293949</color>
+    <!--Item Sidebar List Group-->
+    <color name="itemSidebarText">#ECF0F1</color>
+    <!--Navigation Drawer-->
+    <color name="activatedColor">#009688</color>
+    <!--Main Screen End-->
+    <!---->
+
+    <!--Music Mode start-->
+    <color name="musicModeColorText">#E0FFFF</color>
+    <!--Music Mode end-->
+
+    <!--Frequencies Color Start-->
+    <color name="red">#F0502B</color>
+    <color name="blue">#53A5DB</color>
+    <color name="green">#79C143</color>
+    <color name="magenta">#EC008C</color>
+    <color name="yellow">#FBEE2E</color>
+    <color name="cyan">#00DFDF</color>
+    <!--Frequencies Color End-->
+
+    <!--Controller Info Fragment Start-->
+    <color name="textColor">#757575</color>
+    <!--Controller Info Fragment End-->
+
+    <!---->
+    <!--Bulb Mode Fragment Start-->
+    <color name="backgroundBrightnessArc">#4dd0e1</color>
+    <!--Bulb Mode Fragment End-->
 </resources>
