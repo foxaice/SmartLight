@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="disco_vinyl_image_size">190dp</dimen>
+    <dimen name="music_mode_buttons_size">100dp</dimen>
+    <dimen name="music_info_max_width">300dp</dimen>
+</resources>

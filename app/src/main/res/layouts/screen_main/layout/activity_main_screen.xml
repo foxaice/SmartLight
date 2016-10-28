@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/activity_main_screen_appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/partial_toolbar"/>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/activity_main_screen_drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/activity_main_screen_appBarLayout"
+        android:background="@color/backgroundActivity">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/activity_main_screen_constraint_layout_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/activity_main_screen_relative_layout_wave_background"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <ImageView
+                android:id="@+id/activity_main_screen_image_bulb_mode"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/content_description_bulb_mode"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@+id/activity_main_screen_image_music_mode"
+                app:layout_constraintTop_toTopOf="@+id/activity_main_screen_image_music_mode"
+                app:srcCompat="@drawable/button_mode_bulb_enabled"/>
+
+            <ImageView
+                android:id="@+id/activity_main_screen_image_music_mode"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/content_description_music_mode"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/button_mode_music_enabled"/>
+
+            <ImageView
+                android:id="@+id/activity_main_screen_image_disco_mode"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/content_description_disco_mode"
+                app:layout_constraintHorizontal_bias="0.6"
+                app:layout_constraintLeft_toLeftOf="@+id/activity_main_screen_image_music_mode"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/activity_main_screen_image_music_mode"
+                app:srcCompat="@drawable/button_mode_disco_enabled"/>
+
+            <FrameLayout
+                android:id="@+id/activity_main_screen_frame_layout_mode_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/activity_main_screen_image_music_mode"/>
+
+            <FrameLayout
+                android:id="@+id/activity_main_screen_fragment_settings"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <ViewStub
+            android:id="@+id/activity_main_screen_stub_sidebar"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:inflatedId="@+id/import_sidebar"
+            android:layout="@layout/partial_stub_sidebar"/>
+    </android.support.v4.widget.DrawerLayout>
+</RelativeLayout>

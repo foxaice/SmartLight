@@ -1,9 +1,11 @@
-package me.foxaice.smartlight;
+package me.foxaice.smartlight.activities.main_screen;
 
 import android.os.Bundle;
 import android.app.Activity;
 
-public class MainActivity extends Activity {
+import me.foxaice.smartlight.R;
+
+public class MainScreenActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

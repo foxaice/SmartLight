@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="36dp"
+            android:height="36dp"
+            android:viewportHeight="36"
+            android:viewportWidth="36">
+            <group>
+                <path
+                    android:name="pause"
+                    android:fillColor="#fc9104"
+                    android:pathData="@string/path_pause"/>
+            </group>
+        </vector>
+    </aapt:attr>
+    <target
+        android:name="pause">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="pathData"
+                    android:valueFrom="@string/path_pause"
+                    android:valueTo="@string/path_play"
+                    android:valueType="pathType"/>
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="fillColor"
+                    android:valueFrom="#fc9104"
+                    android:valueTo="#06fa0e"
+                    android:valueType="colorType"/>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

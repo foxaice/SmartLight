@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="check_mark_progress_size">50dp</dimen>
+    <dimen name="additional_height_for_seekbar">40dp</dimen>
+    <dimen name="brightness_arc_width">250dp</dimen>
+    <dimen name="brightness_arc_height">208dp</dimen>
+    <dimen name="brightness_arc_target_size">29dp</dimen>
+</resources>

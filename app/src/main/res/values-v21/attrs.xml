@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WifiSignal">
+        <attr name="level1" format="color"/>
+        <attr name="level2" format="color"/>
+        <attr name="level3" format="color"/>
+        <attr name="level4" format="color"/>
+    </declare-styleable>
+</resources>

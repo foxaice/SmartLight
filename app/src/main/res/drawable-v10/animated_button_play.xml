@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportHeight="36"
+    android:viewportWidth="36">
+    <group>
+        <path
+            android:name="play"
+            android:fillColor="#06fa0e"
+            android:pathData="@string/path_play"/>
+    </group>
+</vector>

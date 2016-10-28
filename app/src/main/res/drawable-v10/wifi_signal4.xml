@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="262.01dp"
+        android:height="205.6dp"
+        android:viewportHeight="205.6"
+        android:viewportWidth="262.01">
+
+    <path
+        android:name="level4"
+        android:fillColor="#33b6ea"
+        android:pathData="M1,46.28c73.2-61.44,188.81-61.44,262,0q-12.87,15.92-26,31.65c-58.68-49.4-151.35-49.42-210,0Q13.87,62.17,1,46.28Z"/>
+    <path
+        android:name="level3"
+        android:fillColor="#33b6ea"
+        android:pathData="M32.84,85.14c55.46-46.56,142.85-46.6,198.28,0-8.64,10.55-17.24,21.13-26,31.6-40.92-34.38-105.37-34.4-146.28,0C50.1,106.29,41.48,95.71,32.84,85.14Z"/>
+    <path
+        android:name="level2"
+        android:fillColor="#33b6ea"
+        android:pathData="M64.8,124.06c37.66-31.54,96.73-31.52,134.39,0-9,11.15-18.24,22.16-27.27,33.31-21.93-19.94-57.91-20-79.83,0C83,146.23,73.85,135.2,64.8,124.06Z"/>
+    <path
+        android:name="level1"
+        android:fillColor="#33b6ea"
+        android:pathData="M98,164.66c18.56-17.2,49.4-17.19,67.95,0-11.47,13.59-22.54,27.5-34,41.11C120.56,192.18,109.49,178.26,98,164.66Z"/>
+</vector>

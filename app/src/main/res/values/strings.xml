@@ -1,4 +1,446 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SmartLight</string>
-    <string name="title_activity_main">MainActivity</string>
+
+    <!--start content Description-->
+    <string name="content_description_music_mode">Music Mode</string>
+    <string name="content_description_disco_mode">Disco Mode</string>
+    <string name="content_description_bulb_mode">Bulb Mode</string>
+    <string name="content_description_close_button">close button</string>
+    <string name="content_description_reset_button">reset button</string>
+    <string name="content_description_brightness_target">brightness target</string>
+    <string name="content_description_color_target">color target</string>
+    <string name="content_description_brightness_arc">brightness arc</string>
+    <string name="content_description_color_circle">color circle</string>
+    <string name="content_description_power_button">power button</string>
+    <string name="content_description_speed_up_button">speed up button</string>
+    <string name="content_description_speed_down_button">speed down button</string>
+    <string name="content_description_next_mode_button">next mode button</string>
+    <string name="content_description_play_pause_button">play and pause button</string>
+    <string name="content_description_music_mode_settings_button">music mode settings button</string>
+    <string name="content_description_RGBM">Red Green Blue color mode</string>
+    <string name="content_description_GBRY">Green Blue Red color mode</string>
+    <string name="content_description_BRGC">Blue Red Green color mode</string>
+    <string name="content_description_RBGY">Red Blue Green color mode</string>
+    <string name="content_description_GRBC">Green Red Blue color mode</string>
+    <string name="content_description_BGRM">Blue Green Red color mode</string>
+    <!--end content Description-->
+
+    <!--start Vector Drawable Paths-->
+    <string name="path_play">M 11.5 10 L 18.5 13.7 L 18.5 22.2 L 11.5 25.9 L 11.5 10 M 18.5 13.7 L 26.5 18 L 26.5 18 L 18.5 22.3 L 18.5 13.7</string>
+    <string name="path_pause">M 11.5 10 L 15.5 10 L 15.5 26 L 11.5 26 L 11.5 10 M 20.5 10 L 24.5 10 L 24.5 26 L 20.5 26 L 20.5 10</string>
+    <string name="path_bulb">
+        M70,40c0,10-10,19.8-10,30H40c0-9.8-10-20-10-30c0-11,9-20,20-20C61,20,70,29,70,40z
+        M57.5,80h-15c-1.4,0-2.5,1.1-2.5,2.5s1.1,2.5,2.5,2.5H43c1,2.9,3.8,5,7,5s6-2.1,7-5h0.5c1.4,0,2.5-1.1,2.5-2.5S58.9,80,57.5,80z
+        M57.5,72.5h-15c-1.4,0-2.5,1.1-2.5,2.5s1.1,2.5,2.5,2.5h15c1.4,0,2.5-1.1,2.5-2.5S58.9,72.5,57.5,72.5z
+        M22.8,27.2l4.5,2.6 c0.7-1.5,1.5-3,2.5-4.3l-4.5-2.6L22.8,27.2z
+        M52.5,15.3V10h-5v5.3c0.8-0.1,1.6-0.3,2.5-0.3S51.7,15.2,52.5,15.3z M39.8,17.3l-2.6-4.5l-4.3,2.5l2.6,4.5C36.8,18.8,38.2,17.9,39.8,17.3z
+        M77.2,27.2l-2.5-4.3l-4.5,2.6c1,1.4,1.8,2.8,2.5,4.3L77.2,27.2z
+        M67.2,15.3l-4.3-2.5l-2.6,4.5c1.5,0.7,3,1.5,4.3,2.5L67.2,15.3z
+        M25,40c0-0.9,0.2-1.7,0.3-2.5H20v5h5.3C25.2,41.7,25,40.8,25,40z
+        M74.7,37.5c0.1,0.8,0.3,1.6,0.3,2.5c0,0.8-0.2,1.7-0.3,2.5H80v-5H74.7z
+        M70.6,54.8l4.1,2.4l2.5-4.3l-4.5-2.6 C72.1,51.8,71.4,53.3,70.6,54.8z
+        M22.8,52.8l2.5,4.3l4.1-2.3c-0.7-1.5-1.4-3-2-4.6L22.8,52.8z
+    </string>
+    <string name="path_circle">M 28 0.5 C 43.1878306203 0.5 55.5 12.8121693797 55.5 28 C 55.5 43.1878306203 43.1878306203 55.5 28 55.5 C 12.8121693797 55.5 0.5 43.1878306203 0.5 28 C 0.5 12.8121693797 12.8121693797 0.5 28 0.5 Z</string>
+    <!--end Vector Drawable Paths-->
+
+    <!--start Activity MainScreen-->
+    <!--Names of Zones-->
+    <string-array name="zone_names">
+        <item>All zones</item>
+        <item>Zone 1</item>
+        <item>Zone 2</item>
+        <item>Zone 3</item>
+        <item>Zone 4</item>
+    </string-array>
+    <!--Selected group-->
+    <string name="select_a_group">%1$s has been selected</string>
+    <string name="select_all_groups">All zones have been selected</string>
+    <!--Navigation Drawer-->
+    <string name="navigation_drawer_open" translatable="false">NavigationDrawer Open</string>
+    <string name="navigation_drawer_close" translatable="false">NavigationDrawer Close</string>
+    <!--end Activity MainScreen-->
+
+    <!--start Activity Music Mode Settings-->
+    <string name="close">Close</string>
+    <string name="reset">Reset</string>
+    <string name="waveform">Waveform</string>
+    <string name="none">None</string>
+    <string name="frequencies">Frequencies</string>
+    <string name="sound_view">Sound View</string>
+    <string name="Dynamic">Dynamic</string>
+    <string name="Static">Static</string>
+    <string name="max_frequency_with_param">Max Frequency: %1$d Hz</string>
+    <string name="max_frequency">Max Frequency</string>
+    <!--Names of Color Modes-->
+    <string name="RGBM"><![CDATA[<font color=\'#F0502B\'>R</font><font color=\'#79C143\'>G</font><font color=\'#53A5DB\'>B</font><font color=\'#EC008C\'>M</font>]]></string>
+    <string name="GBRY"><![CDATA[<font color=\'#79C143\'>G</font><font color=\'#53A5DB\'>B</font><font color=\'#F0502B\'>R</font><font color=\'#FBEE2E\'>Y</font>]]></string>
+    <string name="BRGC"><![CDATA[<font color=\'#53A5DB\'>B</font><font color=\'#F0502B\'>R</font><font color=\'#79C143\'>G</font><font color=\'#00DFDF\'>C</font>]]></string>
+    <string name="RBGY"><![CDATA[<font color=\'#F0502B\'>R</font><font color=\'#53A5DB\'>B</font><font color=\'#79C143\'>G</font><font color=\'#FBEE2E\'>Y</font>]]></string>
+    <string name="GRBC"><![CDATA[<font color=\'#79C143\'>G</font><font color=\'#F0502B\'>R</font><font color=\'#53A5DB\'>B</font><font color=\'#00DFDF\'>C</font>]]></string>
+    <string name="BGRM"><![CDATA[<font color=\'#53A5DB\'>B</font><font color=\'#79C143\'>G</font><font color=\'#F0502B\'>R</font><font color=\'#EC008C\'>M</font>]]></string>
+    <!--end Activity Music Mode Settings-->
+
+    <!--start Activity RedefinitionZoneScreen-->
+    <string name="disconnect_from_zone">Disconnect from a Zone</string>
+    <string name="connect_to_zone">Connect to %1$s</string>
+    <string name="information_text">• Switch off the power of the bulb that you are going to connect or disconnect\n• Switch it on, and within 2 seconds press\u00A0</string>
+    <string name="or">or\u00A0</string>
+    <string name="information">Information</string>
+    <!--end Activity RedefinitionZoneScreen-->
+
+    <!--start Activity RenamingZoneScreen-->
+    <string name="name_of_zone">Name of %1$s</string>
+    <!--end Activity RenamingZoneScreen-->
+
+    <!--start Fragment BulbMode-->
+    <string name="bulb_group_state">Zone "%1$s" is %2$s</string>
+    <string name="bulb_all_groups_state">All Zones are %1$s</string>
+    <string name="bulb_power_on">ON</string>
+    <string name="bulb_power_off">OFF</string>
+    <!--end Fragment BulbMode-->
+
+    <!--start Fragment Controllers List-->
+    <string name="wifi_turn_off">To see available controllers, turn Wi-Fi on\n and \nconnect to a network.</string>
+    <string name="wifi_not_connected">To see available controllers, connect to a Wi-Fi network.</string>
+    <string name="intent_wifi_settings">WI-FI SETTINGS</string>
+    <!--end Fragment Controllers List-->
+
+    <!--start Fragment Settings-->
+    <string name="controllers_settings">Controller settings</string>
+    <string name="redefinition_zones">Redefinition zones</string>
+    <string name="renaming_zones">Renaming zones</string>
+    <string name="setting_ip">Setting IP</string>
+    <string name="setting_port">Setting port</string>
+    <string name="hint_enter_ip">Enter an IP Address</string>
+    <string name="hint_enter_port">Enter a Port</string>
+    <!--end Fragment Settings-->
+
+    <!--start Fragment ControllerList-->
+    <string name="countdown_until_refresh" tools:ignore="PluralsCandidate">\nThe search will be started over %1$d sec.</string>
+    <string name="no_controllers">No controllers were found in this network</string>
+    <!--end Fragment ControllerList-->
+
+    <!--start Fragment Controller Management-->
+    <string name="mac_address" translatable="false">MAC:\u00A0%1$s</string>
+    <string name="ip_address" translatable="false">IP:\u00A0%1$s</string>
+    <string name="port_address" translatable="false">PORT:\u00A0%1$s</string>
+    <string name="failed_to_connect">Failed to connect to the controller =(</string>
+    <string name="change_name_controller">Change Controller Name</string>'
+    <string name="is_searching">Connection to the controller %1$s</string>
+    <string name="change_password_wifi_network">Change Network Password</string>
+    <string name="disconnect_from_network">Disconnect from Wi-Fi Network</string>
+    <string name="connect_to_another_network">Connect to Another Network</string>
+    <string name="ap_state_controller">The Device works as an Access Point:\u00A0%1$s</string>
+    <string name="sta_state_controller">The Device is connected to\u00A0%1$s</string>
+    <string name="change_password">Change password</string>
+    <string name="connect_to_network">Connect to network</string>
+    <string name="forget_network">Forget network</string>
+    <!--<string name="change_password_wifi_network">ИЗМЕНИТЬ ПАРОЛЬ WI-FI СЕТИ</string>-->
+    <!--<string name="disconnect_from_network">ОТКЛЮЧИТЬ ОТ WI-FI СЕТИ</string>-->
+    <!--<string name="ap_state_controller">Контроллер работает в собственной сети\u00A0%1$s</string>-->
+    <!--<string name="sta_state_controller">Контроллер подключен к\u00A0%1$s</string>-->
+    <!--end Fragment Controller Management-->
+
+    <!--start Dialogs-->
+    <string name="hint_edit_name">Enter a Name</string>
+    <string name="execution_task_dialog_title">Task Execution</string>
+    <string name="hint_edit_password">Enter a Password</string>
+    <string name="select_network">Select a Network</string>
+    <string name="password_length">%1$s characters</string>
+    <string name="controller_name">Name of the Controller</string>
+    <string name="change_password_header">Change Password</string>
+    <string name="dialog_negative_button_text">Cancel</string>
+    <string name="dialog_positive_button_text">OK</string>
+    <string name="dialog_neutral_button_text">Default value</string>
+    <string name="task_disconnect_from_network">Disconnecting from Network</string>
+    <string name="task_restart_device">Restarting the Device</string>
+    <string name="task_connect_to_device">Connecting to the Device</string>
+    <string name="task_connect_to_network">Saving Network Connection Info</string>
+    <string name="task_change_password">Changing the Device Password</string>
+    <string name="wifi_signal">wifi signal</string>
+    <string name="saved_network">Saved Network</string>
+    <string name="available_network">Available Networks</string>
+    <string-array name="encryption_methods">
+        <item>OPEN</item>
+        <item>SHARED</item>
+    </string-array>
+    <string-array name="encryption_types">
+        <item>ASCII</item>
+        <item>HEX</item>
+    </string-array>
+    <!--end Dialogs-->
+
+    <!--start Fragment MusicMode-->
+    <string name="color_mode">Color Mode:\u00A0</string>
+    <string name="max_volume_threshold">Max Volume: %1$d dB</string>
+    <string name="min_volume_threshold">Min Volume: %1$d dB</string>
+    <string name="frequency_with_param">Frequency: %1$d Hz</string>
+    <string name="frequency">Frequency: - Hz</string>
+    <string name="volume_with_param">Volume: %1$.0f dB</string>
+    <string name="volume">Volume: - dB</string>
+    <string name="request_permission_dialog_title">Audio Record Permission</string>
+    <string name="request_permission_dialog_message">Hi there! Music mode feature doesn\'t work without the audio record permission, could you please grant it?</string>
+    <string name="request_permission_dialog_positive_button">Yep</string>
+    <string name="request_permission_dialog_negative_button">No thanks</string>
+    <!--Colors of bytes-->
+    <string-array name="bytes_colors">
+        <item>#0000ff</item>
+        <item>#0001ff</item>
+        <item>#0002ff</item>
+        <item>#0004ff</item>
+        <item>#0005ff</item>
+        <item>#0006ff</item>
+        <item>#0008ff</item>
+        <item>#0009ff</item>
+        <item>#000aff</item>
+        <item>#000cff</item>
+        <item>#000eff</item>
+        <item>#000fff</item>
+        <item>#0010ff</item>
+        <item>#0012ff</item>
+        <item>#0015ff</item>
+        <item>#0017ff</item>
+        <item>#0019ff</item>
+        <item>#001aff</item>
+        <item>#001eff</item>
+        <item>#0026ff</item>
+        <item>#002cff</item>
+        <item>#0031ff</item>
+        <item>#0036ff</item>
+        <item>#003eff</item>
+        <item>#0048ff</item>
+        <item>#0050ff</item>
+        <item>#0053ff</item>
+        <item>#0058ff</item>
+        <item>#005bff</item>
+        <item>#0060ff</item>
+        <item>#0065ff</item>
+        <item>#0071ff</item>
+        <item>#0078ff</item>
+        <item>#007aff</item>
+        <item>#007cff</item>
+        <item>#007dff</item>
+        <item>#007fff</item>
+        <item>#0080ff</item>
+        <item>#0081ff</item>
+        <item>#0084ff</item>
+        <item>#0085ff</item>
+        <item>#0088ff</item>
+        <item>#0089ff</item>
+        <item>#008cff</item>
+        <item>#0090ff</item>
+        <item>#0093ff</item>
+        <item>#0098ff</item>
+        <item>#009fff</item>
+        <item>#00a2ff</item>
+        <item>#00acff</item>
+        <item>#00baff</item>
+        <item>#00c2ff</item>
+        <item>#00c7ff</item>
+        <item>#00d5ff</item>
+        <item>#00daff</item>
+        <item>#00e6ff</item>
+        <item>#00f1ff</item>
+        <item>#00f3ff</item>
+        <item>#00f9ff</item>
+        <item>#00ffff</item>
+        <item>#00fffc</item>
+        <item>#00fff9</item>
+        <item>#00fff7</item>
+        <item>#00fff6</item>
+        <item>#00fff2</item>
+        <item>#00ffef</item>
+        <item>#00ffe9</item>
+        <item>#00ffe7</item>
+        <item>#00ffe6</item>
+        <item>#00ffe2</item>
+        <item>#00ffde</item>
+        <item>#00ffda</item>
+        <item>#00ffd6</item>
+        <item>#00ffd4</item>
+        <item>#00ffd0</item>
+        <item>#00ffce</item>
+        <item>#00ffc8</item>
+        <item>#00ffc3</item>
+        <item>#00ffc1</item>
+        <item>#00ffba</item>
+        <item>#00ffb7</item>
+        <item>#00ffb0</item>
+        <item>#00ffac</item>
+        <item>#00ffa8</item>
+        <item>#00ffa5</item>
+        <item>#00ff9f</item>
+        <item>#00ff9c</item>
+        <item>#00ff98</item>
+        <item>#00ff92</item>
+        <item>#00ff8d</item>
+        <item>#00ff88</item>
+        <item>#00ff84</item>
+        <item>#00ff79</item>
+        <item>#00ff5c</item>
+        <item>#00ff54</item>
+        <item>#00ff3d</item>
+        <item>#00ff20</item>
+        <item>#00ff12</item>
+        <item>#00ff0b</item>
+        <item>#00ff00</item>
+        <item>#03ff00</item>
+        <item>#0fff00</item>
+        <item>#11ff00</item>
+        <item>#1cff00</item>
+        <item>#22ff00</item>
+        <item>#32ff00</item>
+        <item>#3cff00</item>
+        <item>#48ff00</item>
+        <item>#51ff00</item>
+        <item>#5dff00</item>
+        <item>#69ff00</item>
+        <item>#7cff00</item>
+        <item>#84ff00</item>
+        <item>#87ff00</item>
+        <item>#93ff00</item>
+        <item>#9cff00</item>
+        <item>#a3ff00</item>
+        <item>#b1ff00</item>
+        <item>#b9ff00</item>
+        <item>#bbff00</item>
+        <item>#c6ff00</item>
+        <item>#cfff00</item>
+        <item>#d6ff00</item>
+        <item>#d8ff00</item>
+        <item>#e4ff00</item>
+        <item>#e9ff00</item>
+        <item>#efff00</item>
+        <item>#f5ff00</item>
+        <item>#ffff00</item>
+        <item>#fffe00</item>
+        <item>#fffd00</item>
+        <item>#fff700</item>
+        <item>#fff000</item>
+        <item>#ffee00</item>
+        <item>#ffe900</item>
+        <item>#ffdb00</item>
+        <item>#ffd400</item>
+        <item>#ffcb00</item>
+        <item>#ffc300</item>
+        <item>#ffbc00</item>
+        <item>#ffb500</item>
+        <item>#ffaf00</item>
+        <item>#ffa500</item>
+        <item>#ff9900</item>
+        <item>#ff9100</item>
+        <item>#ff8900</item>
+        <item>#ff8700</item>
+        <item>#ff8200</item>
+        <item>#ff7a00</item>
+        <item>#ff7600</item>
+        <item>#ff7000</item>
+        <item>#ff6a00</item>
+        <item>#ff6700</item>
+        <item>#ff6300</item>
+        <item>#ff5d00</item>
+        <item>#ff5c00</item>
+        <item>#ff5800</item>
+        <item>#ff5400</item>
+        <item>#ff4d00</item>
+        <item>#ff4700</item>
+        <item>#ff4500</item>
+        <item>#ff4000</item>
+        <item>#ff3e00</item>
+        <item>#ff3c00</item>
+        <item>#ff3700</item>
+        <item>#ff3600</item>
+        <item>#ff3200</item>
+        <item>#ff2d00</item>
+        <item>#ff2a00</item>
+        <item>#ff2700</item>
+        <item>#ff2500</item>
+        <item>#ff2100</item>
+        <item>#ff0500</item>
+        <item>#ff0000</item>
+        <item>#ff000f</item>
+        <item>#ff0015</item>
+        <item>#ff0028</item>
+        <item>#ff0033</item>
+        <item>#ff0037</item>
+        <item>#ff003b</item>
+        <item>#ff0041</item>
+        <item>#ff0047</item>
+        <item>#ff004c</item>
+        <item>#ff004d</item>
+        <item>#ff0051</item>
+        <item>#ff0058</item>
+        <item>#ff005c</item>
+        <item>#ff005f</item>
+        <item>#ff0066</item>
+        <item>#ff0068</item>
+        <item>#ff006d</item>
+        <item>#ff0072</item>
+        <item>#ff0075</item>
+        <item>#ff007a</item>
+        <item>#ff007e</item>
+        <item>#ff0088</item>
+        <item>#ff008e</item>
+        <item>#ff008f</item>
+        <item>#ff0093</item>
+        <item>#ff009b</item>
+        <item>#ff009f</item>
+        <item>#ff00a8</item>
+        <item>#ff00aa</item>
+        <item>#ff00b1</item>
+        <item>#ff00bb</item>
+        <item>#ff00c0</item>
+        <item>#ff00c7</item>
+        <item>#ff00ce</item>
+        <item>#ff00d7</item>
+        <item>#ff00df</item>
+        <item>#ff00e7</item>
+        <item>#ff00f3</item>
+        <item>#ff00f4</item>
+        <item>#ff00f9</item>
+        <item>#ff00ff</item>
+        <item>#fd00ff</item>
+        <item>#f700ff</item>
+        <item>#f300ff</item>
+        <item>#ea00ff</item>
+        <item>#e000ff</item>
+        <item>#db00ff</item>
+        <item>#d300ff</item>
+        <item>#cd00ff</item>
+        <item>#c700ff</item>
+        <item>#c300ff</item>
+        <item>#c200ff</item>
+        <item>#be00ff</item>
+        <item>#ba00ff</item>
+        <item>#b300ff</item>
+        <item>#b100ff</item>
+        <item>#ab00ff</item>
+        <item>#a900ff</item>
+        <item>#a200ff</item>
+        <item>#a100ff</item>
+        <item>#9b00ff</item>
+        <item>#9600ff</item>
+        <item>#9300ff</item>
+        <item>#9000ff</item>
+        <item>#8c00ff</item>
+        <item>#8400ff</item>
+        <item>#8000ff</item>
+        <item>#7200ff</item>
+        <item>#6900ff</item>
+        <item>#6400ff</item>
+        <item>#5800ff</item>
+        <item>#5100ff</item>
+        <item>#4b00ff</item>
+        <item>#3f00ff</item>
+        <item>#3600ff</item>
+        <item>#3000ff</item>
+        <item>#2400ff</item>
+        <item>#1e00ff</item>
+        <item>#1b00ff</item>
+        <item>#1200ff</item>
+        <item>#0a00ff</item>
+        <item>#0500ff</item>
+    </string-array>
+    <!--end Fragment MusicMode-->
 </resources>

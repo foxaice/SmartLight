@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="WifiSignalStrength4">
+        <item name="level4">#33b6ea</item>
+        <item name="level3">#33b6ea</item>
+        <item name="level2">#33b6ea</item>
+        <item name="level1">#33b6ea</item>
+    </style>
+
+    <style name="WifiSignalStrength3">
+        <item name="level4">#3a6070</item>
+        <item name="level3">#33b6ea</item>
+        <item name="level2">#33b6ea</item>
+        <item name="level1">#33b6ea</item>
+    </style>
+
+    <style name="WifiSignalStrength2">
+        <item name="level4">#3a6070</item>
+        <item name="level3">#3a6070</item>
+        <item name="level2">#33b6ea</item>
+        <item name="level1">#33b6ea</item>
+    </style>
+
+    <style name="WifiSignalStrength1">
+        <item name="level4">#3a6070</item>
+        <item name="level3">#3a6070</item>
+        <item name="level2">#3a6070</item>
+        <item name="level1">#33b6ea</item>
+    </style>
+
+    <style name="WifiSignalStrength0">
+        <item name="level4">#3a6070</item>
+        <item name="level3">#3a6070</item>
+        <item name="level2">#3a6070</item>
+        <item name="level1">#3a6070</item>
+    </style>
+
+</resources>
