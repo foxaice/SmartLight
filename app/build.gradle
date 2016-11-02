@@ -26,6 +26,7 @@ android {
         main {
             res.srcDirs = [
                     'src/main/res/layouts/screen_main',
+                    'src/main/res/layouts/settings',
                     'src/main/res/layouts',
                     'src/main/res'
             ]
