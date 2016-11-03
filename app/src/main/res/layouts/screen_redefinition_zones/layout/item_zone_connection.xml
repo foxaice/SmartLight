@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_zone_connection_root"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/item_zone_connection_icon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="15dp"
+        tools:ignore="ContentDescription,RtlHardcoded"
+        tools:src="@drawable/bulb_disconnect"/>
+
+    <TextView
+        android:id="@+id/item_zone_connection_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:textColor="#757575"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="Disconnect from a Zone"/>
+</LinearLayout>

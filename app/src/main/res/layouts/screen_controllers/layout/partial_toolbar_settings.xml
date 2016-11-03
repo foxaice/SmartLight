@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_settings"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/toolbar"
+    android:minHeight="?attr/actionBarSize">
+
+    <ImageView
+        android:id="@+id/toolbar_settings_image_back_arrow"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/partial_toolbar_selector_background_settings"
+        android:clickable="true"
+        app:srcCompat="@drawable/settings_image_back_arrow"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/toolbar_settings_text_header_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/toolbar_settings_image_back_arrow"
+        android:layout_toRightOf="@+id/toolbar_settings_image_back_arrow"
+        android:gravity="left|center_vertical"
+        android:text="@string/controllers_settings"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="RtlHardcoded"/>
+</RelativeLayout>

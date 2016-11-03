@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/fragment_controller_management_dialog_text_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="@string/select_network"
+        android:textColor="@color/toolbar"
+        android:textSize="21sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#007e94"
+        android:scaleType="center"
+        tools:ignore="ContentDescription"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_controller_management_dialog_swipe_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        tools:visibility="gone">
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/fragment_controller_management_dialog_text_saved_network"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="@string/saved_network"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+
+    <include
+        android:id="@+id/fragment_controller_management_dialog_layout_saved_network"
+        layout="@layout/item_wifi_point"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/fragment_controller_management_dialog_text_available_networks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="@string/available_network"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_controller_management_dialog_recycler_wifi_points"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        tools:listitem="@layout/item_wifi_point"
+        tools:visibility="visible">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

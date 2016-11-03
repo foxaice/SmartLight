@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:weightSum="1">
+
+    <TextView
+        android:id="@+id/fragment_controller_management_dialog_text_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:textColor="@color/toolbar"
+        android:textSize="21sp"
+        tools:text="@string/controller_name"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#007e94"
+        android:scaleType="center"
+        tools:ignore="ContentDescription"/>
+
+    <LinearLayout
+        android:id="@+id/fragment_controller_management_dialog_linear_wep_encryption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <Spinner
+            android:id="@+id/fragment_controller_management_dialog_spinner_encryption_method"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/encryption_methods"
+            android:textAlignment="center">
+        </Spinner>
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/fragment_controller_management_dialog_spinner_encryption_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:entries="@array/encryption_types"
+            android:textAlignment="center">
+
+        </Spinner>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/fragment_controller_management_dialog_edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="16dp"
+        android:focusable="true"
+        android:inputType="text"
+        tools:hint="@string/hint_edit_name"/>
+
+    <TextView
+        android:id="@+id/fragment_controller_management_dialog_text_password_quantity_chars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:gravity="left"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        tools:ignore="RtlHardcoded"
+        tools:text="Password Length: NONE"/>
+
+</LinearLayout>

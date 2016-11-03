@@ -26,7 +26,12 @@ android {
         main {
             res.srcDirs = [
                     'src/main/res/layouts/screen_main',
+                    'src/main/res/layouts/screen_controllers',
+                    'src/main/res/layouts/screen_redefinition_zones',
+                    'src/main/res/layouts/screen_renaming_zones',
                     'src/main/res/layouts/settings',
+                    'src/main/res/layouts/controller_info',
+                    'src/main/res/layouts/controllers_list',
                     'src/main/res/layouts',
                     'src/main/res'
             ]

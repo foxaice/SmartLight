@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_controllers_list_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/fragment_controllers_list_list_controllers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:visibility="gone"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/fragment_controllers_list_text_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/wifi_turn_off"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/fragment_controllers_list_text_intent_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/fragment_controllers_list_text_body"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/selector_button_background_with_frame"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/intent_wifi_settings"
+        android:textColor="@drawable/selector_button_color_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:ignore="RtlHardcoded"/>
+</RelativeLayout>
