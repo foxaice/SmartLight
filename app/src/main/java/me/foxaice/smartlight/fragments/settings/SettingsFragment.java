@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import me.foxaice.smartlight.R;
+import me.foxaice.smartlight.activities.controllers_screen.ControllersScreenActivity;
 import me.foxaice.smartlight.activities.redefinition_zones_screen.RedefinitionZonesScreenActivity;
 import me.foxaice.smartlight.activities.renaming_zones_screen.RenamingZonesScreenActivity;
 import me.foxaice.smartlight.fragments.settings.dialogs.ConnectionSettingsDialog;
@@ -64,6 +65,8 @@ public class SettingsFragment extends Fragment implements ISettingsView {
 
     @Override
     public void startControllerSettingsScreenActivity() {
+        Intent intent = new Intent(getContext(), ControllersScreenActivity.class);
+        startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.no_trasition);
     }
 
@@ -80,7 +83,6 @@ public class SettingsFragment extends Fragment implements ISettingsView {
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.no_trasition);
     }
-
 
     @Override
     public void showSettingIPDialog() {
