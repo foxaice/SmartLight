@@ -8,7 +8,23 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public void onTouchColorCircle(float coordX, float coordY, float circleTargetRadius, float circleRadius, @Events int action) {
+        float deltaX = coordX - circleRadius;
+        float deltaY = coordY - circleRadius;
+        float angle = getAngle(deltaX, deltaY);
+        boolean isPointWithinRGBCircle = isPointWithinRGBCircle(coordX, coordY, circleTargetRadius, circleRadius);
 
+        if (((action == Events.ACTION_DOWN) && isPointWithinRGBCircle) || (mIsInRGBCircle && (action == Events.ACTION_MOVE))) {
+            mIsInRGBCircle = true;
+
+            this.setColorByAngle(angle);
+
+            float[] targetCoords = getPointsForRGBTarget(deltaX, deltaY, circleTargetRadius, circleRadius);
+            modeView.setColorCircleTargetCoords(targetCoords[0], targetCoords[1]);
+        }
+
+        if (action == Events.ACTION_UP) {
+            mIsInRGBCircle = false;
+        }
     }
 
     @Override
