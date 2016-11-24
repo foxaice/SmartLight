@@ -1,5 +1,6 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode.presenter;
 
+import me.foxaice.smartlight.activities.main_screen.model.IBulbInfo;
 import me.foxaice.smartlight.fragments.modes.ModeBasePresenter;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.view.IBulbModeView;
 
@@ -38,6 +39,9 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public void onTouchPowerButton() {
+        bulbInfo.setCurrentBulbGroupState(!bulbInfo.isCurrentBulbGroupOn());
+        sendPowerCommand(bulbInfo.isCurrentBulbGroupOn());
+        modeView.showBulbGroupStateMessage(bulbInfo.getCurrentBulbGroupName(), bulbInfo.isCurrentBulbGroupOn(), bulbInfo.getCurrentBulbGroup() == IBulbInfo.ALL_GROUP);
     }
 
     @Override
