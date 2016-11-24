@@ -29,7 +29,11 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public boolean isPointWithinRGBCircle(float coordX, float coordY, float circleTargetRadius, float circleRadius) {
-        return false;
+        float deltaX = coordX - circleRadius;
+        float deltaY = coordY - circleRadius;
+        boolean inner = (deltaX * deltaX + deltaY * deltaY) >= (circleRadius - circleTargetRadius * 2) * (circleRadius - circleTargetRadius * 2);
+        boolean outer = (deltaX * deltaX + deltaY * deltaY) <= circleRadius * circleRadius;
+        return inner && outer;
     }
 
     @Override
