@@ -46,6 +46,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public void onTouchWhiteColorButton() {
+        sendWhiteColorCommand();
     }
 
     @Override
