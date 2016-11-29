@@ -1,6 +1,7 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode.presenter;
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,6 +12,7 @@ import me.foxaice.smartlight.fragments.modes.bulb_mode.view.IBulbModeView;
 
 public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implements IBulbModePresenter {
     private boolean mIsInRGBCircle = false;
+    private BrightnessArcInfo mBrightnessArcInfo = new BrightnessArcInfo();
 
     @Override
     public void onTouchColorCircle(float coordX, float coordY, float circleTargetRadius, float circleRadius, @Events int action) {
@@ -56,6 +58,33 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public void onTouchBrightnessArc(float coordX, float coordY, float arcTargetRadius, float arcRadius, @Events int action) {
+        float deltaX = coordX - arcRadius;
+        float deltaY = coordY - arcRadius;
+        float angle = getAngle(deltaX, deltaY);
+        boolean isPointWithinArc = isPointWithinArc(deltaX, deltaY, arcTargetRadius, arcRadius);
+
+        mBrightnessArcInfo.updateBrightnessArcInfo(action, deltaX, deltaY);
+
+        if (((action == Events.ACTION_DOWN) && isPointWithinArc) || (action == Events.ACTION_MOVE && !mBrightnessArcInfo.isProhibition && mBrightnessArcInfo.isWithinArc)) {
+            mBrightnessArcInfo.isWithinArc = true;
+            Log.d("COORDS", String.format("deltaX: %f, deltaY: %f, angle: %f", deltaX, deltaY, angle));
+            if (checkAngleOutOfRange(angle)) {
+                if (angle < 142f && angle > 90) {
+                    angle = 142f;
+                } else {
+                    angle = 38f;
+                }
+            }
+            float[] targetCoords = getCoordsForBrightnessTarget(angle, arcTargetRadius, arcRadius);
+            modeView.setBrightnessArcTargetCoords(targetCoords[0], targetCoords[1]);
+            angle = getReformedAngle(angle);
+            this.setBrightnessByAngle(angle);
+            modeView.drawBrightnessArcBackground(angle);
+        }
+
+        if (action == Events.ACTION_UP) {
+            mBrightnessArcInfo.clearInfo();
+        }
     }
 
     private void setBrightnessByAngle(float angle) {
