@@ -88,6 +88,9 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private void setBrightnessByAngle(float angle) {
+        float index = 256.4818f;
+        int brightness = (int) (angle / index * 100);
+        sendBrightnessCommand(brightness);
     }
 
     private void setColorByAngle(float angle) {
