@@ -94,6 +94,9 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private void setColorByAngle(float angle) {
+        float index = 1.40625f;
+        int color = (int) (angle / index);
+        sendColorCommand(color);
     }
 
     private float getReformedAngle(float angle) {
