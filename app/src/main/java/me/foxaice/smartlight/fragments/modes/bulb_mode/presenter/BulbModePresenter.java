@@ -100,7 +100,13 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private float getReformedAngle(float angle) {
-        return 0;
+        float reformedAngle = 0;
+        if (angle >= 142f && angle <= 360) {
+            reformedAngle = angle - 142f;
+        } else if (angle >= 0 && angle <= 38f) {
+            reformedAngle = angle + 218f;
+        }
+        return reformedAngle;
     }
 
     private float[] getCoordsForBrightnessTarget(float angle, float arcTargetRadius, float arcRadius) {
