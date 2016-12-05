@@ -1,6 +1,7 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode.presenter;
 
 import android.support.annotation.IntDef;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.lang.annotation.Retention;
@@ -110,7 +111,55 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private float[] getCoordsForBrightnessTarget(float angle, float arcTargetRadius, float arcRadius) {
-        return null;
+        double radians = Math.toRadians(angle);
+        double cosine = Math.cos(radians);
+        double sine = Math.sin(radians);
+        float x, y;
+        int screenDpi = modeView.getScreenDpi();
+        if (screenDpi == DisplayMetrics.DENSITY_LOW) {
+            if (angle >= 0 && angle <= 180) {
+                x = (float) ((arcRadius - arcTargetRadius * 1.2f) * cosine) + arcRadius - arcTargetRadius * 1.07f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.3f) * sine) + arcRadius + arcTargetRadius * 0.3f;
+            } else {
+                x = (float) ((arcRadius - arcTargetRadius * 1.21f) * cosine) + arcRadius - arcTargetRadius * 1.08f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.2f) * sine) + arcRadius + arcTargetRadius * 0.3f;
+            }
+        } else if (screenDpi == DisplayMetrics.DENSITY_MEDIUM) {
+            if (angle >= 0 && angle <= 180) {
+                x = (float) ((arcRadius - arcTargetRadius * 1.23f) * cosine) + arcRadius - arcTargetRadius * 1.05f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.23f) * sine) + arcRadius + arcTargetRadius * 0.3f;
+            } else {
+                x = (float) ((arcRadius - arcTargetRadius * 1.23f) * cosine) + arcRadius - arcTargetRadius * 1.06f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.1f) * sine) + arcRadius + arcTargetRadius * 0.45f;
+            }
+        } else if (screenDpi == DisplayMetrics.DENSITY_HIGH) {
+            if (angle >= 0 && angle <= 180) {
+                x = (float) ((arcRadius - arcTargetRadius * 1.18f) * cosine) + arcRadius - arcTargetRadius * .99f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.15f) * sine) + arcRadius + arcTargetRadius * 0.4f;
+            } else {
+                x = (float) ((arcRadius - arcTargetRadius * 1.16f) * cosine) + arcRadius - arcTargetRadius * .99f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.15f) * sine) + arcRadius + arcTargetRadius * 0.4f;
+            }
+        } else if (screenDpi == DisplayMetrics.DENSITY_XHIGH) {
+            if (angle >= 0 && angle <= 180) {
+                x = (float) ((arcRadius - arcTargetRadius * 1.18f) * cosine) + arcRadius - arcTargetRadius * .99f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.3f) * sine) + arcRadius + arcTargetRadius * 0.4f;
+                Log.d("TWG", "angle: " + angle);
+            } else {
+                x = (float) ((arcRadius - arcTargetRadius * 1.18f) * cosine) + arcRadius - arcTargetRadius * .99f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.15f) * sine) + arcRadius + arcTargetRadius * 0.45f;
+            }
+
+        } else {
+            if (angle >= 0 && angle <= 180) {
+                x = (float) ((arcRadius - arcTargetRadius * 1.2f) * cosine) + arcRadius - arcTargetRadius * 0.98f;
+                y = (float) ((arcRadius - arcTargetRadius * 1.25f) * sine) + arcRadius + arcTargetRadius * 0.45f;
+            } else {
+                x = (float) ((arcRadius - arcTargetRadius * 1.2f) * cosine) + arcRadius - arcTargetRadius;
+                y = (float) ((arcRadius - arcTargetRadius * 1.2f) * sine) + arcRadius + arcTargetRadius * 0.4f;
+            }
+        }
+        return new float[]{x, y};
     }
 
     private float[] getPointsForRGBTarget(float deltaX, float deltaY, float circleTargetRadius, float circleRadius) {
