@@ -163,7 +163,12 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private float[] getPointsForRGBTarget(float deltaX, float deltaY, float circleTargetRadius, float circleRadius) {
-        return null;
+        double hypotenuse = Math.hypot(deltaX, deltaY);
+        double cosine = deltaX / hypotenuse;
+        double sine = deltaY / hypotenuse;
+        float x = (float) (circleRadius + (circleRadius - circleTargetRadius) * cosine) - circleTargetRadius;
+        float y = (float) (circleRadius + (circleRadius - circleTargetRadius) * sine) - circleTargetRadius;
+        return new float[]{x, y};
     }
 
     private boolean checkAngleOutOfRange(float angle) {
