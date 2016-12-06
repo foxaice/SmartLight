@@ -172,7 +172,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private boolean checkAngleOutOfRange(float angle) {
-        return false;
+        return angle >= 38f && angle <= 142f;
     }
 
     private boolean isPointWithinArc(float deltaX, float deltaY, float arcTargetRadius, float arcRadius) {
