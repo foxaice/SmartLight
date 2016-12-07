@@ -176,7 +176,10 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private boolean isPointWithinArc(float deltaX, float deltaY, float arcTargetRadius, float arcRadius) {
-        return false;
+        boolean inner = deltaX * deltaX + deltaY * deltaY >= (arcRadius - arcTargetRadius * 2) * (arcRadius - arcTargetRadius * 2);
+        boolean outer = deltaX * deltaX + deltaY * deltaY <= arcRadius * arcRadius;
+        boolean outsideArc = deltaX > -120 && deltaY > 119 && deltaX < 120;
+        return inner && outer && !outsideArc;
     }
 
     private float getAngle(float x, float y) {
