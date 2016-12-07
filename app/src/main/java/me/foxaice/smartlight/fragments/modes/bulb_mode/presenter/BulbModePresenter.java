@@ -183,7 +183,12 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     }
 
     private float getAngle(float x, float y) {
-        return 0;
+        float deg = 0;
+        if (x != 0) deg = y / x;
+        deg = (float) Math.toDegrees(Math.atan(deg));
+        if (x < 0) deg += 180;
+        else if (x > 0 && y < 0) deg += 360;
+        return deg;
     }
 
     @IntDef({Quarter.LEFT_TOP, Quarter.LEFT_BOTTOM, Quarter.RIGHT_TOP, Quarter.RIGHT_BOTTOM})
