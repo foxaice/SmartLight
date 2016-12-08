@@ -5,9 +5,9 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static me.foxaice.firstSaw.fragments.modes.IModeBasePresenter.Events.ACTION_DOWN;
-import static me.foxaice.firstSaw.fragments.modes.IModeBasePresenter.Events.ACTION_MOVE;
-import static me.foxaice.firstSaw.fragments.modes.IModeBasePresenter.Events.ACTION_UP;
+import static me.foxaice.smartlight.fragments.modes.IModeBasePresenter.Events.ACTION_DOWN;
+import static me.foxaice.smartlight.fragments.modes.IModeBasePresenter.Events.ACTION_MOVE;
+import static me.foxaice.smartlight.fragments.modes.IModeBasePresenter.Events.ACTION_UP;
 
 public interface IModeBasePresenter<T extends IModeBaseView> {
 
