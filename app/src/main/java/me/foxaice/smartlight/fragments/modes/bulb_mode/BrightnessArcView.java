@@ -64,6 +64,20 @@ public class BrightnessArcView extends android.support.v7.widget.AppCompatImageV
         this(context, attrs);
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            int saveFlags = Canvas.ALL_SAVE_FLAG;
+            canvas.saveLayer(0, 0, mWidth, mHeight, null, saveFlags);
+        } else {
+            canvas.saveLayer(0, 0, mWidth, mHeight, null);
+        }
+        canvas.drawArc(mArcRect, 130f, mAngle + 12, false, mPaintColor);
+        canvas.drawBitmap(mBitmapMask, null, mFrameRect, mPaintMask);
+        canvas.drawBitmap(mBitmapBorder, null, mFrameRect, null);
+        canvas.restore();
+    }
+
     private Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
