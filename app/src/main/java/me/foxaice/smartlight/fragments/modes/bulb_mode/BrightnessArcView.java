@@ -64,6 +64,11 @@ public class BrightnessArcView extends android.support.v7.widget.AppCompatImageV
         this(context, attrs);
     }
 
+    public void setAngle(float angle) {
+        mAngle = angle;
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
