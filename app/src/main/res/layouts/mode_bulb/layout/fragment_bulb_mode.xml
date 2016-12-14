@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <me.foxaice.firstSaw.fragments.modes.bulb_mode.BrightnessArcView
+            android:id="@+id/fragment_bulb_mode_image_brightness_arc"
+            android:layout_width="@dimen/brightness_arc_width"
+            android:layout_height="@dimen/brightness_arc_height"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/content_description_brightness_arc"/>
+
+        <ImageView
+            android:id="@+id/fragment_bulb_mode_image_brightness_target_arc"
+            android:layout_width="@dimen/brightness_arc_target_size"
+            android:layout_height="@dimen/brightness_arc_target_size"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/bulb_mode_shape_background_brightness_target"
+            android:contentDescription="@string/content_description_brightness_target"
+            app:srcCompat="@drawable/bulb_mode_image_target_circle"
+            tools:ignore="RtlHardcoded"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/fragment_bulb_mode_image_white_color_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/bulb_mode_white_color_button"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="W"
+        android:textAlignment="center"
+        android:textColor="@color/button_white_color_text"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintRight_toRightOf="@id/relativeLayout"
+        app:layout_constraintTop_toTopOf="@id/relativeLayout"
+        tools:ignore="HardcodedText,SpUsage"/>
+
+    <RelativeLayout
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/fragment_bulb_mode_image_rgb_circle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_description_color_circle"
+            android:src="@drawable/bulb_mode_image_rgb_circle"/>
+
+        <ImageView
+            android:id="@+id/fragment_bulb_mode_image_rgb_target_circle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="1dp"
+            android:contentDescription="@string/content_description_color_target"
+            app:srcCompat="@drawable/bulb_mode_image_target_circle"
+            tools:ignore="RtlHardcoded"/>
+
+        <ImageView
+            android:id="@+id/fragment_bulb_mode_image_power_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            android:contentDescription="@string/content_description_power_button"
+            app:srcCompat="@drawable/bulb_mode_image_power_button"/>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
