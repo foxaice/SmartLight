@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.fragments.modes.ModeBaseView;
+import me.foxaice.smartlight.fragments.modes.bulb_mode.presenter.IBulbModePresenter;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.view.IBulbModeView;
 
 public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
@@ -68,5 +69,20 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     @Override
     public int getScreenDpi() {
         return 0;
+    }
+
+    private abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {
+        int getAction(MotionEvent e) throws IllegalArgumentException {
+            int action = e.getAction();
+            if (MotionEvent.ACTION_UP == action) {
+                return IBulbModePresenter.Events.ACTION_UP;
+            } else if (MotionEvent.ACTION_DOWN == action) {
+                return IBulbModePresenter.Events.ACTION_DOWN;
+            } else if (MotionEvent.ACTION_MOVE == action) {
+                return IBulbModePresenter.Events.ACTION_MOVE;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }
