@@ -132,6 +132,12 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mBulbModePresenter.attachView(this);
+    }
+
+    @Override
     public void onChangedControllerSettings() {
 
     }
