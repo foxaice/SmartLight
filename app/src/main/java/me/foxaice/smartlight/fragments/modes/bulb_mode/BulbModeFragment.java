@@ -138,6 +138,13 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mBulbModePresenter.stopExecutorService();
+        mBulbModePresenter.detachView();
+    }
+
+    @Override
     public void onChangedControllerSettings() {
 
     }
