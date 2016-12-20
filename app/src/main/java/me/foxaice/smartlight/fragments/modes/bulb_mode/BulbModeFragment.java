@@ -145,6 +145,15 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putFloat(EXTRA_ANGLE, mAngle);
+        outState.putFloatArray(EXTRA_COLOR_TARGET_COORDS, mColorTargetCoords);
+        outState.putFloatArray(EXTRA_BRIGHTNESS_TARGET_COORDS, mBrightnessTargetCoords);
+    }
+
+
+    @Override
     public void onChangedControllerSettings() {
 
     }
