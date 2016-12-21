@@ -160,7 +160,8 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public void drawBrightnessArcBackground(float angle) {
-
+        mBrightnessArcImage.setAngle(angle);
+        mAngle = angle;
     }
 
     @Override
