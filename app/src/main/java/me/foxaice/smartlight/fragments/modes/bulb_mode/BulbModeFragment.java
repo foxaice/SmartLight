@@ -1,5 +1,6 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.fragments.modes.ModeBaseView;
@@ -171,7 +173,25 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public void setBrightnessArcTargetCoords(float x, float y) {
-
+        if (mBrightnessTargetCoords == null) mBrightnessTargetCoords = new float[2];
+        mBrightnessTargetCoords[0] = x;
+        mBrightnessTargetCoords[1] = y;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if (x < 225) x += 1;
+            else x -= 1;
+            if (y < 225) y += 1.5;
+            mBrightnessTargetImage.setX(x);
+            mBrightnessTargetImage.setY(y);
+        } else {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mBrightnessTargetImage.getMeasuredHeight(), mBrightnessTargetImage.getMeasuredWidth());
+            if (x > 255) {
+                params.leftMargin = (int) x - 1;
+            } else {
+                params.leftMargin = (int) x + 1;
+            }
+            params.topMargin = (int) y + 2;
+            mBrightnessTargetImage.setLayoutParams(params);
+        }
     }
 
     @Override
