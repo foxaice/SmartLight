@@ -196,7 +196,20 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public void setColorCircleTargetCoords(float x, float y) {
-
+        if (mColorTargetCoords == null) mColorTargetCoords = new float[2];
+        mColorTargetCoords[0] = x;
+        mColorTargetCoords[1] = y;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            y += 0.5;
+            x += 0.5;
+            mRGBTargetImage.setX(x);
+            mRGBTargetImage.setY(y);
+        } else {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mRGBTargetImage.getMeasuredHeight(), mRGBTargetImage.getMeasuredWidth());
+            params.leftMargin = (int) x + 1;
+            params.topMargin = (int) y + 1;
+            mRGBTargetImage.setLayoutParams(params);
+        }
     }
 
     @Override
