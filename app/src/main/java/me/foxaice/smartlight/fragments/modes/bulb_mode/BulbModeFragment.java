@@ -3,6 +3,7 @@ package me.foxaice.smartlight.fragments.modes.bulb_mode;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -168,7 +169,16 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public void showBulbGroupStateMessage(String group, boolean isPowerOn, boolean isAllGroup) {
-
+        String message;
+        String power = getString(isPowerOn ? R.string.bulb_power_on : R.string.bulb_power_off);
+        if (isAllGroup) {
+            message = getString(R.string.bulb_all_groups_state, power);
+        } else {
+            message = getString(R.string.bulb_group_state, group, power);
+        }
+        if (this.getView() != null) {
+            Snackbar.make(this.getView(), message, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
