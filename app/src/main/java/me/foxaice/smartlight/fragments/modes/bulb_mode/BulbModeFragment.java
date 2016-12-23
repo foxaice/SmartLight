@@ -214,7 +214,7 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public int getScreenDpi() {
-        return 0;
+        return mDensityDpi;
     }
 
     private abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {
