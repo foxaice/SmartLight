@@ -158,7 +158,7 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
 
     @Override
     public void onChangedControllerSettings() {
-
+        mBulbModePresenter.updateControllerSettings();
     }
 
     @Override
