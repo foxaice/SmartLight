@@ -155,30 +155,10 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
         outState.putFloatArray(EXTRA_BRIGHTNESS_TARGET_COORDS, mBrightnessTargetCoords);
     }
 
-
-    @Override
-    public void onChangedControllerSettings() {
-        mBulbModePresenter.updateControllerSettings();
-    }
-
     @Override
     public void drawBrightnessArcBackground(float angle) {
         mBrightnessArcImage.setAngle(angle);
         mAngle = angle;
-    }
-
-    @Override
-    public void showBulbGroupStateMessage(String group, boolean isPowerOn, boolean isAllGroup) {
-        String message;
-        String power = getString(isPowerOn ? R.string.bulb_power_on : R.string.bulb_power_off);
-        if (isAllGroup) {
-            message = getString(R.string.bulb_all_groups_state, power);
-        } else {
-            message = getString(R.string.bulb_group_state, group, power);
-        }
-        if (this.getView() != null) {
-            Snackbar.make(this.getView(), message, Snackbar.LENGTH_SHORT).show();
-        }
     }
 
     @Override
@@ -202,6 +182,7 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
             params.topMargin = (int) y + 2;
             mBrightnessTargetImage.setLayoutParams(params);
         }
+
     }
 
     @Override
@@ -225,6 +206,25 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     @Override
     public int getScreenDpi() {
         return mDensityDpi;
+    }
+
+    @Override
+    public void showBulbGroupStateMessage(String group, boolean isPowerOn, boolean isAllGroup) {
+        String message;
+        String power = getString(isPowerOn ? R.string.bulb_power_on : R.string.bulb_power_off);
+        if (isAllGroup) {
+            message = getString(R.string.bulb_all_groups_state, power);
+        } else {
+            message = getString(R.string.bulb_group_state, group, power);
+        }
+        if (this.getView() != null) {
+            Snackbar.make(this.getView(), message, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onChangedControllerSettings() {
+        mBulbModePresenter.updateControllerSettings();
     }
 
     private abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {
