@@ -22,4 +22,18 @@ public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implem
     public void onTouchNextModeButton(@Events int eventAction) {
 
     }
+
+    private Runnable getRunnableSpeedUpTask() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    turnBulbOn();
+                    bulbControllerApi.speedUpDiscoModeOfCurrentGroup();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 }
