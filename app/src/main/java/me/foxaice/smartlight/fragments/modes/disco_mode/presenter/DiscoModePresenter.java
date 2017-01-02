@@ -36,4 +36,18 @@ public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implem
             }
         };
     }
+
+    private Runnable getRunnableSpeedDownTask() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    turnBulbOn();
+                    bulbControllerApi.speedDownDiscoModeOfCurrentGroup();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 }
