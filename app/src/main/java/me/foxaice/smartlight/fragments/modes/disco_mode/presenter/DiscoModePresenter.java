@@ -9,9 +9,15 @@ import me.foxaice.smartlight.fragments.modes.disco_mode.view.IDiscoModeView;
 public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implements IDiscoModePresenter {
 
     @Override
-    public void onTouchSpeedUpButton(@Events int eventAction) {
-
+    public void onTouchSpeedUpButton(int eventAction) {
+        boolean isPressed = eventAction != Events.ACTION_UP;
+        modeView.setPressedSpeedUpButton(isPressed);
+        if (eventAction == Events.ACTION_UP) {
+            modeView.spinVinylImage(IDiscoModeView.Action.SPEED_UP);
+            executorService.submit(getRunnableSpeedUpTask());
+        }
     }
+
 
     @Override
     public void onTouchSpeedDownButton(@Events int eventAction) {
