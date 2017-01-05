@@ -20,8 +20,13 @@ public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implem
 
 
     @Override
-    public void onTouchSpeedDownButton(@Events int eventAction) {
-
+    public void onTouchSpeedDownButton(int eventAction) {
+        boolean isPressed = eventAction != Events.ACTION_UP;
+        modeView.setPressedSpeedDownButton(isPressed);
+        if (eventAction == Events.ACTION_UP) {
+            modeView.spinVinylImage(IDiscoModeView.Action.SPEED_DOWN);
+            executorService.submit(getRunnableSpeedDownTask());
+        }
     }
 
     @Override
