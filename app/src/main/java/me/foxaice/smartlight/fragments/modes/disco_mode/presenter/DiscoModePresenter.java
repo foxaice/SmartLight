@@ -2,7 +2,6 @@ package me.foxaice.smartlight.fragments.modes.disco_mode.presenter;
 
 import java.io.IOException;
 
-import me.foxaice.smartlight.fragments.modes.IModeBasePresenter;
 import me.foxaice.smartlight.fragments.modes.ModeBasePresenter;
 import me.foxaice.smartlight.fragments.modes.disco_mode.view.IDiscoModeView;
 
@@ -30,8 +29,13 @@ public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implem
     }
 
     @Override
-    public void onTouchNextModeButton(@Events int eventAction) {
-
+    public void onTouchNextModeButton(int eventAction) {
+        boolean isPressed = eventAction != Events.ACTION_UP;
+        modeView.setPressedNextModeButton(isPressed);
+        if (eventAction == Events.ACTION_UP) {
+            modeView.spinVinylImage(IDiscoModeView.Action.NEXT_MODE);
+            executorService.submit(getRunnableNextModeTask());
+        }
     }
 
     private Runnable getRunnableSpeedUpTask() {
