@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_vinyl"
+            android:layout_width="@dimen/disco_vinyl_image_size"
+            android:layout_height="@dimen/disco_vinyl_image_size"
+            android:layout_centerInParent="true"
+            android:rotation="45"
+            android:src="@drawable/disco_mode_image_vinyl"
+            tools:ignore="ContentDescription"
+            tools:targetApi="honeycomb"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5">
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_text_speed_up"
+            android:layout_width="262dp"
+            android:layout_height="41dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/content_description_speed_up_button"
+            android:paddingBottom="8dp"
+            android:paddingRight="41dp"
+            android:paddingTop="8dp"
+            android:src="@drawable/disco_mode_selector_text_speed_up"
+            tools:ignore="RtlHardcoded,RtlSymmetry"/>
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_text_next_mode"
+            android:layout_width="262dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/fragment_disco_mode_image_text_speed_up"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/content_description_next_mode_button"
+            android:paddingRight="41dp"
+            android:src="@drawable/disco_mode_selector_text_next_mode"
+            tools:ignore="RtlHardcoded,RtlSymmetry"/>
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_text_speed_down"
+            android:layout_width="262dp"
+            android:layout_height="41dp"
+            android:layout_below="@id/fragment_disco_mode_image_text_next_mode"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/content_description_speed_down_button"
+            android:paddingBottom="8dp"
+            android:paddingRight="41dp"
+            android:paddingTop="8dp"
+            android:src="@drawable/disco_mode_selector_text_speed_down"
+            tools:ignore="RtlHardcoded,RtlSymmetry"/>
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_icon_speed_up"
+            android:layout_width="25dp"
+            android:layout_height="41dp"
+            android:layout_alignTop="@id/fragment_disco_mode_image_text_speed_up"
+            android:layout_marginLeft="-20dp"
+            android:layout_toRightOf="@id/fragment_disco_mode_image_text_speed_down"
+            android:contentDescription="@string/content_description_speed_up_button"
+            android:src="@drawable/disco_mode_selector_icon_speed_up"
+            tools:ignore="RtlHardcoded"/>
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_icon_next_mode"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignTop="@id/fragment_disco_mode_image_text_next_mode"
+            android:layout_marginLeft="-20dp"
+            android:layout_toRightOf="@id/fragment_disco_mode_image_text_speed_down"
+            android:contentDescription="@string/content_description_next_mode_button"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:src="@drawable/disco_mode_selector_icon_next_mode"
+            tools:ignore="RtlHardcoded"/>
+
+        <ImageView
+            android:id="@+id/fragment_disco_mode_image_icon_speed_down"
+            android:layout_width="25dp"
+            android:layout_height="41dp"
+            android:layout_alignTop="@id/fragment_disco_mode_image_text_speed_down"
+            android:layout_marginLeft="-20dp"
+            android:layout_toRightOf="@id/fragment_disco_mode_image_text_speed_down"
+            android:contentDescription="@string/content_description_speed_down_button"
+            android:src="@drawable/disco_mode_selector_icon_speed_down"
+            tools:ignore="RtlHardcoded"/>
+    </RelativeLayout>
+
+</LinearLayout>
