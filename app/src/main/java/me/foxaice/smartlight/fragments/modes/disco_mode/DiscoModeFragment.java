@@ -53,6 +53,13 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mDiscoModePresenter.attachView(this);
+    }
+
+
+    @Override
     public void onChangedControllerSettings() {
 
     }
