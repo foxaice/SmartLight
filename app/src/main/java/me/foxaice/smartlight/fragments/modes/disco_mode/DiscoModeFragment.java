@@ -1,8 +1,15 @@
 package me.foxaice.smartlight.fragments.modes.disco_mode;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -84,6 +91,46 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     @Override
     public void setPressedNextModeButton(boolean isPressed) {
 
+    }
+
+    private static class VinylDrawHandler extends Handler {
+        private static final int START_DRAWING = 0x0001;
+        private static final int KEEP_DRAWING = 0x0002;
+        private static final int STOP_DRAWING = 0x0003;
+        private static final String RED = "#F44336";
+        private static final String PINK = "#E91E63";
+        private static final String PURPLE = "#9C27B0";
+        private static final String INDIGO = "#3F51B5";
+        private static final String TEAL = "#009688";
+        private static final String LIGHT_GREEN = "#8BC34A";
+        private static final String YELLOW = "#FFEB3B";
+        private static final String ORANGE = "#FF9800";
+        private static final String BROWN = "#795548";
+        private final DiscoModeFragment fragment;
+        private final int[] colors;
+        private int curColor = Color.parseColor(RED);
+        private int curColorIndex = 0;
+        private int prevColor = Color.TRANSPARENT;
+        private int alpha;
+        private int height;
+        private int width;
+        private int minSide;
+        private float percent;
+
+        VinylDrawHandler(DiscoModeFragment fragment) {
+            this.fragment = fragment;
+            colors = new int[]{
+                    Color.parseColor(RED),
+                    Color.parseColor(PINK),
+                    Color.parseColor(PURPLE),
+                    Color.parseColor(INDIGO),
+                    Color.parseColor(TEAL),
+                    Color.parseColor(LIGHT_GREEN),
+                    Color.parseColor(YELLOW),
+                    Color.parseColor(ORANGE),
+                    Color.parseColor(BROWN)
+            };
+        }
     }
 
     private class DiscoButtonListener implements View.OnTouchListener {
