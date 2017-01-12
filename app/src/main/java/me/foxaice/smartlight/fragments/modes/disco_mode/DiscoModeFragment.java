@@ -1,9 +1,11 @@
 package me.foxaice.smartlight.fragments.modes.disco_mode;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -82,5 +84,40 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     @Override
     public void setPressedNextModeButton(boolean isPressed) {
 
+    }
+
+    private class DiscoButtonListener implements View.OnTouchListener {
+
+        @Override
+        @SuppressLint("ClickableViewAccessibility")
+        public boolean onTouch(View v, MotionEvent event) {
+            @IDiscoModePresenter.Events int action;
+            try {
+                action = getAction(event);
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+            if (v.getId() == mSpeedUpTextImage.getId() || v.getId() == mSpeedUpIconImage.getId()) {
+                mDiscoModePresenter.onTouchSpeedUpButton(action);
+            } else if (v.getId() == mSpeedDownTextImage.getId() || v.getId() == mSpeedDownIconImage.getId()) {
+                mDiscoModePresenter.onTouchSpeedDownButton(action);
+            } else {
+                mDiscoModePresenter.onTouchNextModeButton(action);
+            }
+            return true;
+        }
+
+        private int getAction(MotionEvent e) throws IllegalArgumentException {
+            int action = e.getAction();
+            if (MotionEvent.ACTION_UP == action) {
+                return IDiscoModePresenter.Events.ACTION_UP;
+            } else if (MotionEvent.ACTION_DOWN == action) {
+                return IDiscoModePresenter.Events.ACTION_DOWN;
+            } else if (MotionEvent.ACTION_MOVE == action) {
+                return IDiscoModePresenter.Events.ACTION_MOVE;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }
