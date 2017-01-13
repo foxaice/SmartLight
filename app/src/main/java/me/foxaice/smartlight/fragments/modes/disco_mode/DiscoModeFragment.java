@@ -131,6 +131,16 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
                     Color.parseColor(BROWN)
             };
         }
+
+        private void setBackground(View view, Bitmap bitmap) {
+            BitmapDrawable drawable = new BitmapDrawable(fragment.getResources(), bitmap);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                //noinspection deprecation
+                view.setBackgroundDrawable(drawable);
+            } else {
+                view.setBackground(drawable);
+            }
+        }
     }
 
     private class DiscoButtonListener implements View.OnTouchListener {
