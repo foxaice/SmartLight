@@ -141,6 +141,10 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
                 view.setBackground(drawable);
             }
         }
+
+        private int nextColors(int index) {
+            return colors[index];
+        }
     }
 
     private class DiscoButtonListener implements View.OnTouchListener {
