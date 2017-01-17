@@ -145,6 +145,16 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
         private int nextColors(int index) {
             return colors[index];
         }
+
+        private void changeColors() {
+            prevColor = curColor;
+            curColorIndex += 1;
+            if (curColorIndex >= colors.length) {
+                curColorIndex = 0;
+            }
+            curColor = nextColors(curColorIndex);
+        }
+
     }
 
     private class DiscoButtonListener implements View.OnTouchListener {
