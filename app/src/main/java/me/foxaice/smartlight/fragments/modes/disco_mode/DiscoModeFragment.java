@@ -155,6 +155,20 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
             curColor = nextColors(curColorIndex);
         }
 
+        private Bitmap drawBackgroundVinyl(int width, int height, int alpha, int curColor, int prevColor) {
+            Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            Paint paint = new Paint();
+            paint.setStrokeWidth(percent * 14f);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setAlpha(255);
+            paint.setColor(prevColor);
+            canvas.drawCircle(height / 2f, width / 2f, percent * 11.5f, paint);
+            paint.setColor(curColor);
+            paint.setAlpha(alpha);
+            canvas.drawCircle(height / 2f, width / 2f, percent * 11.5f, paint);
+            return bm;
+        }
     }
 
     private class DiscoButtonListener implements View.OnTouchListener {
