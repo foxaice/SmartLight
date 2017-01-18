@@ -43,6 +43,7 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_disco_mode, container, false);
+
         mAnimationsOfVinylImage = new Animation[]{
                 AnimationUtils.loadAnimation(getContext(), R.anim.vinyl_speed_up),
                 AnimationUtils.loadAnimation(getContext(), R.anim.vinyl_next_mode),
@@ -55,9 +56,32 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
         mSpeedDownIconImage = (ImageView) view.findViewById(R.id.fragment_disco_mode_image_icon_speed_down);
         mNextModeTextImage = (ImageView) view.findViewById(R.id.fragment_disco_mode_image_text_next_mode);
         mNextModeIconImage = (ImageView) view.findViewById(R.id.fragment_disco_mode_image_icon_next_mode);
+        DiscoButtonListener discoButtonListener = new DiscoButtonListener();
+        mSpeedUpTextImage.setOnTouchListener(discoButtonListener);
+        mSpeedUpIconImage.setOnTouchListener(discoButtonListener);
+        mSpeedDownTextImage.setOnTouchListener(discoButtonListener);
+        mSpeedDownIconImage.setOnTouchListener(discoButtonListener);
+        mNextModeTextImage.setOnTouchListener(discoButtonListener);
+        mNextModeIconImage.setOnTouchListener(discoButtonListener);
         mVinylImage = (ImageView) view.findViewById(R.id.fragment_disco_mode_image_vinyl);
 
+        mVinylDrawerHandler = new VinylDrawHandler(this);
+        mAnimationsOfVinylImage[1].setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mVinylDrawerHandler.sendEmptyMessage(VinylDrawHandler.START_DRAWING);
+            }
 
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mVinylDrawerHandler.sendEmptyMessage(VinylDrawHandler.STOP_DRAWING);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         return view;
     }
 
