@@ -132,6 +132,35 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
             };
         }
 
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == KEEP_DRAWING) {
+                alpha = alpha + 10;
+                if (alpha >= 254) alpha = 254;
+                setBackground(fragment.mVinylImage, drawBackgroundVinyl(width, height, alpha, curColor, prevColor));
+                if (alpha == 254) {
+                    this.sendEmptyMessage(STOP_DRAWING);
+                } else {
+                    this.sendEmptyMessageDelayed(KEEP_DRAWING, 10);
+                }
+            } else if (msg.what == START_DRAWING) {
+                this.removeMessages(KEEP_DRAWING);
+                height = fragment.mVinylImage.getMeasuredHeight();
+                width = fragment.mVinylImage.getMeasuredWidth();
+                minSide = height > width ? height : width;
+                height = minSide;
+                width = minSide;
+                percent = minSide / 100f;
+                alpha = 0;
+                changeColors();
+                this.sendEmptyMessageDelayed(KEEP_DRAWING, 10);
+            } else if (msg.what == STOP_DRAWING) {
+                this.removeMessages(KEEP_DRAWING);
+                alpha = 255;
+                setBackground(fragment.mVinylImage, drawBackgroundVinyl(width, height, alpha, curColor, prevColor));
+            }
+        }
+
         private void setBackground(View view, Bitmap bitmap) {
             BitmapDrawable drawable = new BitmapDrawable(fragment.getResources(), bitmap);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
