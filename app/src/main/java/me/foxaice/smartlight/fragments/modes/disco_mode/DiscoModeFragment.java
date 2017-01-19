@@ -91,6 +91,13 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
         mDiscoModePresenter.attachView(this);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mVinylDrawerHandler.removeCallbacksAndMessages(null);
+        mDiscoModePresenter.stopExecutorService();
+        mDiscoModePresenter.detachView();
+    }
 
     @Override
     public void onChangedControllerSettings() {
