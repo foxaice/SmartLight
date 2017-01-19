@@ -105,8 +105,14 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     }
 
     @Override
-    public void spinVinylImage(@Action int action) {
-
+    public void spinVinylImage(@Action int mode) {
+        if (mode == Action.NEXT_MODE) {
+            mVinylImage.startAnimation(mAnimationsOfVinylImage[1]);
+        } else if (mode == Action.SPEED_UP) {
+            mVinylImage.startAnimation(mAnimationsOfVinylImage[0]);
+        } else if (mode == Action.SPEED_DOWN) {
+            mVinylImage.startAnimation(mAnimationsOfVinylImage[2]);
+        }
     }
 
     @Override
