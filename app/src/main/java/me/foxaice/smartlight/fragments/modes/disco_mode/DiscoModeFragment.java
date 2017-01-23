@@ -129,7 +129,8 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
 
     @Override
     public void setPressedNextModeButton(boolean isPressed) {
-
+        mNextModeIconImage.setPressed(isPressed);
+        mNextModeTextImage.setPressed(isPressed);
     }
 
     private static class VinylDrawHandler extends Handler {
