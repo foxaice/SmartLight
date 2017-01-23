@@ -123,7 +123,8 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
 
     @Override
     public void setPressedSpeedDownButton(boolean isPressed) {
-
+        mSpeedDownIconImage.setPressed(isPressed);
+        mSpeedDownTextImage.setPressed(isPressed);
     }
 
     @Override
