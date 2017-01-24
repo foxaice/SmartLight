@@ -100,11 +100,6 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     }
 
     @Override
-    public void onChangedControllerSettings() {
-        mDiscoModePresenter.updateControllerSettings();
-    }
-
-    @Override
     public void spinVinylImage(@Action int mode) {
         if (mode == Action.NEXT_MODE) {
             mVinylImage.startAnimation(mAnimationsOfVinylImage[1]);
@@ -131,6 +126,11 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     public void setPressedNextModeButton(boolean isPressed) {
         mNextModeIconImage.setPressed(isPressed);
         mNextModeTextImage.setPressed(isPressed);
+    }
+
+    @Override
+    public void onChangedControllerSettings() {
+        mDiscoModePresenter.updateControllerSettings();
     }
 
     private static class VinylDrawHandler extends Handler {
@@ -172,6 +172,17 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
             };
         }
 
+        private void setBackground(View view, Bitmap bitmap) {
+            BitmapDrawable drawable = new BitmapDrawable(fragment.getResources(), bitmap);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                //noinspection deprecation
+                view.setBackgroundDrawable(drawable);
+            } else {
+                view.setBackground(drawable);
+            }
+        }
+
+
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == KEEP_DRAWING) {
@@ -201,20 +212,6 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
             }
         }
 
-        private void setBackground(View view, Bitmap bitmap) {
-            BitmapDrawable drawable = new BitmapDrawable(fragment.getResources(), bitmap);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                //noinspection deprecation
-                view.setBackgroundDrawable(drawable);
-            } else {
-                view.setBackground(drawable);
-            }
-        }
-
-        private int nextColors(int index) {
-            return colors[index];
-        }
-
         private void changeColors() {
             prevColor = curColor;
             curColorIndex += 1;
@@ -222,6 +219,10 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
                 curColorIndex = 0;
             }
             curColor = nextColors(curColorIndex);
+        }
+
+        private int nextColors(int index) {
+            return colors[index];
         }
 
         private Bitmap drawBackgroundVinyl(int width, int height, int alpha, int curColor, int prevColor) {
