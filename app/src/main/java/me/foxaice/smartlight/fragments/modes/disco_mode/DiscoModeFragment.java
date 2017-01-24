@@ -101,7 +101,7 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
 
     @Override
     public void onChangedControllerSettings() {
-
+        mDiscoModePresenter.updateControllerSettings();
     }
 
     @Override
