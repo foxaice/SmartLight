@@ -11,5 +11,19 @@ public class FrequencyCalculator {
         mSampleRate = sampleRate;
     }
 
+    public double[] getArrayOfPCM() {
+        return mPCMArray;
+    }
 
+    public double getDominantFrequency() {
+        return mDominantFrequency;
+    }
+
+    public double getDominantFrequencyMagnitude() {
+        return mDominantFrequencyMagnitude;
+    }
+
+    public double[] getFrequenciesMagnitudes() {
+        return mFrequenciesMagnitudes;
+    }
 }
