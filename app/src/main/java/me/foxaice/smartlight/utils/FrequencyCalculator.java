@@ -35,4 +35,13 @@ public class FrequencyCalculator {
         }
         return res;
     }
+
+    private double[] applyHammingWindow(short[] pcm) {
+        double[] res = new double[pcm.length];
+        for (int i = 0; i < pcm.length; i++) {
+            double window = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (pcm.length - 1));
+            res[i] = pcm[i] * window;
+        }
+        return res;
+    }
 }
