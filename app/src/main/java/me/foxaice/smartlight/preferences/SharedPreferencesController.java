@@ -3,8 +3,11 @@ package me.foxaice.smartlight.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
+import me.foxaice.smartlight.fragments.modes.music_mode.model.MusicInfo;
 import me.foxaice.smartlight.utils.Validator;
 
 public class SharedPreferencesController implements ISharedPreferencesController {
@@ -131,6 +134,32 @@ public class SharedPreferencesController implements ISharedPreferencesController
         }
     }
 
+    @Override
+    public IMusicInfo getMusicInfo() {
+        if (mSharedPreferences != null) {
+            @IMusicInfo.ColorMode int colorMode = mSharedPreferences.getInt(MusicInfoKey.COLOR_MODE, IMusicInfo.DefaultValues.COLOR_MODE);
+            @IMusicInfo.ViewType int viewType = mSharedPreferences.getInt(MusicInfoKey.VIEW_TYPE, IMusicInfo.DefaultValues.VIEW_TYPE);
+            @IMusicInfo.MaxFrequencyType int maxFrequencyType = mSharedPreferences.getInt(MusicInfoKey.MAX_FREQUENCY_TYPE, IMusicInfo.DefaultValues.MAX_FREQUENCY_TYPE);
+            int maxFrequency = mSharedPreferences.getInt(MusicInfoKey.MAX_FREQUENCY, IMusicInfo.DefaultValues.MAX_FREQUENCY);
+            int maxVolume = mSharedPreferences.getInt(MusicInfoKey.MAX_VOLUME, IMusicInfo.DefaultValues.MAX_VOLUME);
+            int minVolume = mSharedPreferences.getInt(MusicInfoKey.MIN_VOLUME, IMusicInfo.DefaultValues.MIN_VOLUME);
+            return new MusicInfo(colorMode, viewType, maxFrequencyType, maxFrequency, maxVolume, minVolume);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void setMusicInfo(IMusicInfo musicInfo) {
+        Map<String, Integer> values = new HashMap<>();
+        values.put(MusicInfoKey.COLOR_MODE, musicInfo.getColorMode());
+        values.put(MusicInfoKey.VIEW_TYPE, musicInfo.getSoundViewType());
+        values.put(MusicInfoKey.MAX_FREQUENCY_TYPE, musicInfo.getMaxFrequencyType());
+        values.put(MusicInfoKey.MAX_FREQUENCY, musicInfo.getMaxFrequency());
+        values.put(MusicInfoKey.MAX_VOLUME, musicInfo.getMaxVolumeThreshold());
+        values.put(MusicInfoKey.MIN_VOLUME, musicInfo.getMinVolumeThreshold());
+        putValues(values);
+    }
 
     @Override
     public void setNameDevice(String deviceMacAddress, String deviceName) {

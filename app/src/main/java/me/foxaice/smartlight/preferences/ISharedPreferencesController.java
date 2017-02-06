@@ -5,6 +5,8 @@ import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
+
 public interface ISharedPreferencesController {
 
     int getPort();
@@ -16,6 +18,8 @@ public interface ISharedPreferencesController {
     String getGroupName(@NameZone String nameZone);
     String getFragmentTag();
     void setFragmentTag(String tag);
+    IMusicInfo getMusicInfo();
+    void setMusicInfo(IMusicInfo musicInfo);
     void setNameDevice(String deviceMacAddress, String deviceName);
     void setGroupColor(@ColorZone String colorZone, String color);
     void setGroupName(@NameZone String nameZone, String name);
