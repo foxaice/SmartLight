@@ -11,6 +11,30 @@ public class FrequencyCalculator {
         mSampleRate = sampleRate;
     }
 
+    public void calculateFrequencies(short[] pcm) {
+        mPCMArray = applyHammingWindow(pcm);
+        double[] fftData = FFT.getFFTArray(mPCMArray);
+        double[] magnitudes = new double[fftData.length >> 1];
+
+        double maxMagnitude = -1;
+        double maxMagnitudeIndex = -1;
+        for (int i = 0, length = magnitudes.length; i < length; i++) {
+            if (i < length / 2) {
+                magnitudes[i] = Math.sqrt(Math.pow(fftData[i << 1], 2) + Math.pow(fftData[(i << 1) + 1], 2));
+                if (magnitudes[i] > maxMagnitude) {
+                    maxMagnitude = magnitudes[i];
+                    maxMagnitudeIndex = i;
+                }
+            } else {
+                magnitudes[i] = magnitudes[length - 1 - i];
+            }
+        }
+
+        mDominantFrequencyMagnitude = maxMagnitude;
+        mFrequenciesMagnitudes = magnitudes;
+        mDominantFrequency = maxMagnitudeIndex * mSampleRate / magnitudes.length;
+    }
+
     public double[] getArrayOfPCM() {
         return mPCMArray;
     }
