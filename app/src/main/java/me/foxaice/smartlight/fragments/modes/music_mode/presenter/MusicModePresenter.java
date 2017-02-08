@@ -89,6 +89,14 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                     bufferSize);
         }
 
+        private int getUnsignedByte(int value) {
+            if (value < 256) {
+                return value;
+            }
+            return getUnsignedByte(value - 256);
+        }
+
+
         @Override
         public void run() {
             record();
