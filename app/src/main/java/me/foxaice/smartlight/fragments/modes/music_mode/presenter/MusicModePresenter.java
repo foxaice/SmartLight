@@ -96,6 +96,16 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
             return getUnsignedByte(value - 256);
         }
 
+        private int calculateFrequency(int sampleRate, short[] audioBuffer) {
+            int countCrossing = 0;
+            for (int i = 0, j = audioBuffer.length - 1; i < j; i++) {
+                if ((audioBuffer[i] > 0 && audioBuffer[i + 1] <= 0) || (audioBuffer[i] < 0 && audioBuffer[i + 1] >= 0)) {
+                    countCrossing++;
+                }
+            }
+            return (int) ((countCrossing / 2f) / ((float) audioBuffer.length / (float) sampleRate));
+        }
+
 
         @Override
         public void run() {
