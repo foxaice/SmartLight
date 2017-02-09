@@ -106,6 +106,25 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
             return (int) ((countCrossing / 2f) / ((float) audioBuffer.length / (float) sampleRate));
         }
 
+        private int getColorShift() {
+            switch (mMusicInfo.getColorMode()) {
+                case IMusicInfo.ColorMode.BGRM:
+                    return 0;
+                case IMusicInfo.ColorMode.RBGY:
+                    return 173;
+                case IMusicInfo.ColorMode.GRBC:
+                    return 99;
+                case IMusicInfo.ColorMode.RGBM:
+                    return 214;
+                case IMusicInfo.ColorMode.GBRY:
+                    return 128;
+                case IMusicInfo.ColorMode.BRGC:
+                    return 59;
+                default:
+                    throw new IllegalArgumentException("Wrong mode frequency parameter!");
+            }
+        }
+
 
         @Override
         public void run() {
