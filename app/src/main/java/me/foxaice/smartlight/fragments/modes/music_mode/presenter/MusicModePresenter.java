@@ -143,6 +143,14 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                     throw new IllegalArgumentException("Wrong mode frequency parameter!");
             }
         }
+        private double calculateBrightnessMultiplier(double maxAmplitude, double threshold) {
+            double multiplierBrightness = (maxAmplitude - threshold) / 100f;
+            if (multiplierBrightness < 1) {
+                return 1;
+            } else {
+                return multiplierBrightness;
+            }
+        }
         @Override
         public void run() {
             record();
