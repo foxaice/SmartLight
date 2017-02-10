@@ -151,6 +151,12 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                 return multiplierBrightness;
             }
         }
+
+        private boolean isReverseMode() {
+            return mMusicInfo.getColorMode() == IMusicInfo.ColorMode.RGBM
+                    || mMusicInfo.getColorMode() == IMusicInfo.ColorMode.BRGC
+                    || mMusicInfo.getColorMode() == IMusicInfo.ColorMode.GBRY;
+        }
         @Override
         public void run() {
             record();
