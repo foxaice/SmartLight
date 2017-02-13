@@ -66,27 +66,58 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                 mAudioRecord.release();
                 return;
             }
-        }
 
+            mAudioRecord.startRecording();
+            boolean dynamicType = mMusicInfo.getMaxFrequencyType() == IMusicInfo.MaxFrequencyType.DYNAMIC;
+            mIsReverse = isReverseMode();
+            mMaxVolumeThreshold = mMusicInfo.getMaxVolumeThreshold();
+            mMinVolumeThreshold = mMusicInfo.getMinVolumeThreshold();
+            mBrightnessMultiplier = calculateBrightnessMultiplier(mMaxVolumeThreshold, mMinVolumeThreshold);
+            mColorsQuantity = getColorsQuantity();
+            mShift = getColorShift();
+            mMaxFrequency = !dynamicType ? mMusicInfo.getMaxFrequency() : 0;
+            mMultiplierColor = mMaxFrequency / mColorsQuantity == 0 ? 1 : mMaxFrequency / mColorsQuantity;
+            FrequencyCalculator frequencyCalculator = new FrequencyCalculator(SAMPLE_RATE);
+            while (mIsAlive) {
+                mAudioRecord.read(mAudioBuffer, 0, mAudioBuffer.length);
+                double dbSPL = 0;
+                for (short anAudioBuffer : mAudioBuffer) {
+                    dbSPL += anAudioBuffer * anAudioBuffer;
+                }
+                double avgAmplitude = Math.sqrt(dbSPL / mAudioBuffer.length);
+                dbSPL = (int) (20 * Math.log10(avgAmplitude));
 
-        private void prepareAudioRecord() {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-
-            int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
-
-            if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
-                bufferSize = SAMPLE_RATE * 2;
+                if (dbSPL > mMinVolumeThreshold) {
+                    if (dbSPL > mMaxVolumeThreshold) dbSPL = mMaxVolumeThreshold;
+                    frequencyCalculator.calculateFrequencies(mAudioBuffer);
+                    int frequency = (int) frequencyCalculator.getDominantFrequency();
+                    if (dynamicType) {
+                        if (frequency > mMaxFrequency) {
+                            mMaxFrequency = frequency;
+                            mMultiplierColor = mMaxFrequency / mColorsQuantity;
+                            if (mMultiplierColor < 1) mMultiplierColor = 1;
+                        }
+                    } else {
+                        if (frequency > mMaxFrequency) {
+                            frequency = (int) mMaxFrequency;
+                        }
+                    }
+                    int color = calculateColorByFrequency(frequency);
+                    int brightness = (int) ((dbSPL - mMinVolumeThreshold) / mBrightnessMultiplier);
+                    MusicModePresenter.this.sendColorCommand(color);
+                    MusicModePresenter.this.sendBrightnessCommand(brightness);
+                    if (mMusicInfo.getSoundViewType() == IMusicInfo.ViewType.WAVEFORM) {
+                        MusicModePresenter.this.modeView.drawWaveFormView(frequencyCalculator.getArrayOfPCM(), mBytesColors[color], avgAmplitude, mMusicInfo.getSoundViewType());
+                    } else if (mMusicInfo.getSoundViewType() == IMusicInfo.ViewType.FREQUENCIES) {
+                        MusicModePresenter.this.modeView.drawWaveFormView(frequencyCalculator.getFrequenciesMagnitudes(), mBytesColors[color], mMaxVolumeThreshold, mMusicInfo.getSoundViewType());
+                    }
+                    MusicModePresenter.this.modeView.setFrequencyText(frequency);
+                }
+                MusicModePresenter.this.modeView.setCurrentVolumeText(dbSPL);
             }
 
-            mAudioBuffer = new short[bufferSize / 2];
-
-            mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
-                    SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSize);
+            mAudioRecord.stop();
+            mAudioRecord.release();
         }
 
         private int calculateColorByFrequency(int frequency) {
@@ -152,6 +183,7 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                     throw new IllegalArgumentException("Wrong mode frequency parameter!");
             }
         }
+
         private double calculateBrightnessMultiplier(double maxAmplitude, double threshold) {
             double multiplierBrightness = (maxAmplitude - threshold) / 100f;
             if (multiplierBrightness < 1) {
@@ -166,6 +198,27 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                     || mMusicInfo.getColorMode() == IMusicInfo.ColorMode.BRGC
                     || mMusicInfo.getColorMode() == IMusicInfo.ColorMode.GBRY;
         }
+
+        private void prepareAudioRecord() {
+            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
+
+            int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT);
+
+            if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
+                bufferSize = SAMPLE_RATE * 2;
+            }
+
+            mAudioBuffer = new short[bufferSize / 2];
+
+            mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    bufferSize);
+        }
+
         @Override
         public void run() {
             record();
