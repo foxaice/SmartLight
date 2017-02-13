@@ -89,6 +89,15 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
                     bufferSize);
         }
 
+        private int calculateColorByFrequency(int frequency) {
+            int color = (int) (frequency / mMultiplierColor);
+            if (mIsReverse) {
+                color = mColorsQuantity - color;
+            }
+            color += mShift;
+            return getUnsignedByte(color);
+        }
+
         private int getUnsignedByte(int value) {
             if (value < 256) {
                 return value;
