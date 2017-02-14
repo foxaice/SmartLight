@@ -31,6 +31,10 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
 
     }
 
+    private void turnOnBulbGroup() {
+        sendPowerCommand(true);
+    }
+
     private class RecordThread implements Runnable {
         private static final int SAMPLE_RATE = 44100;
         private static final int MAX_AMPLITUDE = 32000;
