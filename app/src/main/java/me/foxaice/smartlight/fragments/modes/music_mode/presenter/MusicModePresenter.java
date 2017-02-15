@@ -28,7 +28,11 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
 
     @Override
     public void loadMusicInfoFromPreferences() {
-
+        mMusicInfo = sharedPreferences.getMusicInfo();
+        modeView.setMaxVolumeText(mMusicInfo.getMaxVolumeThreshold());
+        modeView.setMinVolumeText(mMusicInfo.getMinVolumeThreshold());
+        modeView.setColorModeText(mMusicInfo.getColorMode());
+        modeView.setWaveFormVisible(mMusicInfo.getSoundViewType() != IMusicInfo.ViewType.NONE);
     }
 
     private void turnOnBulbGroup() {
