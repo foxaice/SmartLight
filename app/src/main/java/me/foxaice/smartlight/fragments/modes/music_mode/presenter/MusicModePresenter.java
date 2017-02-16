@@ -14,11 +14,14 @@ import me.foxaice.smartlight.utils.FrequencyCalculator;
 public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implements IMusicModePresenter {
     private IMusicInfo mMusicInfo;
     private String[] mBytesColors;
+    private RecordThread mAudioRecord;
 
 
     @Override
     public void onTouchPlayButton() {
-
+        mAudioRecord = new RecordThread();
+        turnOnBulbGroup();
+        mAudioRecord.startRecord();
     }
 
     @Override
