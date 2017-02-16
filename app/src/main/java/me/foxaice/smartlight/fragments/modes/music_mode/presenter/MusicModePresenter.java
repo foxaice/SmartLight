@@ -26,7 +26,7 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
 
     @Override
     public void onTouchStopButton() {
-
+        if (mAudioRecord != null) mAudioRecord.stopRecord();
     }
 
     @Override
