@@ -10,12 +10,19 @@ import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
 import me.foxaice.smartlight.fragments.modes.music_mode.view.IMusicModeView;
 import me.foxaice.smartlight.utils.FrequencyCalculator;
 
-
 public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implements IMusicModePresenter {
     private IMusicInfo mMusicInfo;
     private String[] mBytesColors;
     private RecordThread mAudioRecord;
 
+    @Override
+    public void attachView(IMusicModeView view) {
+        super.attachView(view);
+
+        if (mBytesColors == null) {
+            mBytesColors = modeView.getBytesColorsFromResources();
+        }
+    }
 
     @Override
     public void onTouchPlayButton() {
@@ -23,6 +30,7 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
         turnOnBulbGroup();
         mAudioRecord.startRecord();
     }
+
 
     @Override
     public void onTouchStopButton() {
@@ -37,6 +45,7 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
         modeView.setColorModeText(mMusicInfo.getColorMode());
         modeView.setWaveFormVisible(mMusicInfo.getSoundViewType() != IMusicInfo.ViewType.NONE);
     }
+
 
     private void turnOnBulbGroup() {
         sendPowerCommand(true);
@@ -235,4 +244,5 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
             record();
         }
     }
+
 }
