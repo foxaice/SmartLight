@@ -61,4 +61,15 @@ public class WaveFormView extends AppCompatImageView {
         mFillPaint.setStyle(Paint.Style.FILL);
         mRectF = new RectF();
     }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        mLeftCanvasCoord = PADDING_DP * mDensity;
+        mTopCanvasCoord = 0;
+        mRightCanvasCoord = width - PADDING_DP * mDensity;
+        mBottomCanvasCoord = height - PADDING_DP * mDensity;
+    }
 }
