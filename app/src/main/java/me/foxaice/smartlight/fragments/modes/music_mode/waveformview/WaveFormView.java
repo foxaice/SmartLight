@@ -45,4 +45,20 @@ public class WaveFormView extends AppCompatImageView {
         super(context, attrs, defStyleAttr);
         init();
     }
+
+    private void init() {
+        mDensity = getResources().getDisplayMetrics().density;
+        mStrokeWidthPx = (int) (mDensity * STROKE_WIDTH_DP);
+        mStrokePaint = new Paint();
+        mStrokePaint.setColor(Color.BLACK);
+        mStrokePaint.setStyle(Paint.Style.STROKE);
+        mStrokePaint.setStrokeWidth(mStrokeWidthPx);
+        mStrokePaint.setStrokeCap(Paint.Cap.ROUND);
+        mWaveFormPaint = new Paint();
+        mWaveFormPaint.setStyle(Paint.Style.STROKE);
+        mFillPaint = new Paint();
+        mFillPaint.setColor(ContextCompat.getColor(getContext(), R.color.toolbar));
+        mFillPaint.setStyle(Paint.Style.FILL);
+        mRectF = new RectF();
+    }
 }
