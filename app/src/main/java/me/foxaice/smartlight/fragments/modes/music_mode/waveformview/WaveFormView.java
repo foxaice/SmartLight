@@ -72,4 +72,9 @@ public class WaveFormView extends AppCompatImageView {
         mRightCanvasCoord = width - PADDING_DP * mDensity;
         mBottomCanvasCoord = height - PADDING_DP * mDensity;
     }
+
+    public void setAudioBuffer(double[] audioBuffer) {
+        mAudioBuffer = audioBuffer;
+        postInvalidate();
+    }
 }
