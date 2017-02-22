@@ -81,4 +81,8 @@ public class WaveFormView extends AppCompatImageView {
     public void setAudioBufferColor(String color) {
         mWaveFormPaint.setColor(Color.parseColor(color));
     }
+
+    public void setMax(double max) {
+        mMax = (int) max;
+    }
 }
