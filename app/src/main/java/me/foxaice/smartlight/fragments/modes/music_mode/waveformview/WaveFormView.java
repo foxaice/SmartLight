@@ -77,4 +77,8 @@ public class WaveFormView extends AppCompatImageView {
         mAudioBuffer = audioBuffer;
         postInvalidate();
     }
+
+    public void setAudioBufferColor(String color) {
+        mWaveFormPaint.setColor(Color.parseColor(color));
+    }
 }
