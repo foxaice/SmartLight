@@ -73,6 +73,50 @@ public class WaveFormView extends AppCompatImageView {
         mBottomCanvasCoord = height - PADDING_DP * mDensity;
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        mRectF.set(mLeftCanvasCoord, mTopCanvasCoord, mRightCanvasCoord, mBottomCanvasCoord);
+        canvas.drawRect(mRectF, mFillPaint);
+        float halfStrokeWidth = mStrokeWidthPx / 2f;
+        mRectF.set(mLeftCanvasCoord + halfStrokeWidth, mTopCanvasCoord + halfStrokeWidth, mRightCanvasCoord - halfStrokeWidth, mBottomCanvasCoord - halfStrokeWidth);
+        canvas.drawRect(mRectF, mStrokePaint);
+        if (mAudioBuffer != null) {
+            float[] points = new float[mViewType == IMusicInfo.ViewType.WAVEFORM
+                    ? mAudioBuffer.length * 2
+                    : mAudioBuffer.length * 4];
+            float height = mMax;
+            float xPercent = (mRightCanvasCoord - mLeftCanvasCoord - mStrokeWidthPx * 2) * 1.0f / mAudioBuffer.length;
+            float yPercent = (mBottomCanvasCoord - mStrokeWidthPx * 2) / height;
+            for (int i = 0; i < mAudioBuffer.length; i++) {
+                float temp = (float) (mAudioBuffer[i] * yPercent);
+                if (mViewType == IMusicInfo.ViewType.WAVEFORM) {
+                    if (Math.abs(temp) > mBottomCanvasCoord / 2 - mStrokeWidthPx) {
+                        temp = temp < 0
+                                ? -(mBottomCanvasCoord / 2 - mStrokeWidthPx)
+                                : (mBottomCanvasCoord / 2 - mStrokeWidthPx);
+                    }
+                    points[2 * i] = mLeftCanvasCoord + mStrokeWidthPx + i * xPercent;
+                    points[2 * i + 1] = mBottomCanvasCoord / 2 - temp;
+                } else if (mViewType == IMusicInfo.ViewType.FREQUENCIES) {
+                    if (temp > mBottomCanvasCoord - 2 * mStrokeWidthPx) {
+                        temp = mBottomCanvasCoord - 2 * mStrokeWidthPx;
+                    }
+                    points[4 * i] = mLeftCanvasCoord + mStrokeWidthPx + i * xPercent;
+                    points[4 * i + 1] = mBottomCanvasCoord - mStrokeWidthPx;
+                    points[4 * i + 2] = mLeftCanvasCoord + mStrokeWidthPx + i * xPercent;
+                    points[4 * i + 3] = mBottomCanvasCoord - mStrokeWidthPx - temp;
+                }
+            }
+            if (mViewType == IMusicInfo.ViewType.WAVEFORM) {
+                canvas.drawPoints(points, mWaveFormPaint);
+            } else if (mViewType == IMusicInfo.ViewType.FREQUENCIES) {
+                canvas.drawLines(points, mWaveFormPaint);
+            }
+            mAudioBuffer = null;
+        }
+    }
+
     public void setAudioBuffer(double[] audioBuffer) {
         mAudioBuffer = audioBuffer;
         postInvalidate();
