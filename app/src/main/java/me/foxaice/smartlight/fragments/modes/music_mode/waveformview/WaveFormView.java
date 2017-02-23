@@ -85,4 +85,8 @@ public class WaveFormView extends AppCompatImageView {
     public void setMax(double max) {
         mMax = (int) max;
     }
+
+    public void setViewType(@IMusicInfo.ViewType int type) {
+        mViewType = type;
+    }
 }
