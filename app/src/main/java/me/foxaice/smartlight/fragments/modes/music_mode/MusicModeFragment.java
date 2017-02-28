@@ -1,6 +1,7 @@
 package me.foxaice.smartlight.fragments.modes.music_mode;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
@@ -69,6 +70,12 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         } else {
             return Html.fromHtml(html);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_IS_PLAYING, mIsPlaying);
     }
 
 
