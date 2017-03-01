@@ -1,9 +1,11 @@
 package me.foxaice.smartlight.fragments.modes.music_mode;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.text.Html;
@@ -76,6 +78,15 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_IS_PLAYING, mIsPlaying);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mPlayStopButtonImage.performClick();
+            }
+        }
     }
 
 
