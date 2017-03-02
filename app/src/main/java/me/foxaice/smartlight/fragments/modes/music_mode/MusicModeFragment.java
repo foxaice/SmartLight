@@ -89,6 +89,12 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMusicModePresenter.loadMusicInfoFromPreferences();
+    }
+
 
     @Override
     public void onChangedControllerSettings() {
