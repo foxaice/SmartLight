@@ -95,6 +95,15 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         mMusicModePresenter.loadMusicInfoFromPreferences();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mIsPlaying = false;
+        mMusicModePresenter.onTouchStopButton();
+        mMusicModePresenter.stopExecutorService();
+    }
+
+
 
     @Override
     public void onChangedControllerSettings() {
