@@ -103,6 +103,12 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         mMusicModePresenter.stopExecutorService();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mMusicModePresenter.detachView();
+    }
+
 
 
     @Override
