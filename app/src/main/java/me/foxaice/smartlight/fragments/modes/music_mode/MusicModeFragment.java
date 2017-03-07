@@ -118,7 +118,26 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void drawWaveFormView(double[] data, String color, double max, @IMusicInfo.ViewType int viewType) {
-
+        mWaveFormView.setAudioBufferColor(color);
+        mWaveFormView.setViewType(viewType);
+        if (viewType == IMusicInfo.ViewType.FREQUENCIES) {
+            max = Math.pow(10, max / 10 > 7 ? 7 : max / 10);
+            mWaveFormView.setMax(max);
+            int shift = 2;
+            int newSize = (int) (data.length * .86);
+            double[] temp = new double[newSize - 2 * shift];
+            for (int i = 0; i < newSize - 2 * shift; i++) {
+                if (i >= temp.length / 2 - 1 - shift) {
+                    temp[i] = temp[temp.length - 1 - i];
+                } else {
+                    temp[i] = data[i + shift];
+                }
+            }
+            mWaveFormView.setAudioBuffer(temp);
+        } else if (viewType == IMusicInfo.ViewType.WAVEFORM) {
+            mWaveFormView.setMax(max * 8);
+            mWaveFormView.setAudioBuffer(data);
+        }
     }
 
     @Override
