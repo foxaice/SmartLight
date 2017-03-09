@@ -167,7 +167,80 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void setWaveFormVisible(boolean visible) {
+        if (mRootLayout != null) {
+            float density = getResources().getDisplayMetrics().density;
+            if (mCacheWaveformVisibleConstraintSet == null) {
+                mCacheWaveformVisibleConstraintSet = new ConstraintSet();
+                mCacheWaveformVisibleConstraintSet.clone(mRootLayout);
+            }
+            if (mIsLandscapeOrientation) {
+                if (visible) {
+                    mCacheWaveformVisibleConstraintSet.applyTo(mRootLayout);
+                    ConstraintSet constraintSet = new ConstraintSet();
+                    constraintSet.clone((ConstraintLayout) mPlayStopButtonImage.getParent());
+                    constraintSet.clear(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.BOTTOM);
+                    constraintSet.clear(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, (int) (8 * density));
+                    constraintSet.connect(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.BOTTOM, R.id.guidelineHorizontal, ConstraintSet.TOP, (int) (8 * density));
+                    constraintSet.clear(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.TOP);
+                    constraintSet.clear(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.LEFT);
+                    constraintSet.connect(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, (int) (8 * density));
+                    constraintSet.connect(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.TOP, R.id.guidelineHorizontal, ConstraintSet.BOTTOM, (int) (8 * density));
+                    constraintSet.applyTo((ConstraintLayout) mPlayStopButtonImage.getParent());
+                } else {
+                    ConstraintSet constraintSet = new ConstraintSet();
+                    constraintSet.clone(mCacheWaveformVisibleConstraintSet);
+                    constraintSet.clear(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+                    constraintSet.setVerticalBias(R.id.fragment_music_mode_constraint_music_info, 0.25f);
+                    constraintSet.constrainMaxWidth(R.id.fragment_music_mode_constraint_music_info, getResources().getDimensionPixelSize(R.dimen.music_info_max_width));
+                    constraintSet.clear(R.id.fragment_music_mode_constraint_buttons);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.TOP, R.id.fragment_music_mode_constraint_music_info, ConstraintSet.BOTTOM);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.LEFT, R.id.fragment_music_mode_constraint_music_info, ConstraintSet.LEFT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.RIGHT, R.id.fragment_music_mode_constraint_music_info, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+                    constraintSet.setVerticalBias(R.id.fragment_music_mode_constraint_buttons, 0.1f);
+                    constraintSet.constrainWidth(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.MATCH_CONSTRAINT);
+                    constraintSet.constrainHeight(R.id.fragment_music_mode_constraint_buttons, getResources().getDimensionPixelSize(R.dimen.music_mode_buttons_size));
+                    constraintSet.setVisibility(R.id.fragment_music_mode_waveform, ConstraintSet.GONE);
+                    constraintSet.applyTo(mRootLayout);
 
+                    constraintSet.clone((ConstraintLayout) mPlayStopButtonImage.getParent());
+                    constraintSet.clear(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.BOTTOM);
+                    constraintSet.clear(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, (int) (8 * density));
+                    constraintSet.connect(R.id.fragment_music_mode_image_play_stop_frequency, ConstraintSet.RIGHT, R.id.guidelineVertical, ConstraintSet.LEFT);
+                    constraintSet.clear(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.TOP);
+                    constraintSet.clear(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.LEFT);
+                    constraintSet.connect(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, (int) (8 * density));
+                    constraintSet.connect(R.id.fragment_music_mode_image_settings_frequency, ConstraintSet.LEFT, R.id.guidelineVertical, ConstraintSet.RIGHT);
+                    constraintSet.applyTo((ConstraintLayout) mPlayStopButtonImage.getParent());
+                }
+            } else {
+                if (visible) {
+                    mCacheWaveformVisibleConstraintSet.applyTo(mRootLayout);
+                } else {
+                    ConstraintSet constraintSet = new ConstraintSet();
+                    constraintSet.clone(mRootLayout);
+                    constraintSet.clear(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.BOTTOM);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_music_info, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+                    constraintSet.setVerticalBias(R.id.fragment_music_mode_constraint_music_info, 0.25f);
+                    constraintSet.constrainMaxWidth(R.id.fragment_music_mode_constraint_music_info, getResources().getDimensionPixelSize(R.dimen.music_info_max_width));
+                    constraintSet.clear(R.id.fragment_music_mode_constraint_buttons);
+                    constraintSet.constrainWidth(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.MATCH_CONSTRAINT);
+                    constraintSet.constrainHeight(R.id.fragment_music_mode_constraint_buttons, getResources().getDimensionPixelSize(R.dimen.music_mode_buttons_size));
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.TOP, R.id.fragment_music_mode_constraint_music_info, ConstraintSet.BOTTOM);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
+                    constraintSet.connect(R.id.fragment_music_mode_constraint_buttons, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+                    constraintSet.setVerticalBias(R.id.fragment_music_mode_constraint_buttons, 0.1f);
+                    constraintSet.setVisibility(R.id.fragment_music_mode_waveform, ConstraintSet.GONE);
+                    constraintSet.applyTo(mRootLayout);
+                }
+            }
+        }
     }
 
     @Override
