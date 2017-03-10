@@ -142,7 +142,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void setCurrentVolumeText(double value) {
-
+        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_VOLUME, value));
     }
 
     @Override
