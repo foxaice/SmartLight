@@ -147,7 +147,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void setFrequencyText(int value) {
-
+        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_FREQUENCY, value));
     }
 
     @Override
