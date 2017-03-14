@@ -157,7 +157,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void setMinVolumeText(int value) {
-
+        mMinVolumeText.setText(getString(R.string.min_volume_threshold, value));
     }
 
     @Override
