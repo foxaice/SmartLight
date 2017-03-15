@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -162,7 +163,8 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void setColorModeText(@IMusicInfo.ColorMode int colorMode) {
-
+        Spanned spans = getColorModeSpannedFromResources(this.getContext(), colorMode);
+        mColorModeText.setText(TextUtils.concat(getString(R.string.color_mode), spans));
     }
 
     @Override
