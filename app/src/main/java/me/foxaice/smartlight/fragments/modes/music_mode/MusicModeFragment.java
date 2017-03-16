@@ -114,7 +114,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public void onChangedControllerSettings() {
-
+        mMusicModePresenter.updateControllerSettings();
     }
 
     @Override
