@@ -247,7 +247,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
 
     @Override
     public String[] getBytesColorsFromResources() {
-        return new String[0];
+        return getResources().getStringArray(R.array.bytes_colors);
     }
 
     private static class MusicModeHandler extends Handler {
