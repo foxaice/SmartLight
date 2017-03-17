@@ -1,22 +1,36 @@
 package me.foxaice.smartlight.fragments.modes.music_mode;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
 import me.foxaice.smartlight.R;
+import me.foxaice.smartlight.activities.music_mode_settings.view.MusicModeSettingsScreenActivity;
 import me.foxaice.smartlight.fragments.modes.ModeBaseView;
 import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
 import me.foxaice.smartlight.fragments.modes.music_mode.presenter.IMusicModePresenter;
@@ -75,10 +89,115 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         }
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_music_mode, container, false);
+        mMusicModePresenter.attachView(this);
+        mHandler = new MusicModeHandler(this);
+
+        mIsLandscapeOrientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        mRootLayout = (ConstraintLayout) view;
+        mWaveFormView = (WaveFormView) view.findViewById(R.id.fragment_music_mode_waveform);
+        mPlayStopButtonImage = (ImageView) view.findViewById(R.id.fragment_music_mode_image_play_stop_frequency);
+        mMaxVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_max_volume);
+        mMinVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_min_volume);
+        mColorModeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_color_mode);
+        mCurrentVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_volume);
+        mCurrentFrequencyText = (TextView) view.findViewById(R.id.fragment_music_mode_text_frequency);
+        ImageView settingsButtonImage = (ImageView) view.findViewById(R.id.fragment_music_mode_image_settings_frequency);
+
+        settingsButtonImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsPlaying) {
+                    mPlayStopButtonImage.performClick();
+                }
+                startActivityForResult(new Intent(getContext(), MusicModeSettingsScreenActivity.class), REQUEST_CODE);
+            }
+        });
+
+        mPlayStopButtonImage.setOnClickListener(new View.OnClickListener() {
+            private Drawable mPlayDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_play);
+            private Drawable mPauseDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_pause);
+
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (getActivity().checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle(R.string.request_permission_dialog_title)
+                                    .setMessage(R.string.request_permission_dialog_message)
+                                    .setPositiveButton(R.string.request_permission_dialog_positive_button, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.request_permission_dialog_negative_button, null).show();
+                        } else {
+                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
+                        }
+                    } else {
+                        clickPlayPauseRecord();
+                    }
+                } else {
+                    clickPlayPauseRecord();
+                }
+            }
+
+            private void clickPlayPauseRecord() {
+                if (mIsPlaying = !mIsPlaying) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
+                        if (mPlayDrawable instanceof Animatable) {
+                            ((Animatable) mPlayDrawable).start();
+                        }
+                    } else {
+                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
+                    }
+                    mMusicModePresenter.onTouchPlayButton();
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
+                        if (mPauseDrawable instanceof Animatable) {
+                            ((Animatable) mPauseDrawable).start();
+                        }
+                    } else {
+                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
+                    }
+                    mMusicModePresenter.onTouchStopButton();
+                }
+            }
+        });
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(KEY_IS_PLAYING)) {
+                mPlayStopButtonImage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPlayStopButtonImage.performClick();
+                    }
+                });
+            }
+        }
+
+        return view;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_IS_PLAYING, mIsPlaying);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MusicModeSettingsScreenActivity.RESULT_KEY_MUSIC_INFO_IS_CHANGED) {
+            mMusicModePresenter.loadMusicInfoFromPreferences();
+        }
     }
 
     @Override
@@ -110,13 +229,6 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         mMusicModePresenter.detachView();
     }
 
-
-
-    @Override
-    public void onChangedControllerSettings() {
-        mMusicModePresenter.updateControllerSettings();
-    }
-
     @Override
     public void drawWaveFormView(double[] data, String color, double max, @IMusicInfo.ViewType int viewType) {
         mWaveFormView.setAudioBufferColor(color);
@@ -139,32 +251,6 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
             mWaveFormView.setMax(max * 8);
             mWaveFormView.setAudioBuffer(data);
         }
-    }
-
-    @Override
-    public void setCurrentVolumeText(double value) {
-        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_VOLUME, value));
-    }
-
-    @Override
-    public void setFrequencyText(int value) {
-        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_FREQUENCY, value));
-    }
-
-    @Override
-    public void setMaxVolumeText(int value) {
-        mMaxVolumeText.setText(getString(R.string.max_volume_threshold, value));
-    }
-
-    @Override
-    public void setMinVolumeText(int value) {
-        mMinVolumeText.setText(getString(R.string.min_volume_threshold, value));
-    }
-
-    @Override
-    public void setColorModeText(@IMusicInfo.ColorMode int colorMode) {
-        Spanned spans = getColorModeSpannedFromResources(this.getContext(), colorMode);
-        mColorModeText.setText(TextUtils.concat(getString(R.string.color_mode), spans));
     }
 
     @Override
@@ -246,8 +332,39 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     }
 
     @Override
+    public void setCurrentVolumeText(double value) {
+        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_VOLUME, value));
+    }
+
+    @Override
+    public void setFrequencyText(int value) {
+        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_FREQUENCY, value));
+    }
+
+    @Override
+    public void setMaxVolumeText(int value) {
+        mMaxVolumeText.setText(getString(R.string.max_volume_threshold, value));
+    }
+
+    @Override
+    public void setMinVolumeText(int value) {
+        mMinVolumeText.setText(getString(R.string.min_volume_threshold, value));
+    }
+
+    @Override
+    public void setColorModeText(@IMusicInfo.ColorMode int colorMode) {
+        Spanned spans = getColorModeSpannedFromResources(this.getContext(), colorMode);
+        mColorModeText.setText(TextUtils.concat(getString(R.string.color_mode), spans));
+    }
+
+    @Override
     public String[] getBytesColorsFromResources() {
         return getResources().getStringArray(R.array.bytes_colors);
+    }
+
+    @Override
+    public void onChangedControllerSettings() {
+        mMusicModePresenter.updateControllerSettings();
     }
 
     private static class MusicModeHandler extends Handler {
