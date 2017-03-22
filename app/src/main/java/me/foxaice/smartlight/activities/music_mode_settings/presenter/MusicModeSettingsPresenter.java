@@ -93,7 +93,10 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void attach(IMusicModeSettingsView view) {
-
+        mView = view;
+        if (mSharedPreferences == null) {
+            mSharedPreferences = SharedPreferencesController.getInstance(mView.getContext());
+        }
     }
 
     @Override
