@@ -101,6 +101,6 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void detach() {
-
+        mView = null;
     }
 }
