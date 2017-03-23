@@ -13,7 +13,9 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void saveMusicInfoToPreferences() {
-
+        if (mSharedPreferences != null && mMusicInfo != null) {
+            mSharedPreferences.setMusicInfo(mMusicInfo);
+        }
     }
 
     @Override
