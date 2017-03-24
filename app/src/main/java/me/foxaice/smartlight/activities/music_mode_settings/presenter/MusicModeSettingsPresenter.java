@@ -26,7 +26,12 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void resetMusicInfo() {
-
+        onChangeColorMode(IMusicInfo.DefaultValues.COLOR_MODE);
+        onChangeSoundViewType(IMusicInfo.DefaultValues.VIEW_TYPE);
+        onChangeMaxFrequencyType(IMusicInfo.DefaultValues.MAX_FREQUENCY_TYPE);
+        onChangeMaxFrequency(IMusicInfo.DefaultValues.MAX_FREQUENCY);
+        onChangeMaxVolume(IMusicInfo.DefaultValues.MAX_VOLUME);
+        onChangeMinVolume(IMusicInfo.DefaultValues.MIN_VOLUME);
     }
 
     @Override
