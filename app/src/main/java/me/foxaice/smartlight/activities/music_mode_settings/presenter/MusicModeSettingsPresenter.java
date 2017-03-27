@@ -39,9 +39,11 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
         mMusicInfo.setColorMode(colorMode);
         mView.setColorModeByColorMode(colorMode);
     }
+
     @Override
     public void onChangeSoundViewType(@IMusicInfo.ViewType int viewType) {
-
+        mMusicInfo.setSoundViewType(viewType);
+        mView.setSoundViewType(viewType);
     }
 
     @Override
