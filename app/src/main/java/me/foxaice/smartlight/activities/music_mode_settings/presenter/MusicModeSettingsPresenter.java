@@ -48,7 +48,8 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void onChangeMaxFrequencyType(@IMusicInfo.MaxFrequencyType int maxFrequencyType) {
-
+        mMusicInfo.setMaxFrequencyType(maxFrequencyType);
+        mView.setMaxFrequencyType(maxFrequencyType);
     }
 
     @Override
