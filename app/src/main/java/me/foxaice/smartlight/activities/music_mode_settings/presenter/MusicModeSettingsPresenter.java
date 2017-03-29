@@ -60,8 +60,10 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public void onChangeMaxVolume(int dBSPL) {
-
+        mMusicInfo.setMaxVolumeThreshold(dBSPL);
+        mView.setMaxVolume(dBSPL);
     }
+
 
     @Override
     public void onChangeMinVolume(int dBSPL) {
