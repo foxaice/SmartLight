@@ -10,11 +10,11 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
     private IMusicModeSettingsView mView;
     private ISharedPreferencesController mSharedPreferences;
 
-
     @Override
-    public void saveMusicInfoToPreferences() {
-        if (mSharedPreferences != null && mMusicInfo != null) {
-            mSharedPreferences.setMusicInfo(mMusicInfo);
+    public void attach(IMusicModeSettingsView view) {
+        mView = view;
+        if (mSharedPreferences == null) {
+            mSharedPreferences = SharedPreferencesController.getInstance(mView.getContext());
         }
     }
 
@@ -23,6 +23,17 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
         mMusicInfo = mSharedPreferences.getMusicInfo();
     }
 
+    @Override
+    public void detach() {
+        mView = null;
+    }
+
+    @Override
+    public void saveMusicInfoToPreferences() {
+        if (mSharedPreferences != null && mMusicInfo != null) {
+            mSharedPreferences.setMusicInfo(mMusicInfo);
+        }
+    }
 
     @Override
     public void resetMusicInfo() {
@@ -77,44 +88,32 @@ public class MusicModeSettingsPresenter implements IMusicModeSettingsPresenter {
 
     @Override
     public int getColorMode() {
-        return 0;
+        return mMusicInfo.getColorMode();
     }
 
     @Override
     public int getSoundViewType() {
-        return 0;
+        return mMusicInfo.getSoundViewType();
     }
 
     @Override
     public int getMaxFrequencyType() {
-        return 0;
+        return mMusicInfo.getMaxFrequencyType();
     }
 
     @Override
     public int getMaxFrequency() {
-        return 0;
+        return mMusicInfo.getMaxFrequency();
     }
 
     @Override
     public int getMaxVolume() {
-        return 0;
+        return mMusicInfo.getMaxVolumeThreshold();
     }
 
     @Override
     public int getMinVolume() {
-        return 0;
+        return mMusicInfo.getMinVolumeThreshold();
     }
 
-    @Override
-    public void attach(IMusicModeSettingsView view) {
-        mView = view;
-        if (mSharedPreferences == null) {
-            mSharedPreferences = SharedPreferencesController.getInstance(mView.getContext());
-        }
-    }
-
-    @Override
-    public void detach() {
-        mView = null;
-    }
 }
