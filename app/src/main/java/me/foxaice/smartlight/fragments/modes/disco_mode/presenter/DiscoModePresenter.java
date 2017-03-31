@@ -17,7 +17,6 @@ public class DiscoModePresenter extends ModeBasePresenter<IDiscoModeView> implem
         }
     }
 
-
     @Override
     public void onTouchSpeedDownButton(int eventAction) {
         boolean isPressed = eventAction != Events.ACTION_UP;

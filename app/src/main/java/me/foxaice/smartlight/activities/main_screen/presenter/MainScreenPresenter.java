@@ -1,10 +1,10 @@
 package me.foxaice.smartlight.activities.main_screen.presenter;
 
-import me.foxaice.firstSaw.activities.main_screen.model.BulbInfo;
-import me.foxaice.firstSaw.activities.main_screen.model.IBulbInfo;
-import me.foxaice.firstSaw.activities.main_screen.view.IMainScreenView;
-import me.foxaice.firstSaw.preferences.ISharedPreferencesController;
-import me.foxaice.firstSaw.preferences.SharedPreferencesController;
+import me.foxaice.smartlight.activities.main_screen.model.BulbInfo;
+import me.foxaice.smartlight.activities.main_screen.model.IBulbInfo;
+import me.foxaice.smartlight.activities.main_screen.view.IMainScreenView;
+import me.foxaice.smartlight.preferences.ISharedPreferencesController;
+import me.foxaice.smartlight.preferences.SharedPreferencesController;
 
 public class MainScreenPresenter implements IMainScreenPresenter {
     private IBulbInfo mBulbInfo;

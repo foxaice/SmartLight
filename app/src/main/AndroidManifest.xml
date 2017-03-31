@@ -22,9 +22,14 @@
             android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.controllers_screen.ControllersScreenActivity"/>
+        <activity android:name=".activities.redefinition_zones_screen.RedefinitionZonesScreenActivity"/>
+        <activity android:name=".activities.renaming_zones_screen.RenamingZonesScreenActivity"/>
+        <activity android:name=".activities.music_mode_settings.view.MusicModeSettingsScreenActivity"/>
     </application>
 
 </manifest>
