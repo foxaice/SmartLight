@@ -16,7 +16,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <me.foxaice.firstSaw.fragments.modes.bulb_mode.BrightnessArcView
+        <me.foxaice.smartlight.fragments.modes.bulb_mode.BrightnessArcView
             android:id="@+id/fragment_bulb_mode_image_brightness_arc"
             android:layout_width="@dimen/brightness_arc_width"
             android:layout_height="@dimen/brightness_arc_height"

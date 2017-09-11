@@ -4,7 +4,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-    <me.foxaice.firstSaw.fragments.controllers_screen.controller_management.custom_views.CheckMarkProgressView
+    <me.foxaice.smartlight.fragments.controllers_screen.controller_management.custom_views.CheckMarkProgressView
         android:id="@+id/fragment_controller_management_dialog_view_checkmark"
         android:layout_width="@dimen/check_mark_progress_size"
         android:layout_height="@dimen/check_mark_progress_size"/>

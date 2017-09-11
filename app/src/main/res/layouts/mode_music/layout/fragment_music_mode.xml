@@ -8,7 +8,7 @@
     android:background="@color/backgroundActivity">
 
 
-    <me.foxaice.firstSaw.fragments.modes.music_mode.waveformview.WaveFormView
+    <me.foxaice.smartlight.fragments.modes.music_mode.waveformview.WaveFormView
         android:id="@+id/fragment_music_mode_waveform"
         android:layout_width="0dp"
         android:layout_height="0dp"

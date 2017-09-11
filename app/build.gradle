@@ -48,7 +48,7 @@ android {
     }
 }
 ext {
-    supportLibVersion = '25.3.0'
+    supportLibVersion = '25.4.0'
 }
 
 dependencies {
@@ -56,6 +56,5 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
     compile project(path: ':controller_api');
 }
