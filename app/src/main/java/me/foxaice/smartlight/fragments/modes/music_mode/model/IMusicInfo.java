@@ -52,7 +52,7 @@ public interface IMusicInfo {
         @ColorMode
         int COLOR_MODE = ColorMode.RGBM;
         @ViewType
-        int VIEW_TYPE = ViewType.FREQUENCIES;
+        int VIEW_TYPE = ViewType.WAVEFORM;
         @MaxFrequencyType
         int MAX_FREQUENCY_TYPE = MaxFrequencyType.DYNAMIC;
         int MAX_FREQUENCY = 18000;
