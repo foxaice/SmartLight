@@ -658,6 +658,9 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
             @Override
             public void onAnimationStart(Animation animation) {
                 curView.bringToFront();
+                mBulbModeButton.setEnabled(false);
+                mMusicModeButton.setEnabled(false);
+                mDiscoModeButton.setEnabled(false);
             }
 
             @Override

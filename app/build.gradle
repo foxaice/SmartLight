@@ -1,6 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    def propsFile = rootProject.file('keystore.properties')
+    def props = new Properties()
+    props.load(new FileInputStream(propsFile))
+
+    signingConfigs {
+        release {
+            storeFile file(props['storeFile'])
+            storePassword props['storePassword']
+            keyAlias props['keyAlias']
+            keyPassword props['keyPassword']
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
@@ -11,6 +23,7 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {
@@ -45,6 +58,8 @@ android {
             ]
         }
     }
+    productFlavors {
+    }
 }
 
 android {
@@ -57,9 +72,9 @@ ext {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile project(path: ':controller_api');
+    compile project(path: ':controller_api')
 }
