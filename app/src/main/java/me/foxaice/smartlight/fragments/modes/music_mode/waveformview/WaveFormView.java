@@ -56,6 +56,7 @@ public class WaveFormView extends AppCompatImageView {
         mStrokePaint.setStrokeCap(Paint.Cap.ROUND);
         mWaveFormPaint = new Paint();
         mWaveFormPaint.setStyle(Paint.Style.STROKE);
+        mWaveFormPaint.setStrokeWidth(mStrokeWidthPx);
         mFillPaint = new Paint();
         mFillPaint.setColor(ContextCompat.getColor(getContext(), R.color.toolbar));
         mFillPaint.setStyle(Paint.Style.FILL);
