@@ -68,7 +68,6 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
         if (((action == Events.ACTION_DOWN) && isPointWithinArc) || (action == Events.ACTION_MOVE && !mBrightnessArcInfo.isProhibition && mBrightnessArcInfo.isWithinArc)) {
             mBrightnessArcInfo.isWithinArc = true;
-            Log.d("COORDS", String.format("deltaX: %f, deltaY: %f, angle: %f", deltaX, deltaY, angle));
             if (checkAngleOutOfRange(angle)) {
                 if (angle < 142f && angle > 90) {
                     angle = 142f;
@@ -144,7 +143,6 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
             if (angle >= 0 && angle <= 180) {
                 x = (float) ((arcRadius - arcTargetRadius * 1.18f) * cosine) + arcRadius - arcTargetRadius * .99f;
                 y = (float) ((arcRadius - arcTargetRadius * 1.3f) * sine) + arcRadius + arcTargetRadius * 0.4f;
-                Log.d("TWG", "angle: " + angle);
             } else {
                 x = (float) ((arcRadius - arcTargetRadius * 1.18f) * cosine) + arcRadius - arcTargetRadius * .99f;
                 y = (float) ((arcRadius - arcTargetRadius * 1.15f) * sine) + arcRadius + arcTargetRadius * 0.45f;

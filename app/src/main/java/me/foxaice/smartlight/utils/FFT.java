@@ -4,7 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-abstract class FFT {
+final class FFT {
     private FFT() {
     }
 

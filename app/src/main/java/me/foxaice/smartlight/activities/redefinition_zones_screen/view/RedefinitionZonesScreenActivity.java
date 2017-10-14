@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.activities.redefinition_zones_screen;
+package me.foxaice.smartlight.activities.redefinition_zones_screen.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -33,16 +33,22 @@ public class RedefinitionZonesScreenActivity extends AppCompatActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_redefinition_zones_screen);
         mPresenter.attach(this);
+
         TextView header = (TextView) findViewById(R.id.toolbar_settings_text_header_settings);
         ImageView backArrow = (ImageView) findViewById(R.id.toolbar_settings_image_back_arrow);
+        ImageView imageInfo = (ImageView) findViewById(R.id.activity_redefinition_zones_screen_image_info);
+        ListView listView = (ListView) findViewById(R.id.activity_redefinition_zones_screen_list_of_zone_connection);
+
+        header.setText(R.string.redefinition_zones);
+
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        header.setText(R.string.redefinition_zones);
-        final ImageView imageInfo = (ImageView) findViewById(R.id.activity_redefinition_zones_screen_image_info);
+
+
         imageInfo.setOnClickListener(new View.OnClickListener() {
             AlertDialog mDialog;
 
@@ -64,7 +70,7 @@ public class RedefinitionZonesScreenActivity extends AppCompatActivity implement
                 mDialog.show();
             }
         });
-        ListView listView = (ListView) findViewById(R.id.activity_redefinition_zones_screen_list_of_zone_connection);
+
         listView.setLongClickable(true);
         listView.setAdapter(new RedefinitionZonesListAdapter(this, getRedefinitionZoneNames(mPresenter.getZonesNames()), getRedefinitionZoneDrawablesID()));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

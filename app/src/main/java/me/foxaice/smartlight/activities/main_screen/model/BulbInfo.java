@@ -6,23 +6,28 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class BulbInfo implements IBulbInfo, Parcelable {
 
-    public static final Creator<BulbInfo> CREATOR = new Creator<BulbInfo>() {
-        @Override
-        public BulbInfo createFromParcel(Parcel in) {
-            return new BulbInfo(in);
-        }
-
-        @Override
-        public BulbInfo[] newArray(int size) {
-            return new BulbInfo[size];
-        }
-    };
+    public static final Creator<BulbInfo> CREATOR;
     private static final int BULB_QUANTITY = 5;
     private Bulb mCurrentBulb;
     private List<Bulb> mBulbsList;
+
+    static {
+        CREATOR = new Creator<BulbInfo>() {
+            @Override
+            public BulbInfo createFromParcel(Parcel in) {
+                return new BulbInfo(in);
+            }
+
+            @Override
+            public BulbInfo[] newArray(int size) {
+                return new BulbInfo[size];
+            }
+        };
+    }
 
     public BulbInfo() {
         mBulbsList = new ArrayList<>(Arrays.asList(
@@ -41,7 +46,7 @@ public class BulbInfo implements IBulbInfo, Parcelable {
             mCurrentBulb = mBulbsList.get(currentGroupBulb);
             mCurrentBulb.setOn(isCurrentOn);
         } else {
-            throw new IllegalArgumentException("Must be between 0 and 4 inclusive");
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Must be between 0 and %d inclusive", BULB_QUANTITY - 1));
         }
     }
 
@@ -122,7 +127,7 @@ public class BulbInfo implements IBulbInfo, Parcelable {
 
     private void checkGroupNumberIntoRange(@GroupID int group) {
         if (group < 0 || group >= BULB_QUANTITY) {
-            throw new IllegalArgumentException("Must be between 0 and 4 inclusive");
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Must be between 0 and %d inclusive", BULB_QUANTITY - 1));
         }
     }
 
@@ -143,63 +148,4 @@ public class BulbInfo implements IBulbInfo, Parcelable {
     }
 }
 
-class Bulb implements Parcelable {
-    public static final Creator<Bulb> CREATOR = new Creator<Bulb>() {
-        @Override
-        public Bulb createFromParcel(Parcel in) {
-            return new Bulb(in);
-        }
 
-        @Override
-        public Bulb[] newArray(int size) {
-            return new Bulb[size];
-        }
-    };
-    private boolean mIsOn;
-    private int mID;
-    private String mName;
-
-    Bulb(@IBulbInfo.GroupID int BulbGroupID) {
-        mID = BulbGroupID;
-        mIsOn = false;
-        mName = null;
-    }
-
-    private Bulb(Parcel in) {
-        mIsOn = in.readByte() != 0x00;
-        mID = in.readInt();
-        mName = in.readString();
-    }
-
-    String getName() {
-        return mName;
-    }
-
-    void setName(String name) {
-        mName = name;
-    }
-
-    boolean isOn() {
-        return mIsOn;
-    }
-
-    void setOn(boolean isOn) {
-        this.mIsOn = isOn;
-    }
-
-    int getID() {
-        return mID;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (mIsOn ? 0x01 : 0x00));
-        dest.writeInt(mID);
-        dest.writeString(mName);
-    }
-}

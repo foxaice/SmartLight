@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.modes.music_mode;
+package me.foxaice.smartlight.fragments.modes.music_mode.view;
 
 import android.Manifest;
 import android.content.Context;
@@ -35,8 +35,7 @@ import me.foxaice.smartlight.fragments.modes.ModeBaseView;
 import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
 import me.foxaice.smartlight.fragments.modes.music_mode.presenter.IMusicModePresenter;
 import me.foxaice.smartlight.fragments.modes.music_mode.presenter.MusicModePresenter;
-import me.foxaice.smartlight.fragments.modes.music_mode.view.IMusicModeView;
-import me.foxaice.smartlight.fragments.modes.music_mode.waveformview.WaveFormView;
+import me.foxaice.smartlight.fragments.modes.music_mode.view.waveformview.WaveFormView;
 
 public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     public static final String TAG = "MUSIC_MODE_FRAGMENT";
@@ -45,6 +44,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     private final IMusicModePresenter mMusicModePresenter = new MusicModePresenter();
     private Handler mHandler;
     private ImageView mPlayStopButtonImage;
+    private ImageView mSettingsButtonImage;
     private TextView mMaxVolumeText;
     private TextView mMinVolumeText;
     private TextView mColorModeText;
@@ -95,94 +95,10 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
         final View view = inflater.inflate(R.layout.fragment_music_mode, container, false);
         mMusicModePresenter.attachView(this);
         mHandler = new MusicModeHandler(this);
-
         mIsLandscapeOrientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        mRootLayout = (ConstraintLayout) view;
-        mWaveFormView = (WaveFormView) view.findViewById(R.id.fragment_music_mode_waveform);
-        mPlayStopButtonImage = (ImageView) view.findViewById(R.id.fragment_music_mode_image_play_stop_frequency);
-        mMaxVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_max_volume);
-        mMinVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_min_volume);
-        mColorModeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_color_mode);
-        mCurrentVolumeText = (TextView) view.findViewById(R.id.fragment_music_mode_text_volume);
-        mCurrentFrequencyText = (TextView) view.findViewById(R.id.fragment_music_mode_text_frequency);
-        ImageView settingsButtonImage = (ImageView) view.findViewById(R.id.fragment_music_mode_image_settings_frequency);
-
-        settingsButtonImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsPlaying) {
-                    mPlayStopButtonImage.performClick();
-                }
-                startActivityForResult(new Intent(getContext(), MusicModeSettingsScreenActivity.class), REQUEST_CODE);
-            }
-        });
-
-        mPlayStopButtonImage.setOnClickListener(new View.OnClickListener() {
-            private Drawable mPlayDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_play);
-            private Drawable mPauseDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_pause);
-
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (getActivity().checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle(R.string.request_permission_dialog_title)
-                                    .setMessage(R.string.request_permission_dialog_message)
-                                    .setPositiveButton(R.string.request_permission_dialog_positive_button, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.request_permission_dialog_negative_button, null).show();
-                        } else {
-                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
-                        }
-                    } else {
-                        clickPlayPauseRecord();
-                    }
-                } else {
-                    clickPlayPauseRecord();
-                }
-            }
-
-            private void clickPlayPauseRecord() {
-                if (mIsPlaying = !mIsPlaying) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
-                        if (mPlayDrawable instanceof Animatable) {
-                            ((Animatable) mPlayDrawable).start();
-                        }
-                    } else {
-                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
-                    }
-                    mMusicModePresenter.onTouchPlayButton();
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
-                        if (mPauseDrawable instanceof Animatable) {
-                            ((Animatable) mPauseDrawable).start();
-                        }
-                    } else {
-                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
-                    }
-                    mMusicModePresenter.onTouchStopButton();
-                }
-            }
-        });
-
-        if (savedInstanceState != null) {
-            if (savedInstanceState.getBoolean(KEY_IS_PLAYING)) {
-                mPlayStopButtonImage.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPlayStopButtonImage.performClick();
-                    }
-                });
-            }
-        }
-
+        initViews(view);
+        setListeners();
+        restoreState(savedInstanceState);
         return view;
     }
 
@@ -365,6 +281,98 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     @Override
     public void onChangedControllerSettings() {
         mMusicModePresenter.updateControllerSettings();
+    }
+
+    private void initViews(View root) {
+        mRootLayout = (ConstraintLayout) root;
+        mWaveFormView = (WaveFormView) root.findViewById(R.id.fragment_music_mode_waveform);
+        mPlayStopButtonImage = (ImageView) root.findViewById(R.id.fragment_music_mode_image_play_stop_frequency);
+        mMaxVolumeText = (TextView) root.findViewById(R.id.fragment_music_mode_text_max_volume);
+        mMinVolumeText = (TextView) root.findViewById(R.id.fragment_music_mode_text_min_volume);
+        mColorModeText = (TextView) root.findViewById(R.id.fragment_music_mode_text_color_mode);
+        mCurrentVolumeText = (TextView) root.findViewById(R.id.fragment_music_mode_text_volume);
+        mCurrentFrequencyText = (TextView) root.findViewById(R.id.fragment_music_mode_text_frequency);
+        mSettingsButtonImage = (ImageView) root.findViewById(R.id.fragment_music_mode_image_settings_frequency);
+    }
+
+    private void setListeners() {
+        mSettingsButtonImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsPlaying) {
+                    mPlayStopButtonImage.performClick();
+                }
+                startActivityForResult(new Intent(getContext(), MusicModeSettingsScreenActivity.class), REQUEST_CODE);
+            }
+        });
+
+        mPlayStopButtonImage.setOnClickListener(new View.OnClickListener() {
+            private Drawable mPlayDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_play);
+            private Drawable mPauseDrawable = ContextCompat.getDrawable(getContext(), R.drawable.animated_button_pause);
+
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (getActivity().checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle(R.string.request_permission_dialog_title)
+                                    .setMessage(R.string.request_permission_dialog_message)
+                                    .setPositiveButton(R.string.request_permission_dialog_positive_button, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.request_permission_dialog_negative_button, null).show();
+                        } else {
+                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE);
+                        }
+                    } else {
+                        clickPlayPauseRecord();
+                    }
+                } else {
+                    clickPlayPauseRecord();
+                }
+            }
+
+            private void clickPlayPauseRecord() {
+                if (mIsPlaying = !mIsPlaying) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
+                        if (mPlayDrawable instanceof Animatable) {
+                            ((Animatable) mPlayDrawable).start();
+                        }
+                    } else {
+                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
+                    }
+                    mMusicModePresenter.onTouchPlayButton();
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        mPlayStopButtonImage.setImageDrawable(mPauseDrawable);
+                        if (mPauseDrawable instanceof Animatable) {
+                            ((Animatable) mPauseDrawable).start();
+                        }
+                    } else {
+                        mPlayStopButtonImage.setImageDrawable(mPlayDrawable);
+                    }
+                    mMusicModePresenter.onTouchStopButton();
+                }
+            }
+        });
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(KEY_IS_PLAYING)) {
+                mPlayStopButtonImage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPlayStopButtonImage.performClick();
+                    }
+                });
+            }
+        }
     }
 
     private static class MusicModeHandler extends Handler {

@@ -3,7 +3,7 @@ package me.foxaice.controller_api.bulb;
 /**
  * This class contains methods that form bytes array of a command to be sent to LimitlessLedWiFiBridge
  */
-public abstract class BulbCommands {
+public final class BulbCommands {
 
     private BulbCommands() {
     }

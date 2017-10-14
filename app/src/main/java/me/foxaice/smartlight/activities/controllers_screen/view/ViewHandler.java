@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.activities.controllers_screen;
+package me.foxaice.smartlight.activities.controllers_screen.view;
 
 import android.content.Context;
 import android.content.Intent;

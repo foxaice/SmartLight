@@ -96,6 +96,12 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mPresenter.detach();
+    }
+
+    @Override
     public void finish() {
         if (mPresenter.isMusicModeChanged()) {
             mPresenter.saveMusicInfoToPreferences();
@@ -104,12 +110,6 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
             setResult(RESULT_KEY_MUSIC_INFO_IS_NOT_CHANGED);
         }
         super.finish();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mPresenter.detach();
     }
 
     @Override
@@ -274,17 +274,12 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
         });
 
         mMaxFrequencySeekBar.setProgress(convertHzValueToProgress(mPresenter.getMaxFrequency()));
-        mMaxFrequencySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mMaxFrequencySeekBar.setOnSeekBarChangeListener(new SeekBarListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (mMaxFrequencyStaticTypeRadioButton.isChecked()) {
                     mMaxFrequencyText.setText(getString(R.string.max_frequency_with_param, convertProgressToHzValue(seekBar.getProgress())));
                 }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
@@ -298,36 +293,16 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
         mMaxFrequencySeekBarHideAnimation = AnimationUtils.getChangeViewGroupHeightAnimation(mMaxFrequencyRootView, -addedHeight);
         mMaxFrequencySeekBarShowAnimation.setDuration(200);
         mMaxFrequencySeekBarHideAnimation.setDuration(200);
-        mMaxFrequencySeekBarShowAnimation.setAnimationListener(new Animation.AnimationListener() {
+        mMaxFrequencySeekBarShowAnimation.setAnimationListener(new AnimationUtils.AnimationListenerAdapter() {
             @Override
             public void onAnimationStart(Animation animation) {
                 mMaxFrequencySeekBar.setVisibility(View.VISIBLE);
             }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
         });
-        mMaxFrequencySeekBarHideAnimation.setAnimationListener(new Animation.AnimationListener() {
+        mMaxFrequencySeekBarHideAnimation.setAnimationListener(new AnimationUtils.AnimationListenerAdapter() {
             @Override
             public void onAnimationStart(Animation animation) {
                 mMaxFrequencySeekBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
             }
         });
     }
@@ -335,7 +310,7 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
     private void prepareMaxVolumeView() {
         mMaxVolumeText.setText(getString(R.string.max_volume_threshold, mPresenter.getMaxVolume()));
         mMaxVolumeSeekBar.setProgress(mPresenter.getMaxVolume());
-        mMaxVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mMaxVolumeSeekBar.setOnSeekBarChangeListener(new SeekBarListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mMaxVolumeText.setText(getString(R.string.max_volume_threshold, seekBar.getProgress()));
@@ -350,11 +325,6 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mPresenter.onChangeMaxVolume(seekBar.getProgress());
             }
@@ -364,7 +334,7 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
     private void prepareMinVolumeView() {
         mMinVolumeText.setText(getString(R.string.min_volume_threshold, mPresenter.getMinVolume()));
         mMinVolumeSeekBar.setProgress(mPresenter.getMinVolume());
-        mMinVolumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mMinVolumeSeekBar.setOnSeekBarChangeListener(new SeekBarListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mMinVolumeText.setText(getString(R.string.min_volume_threshold, seekBar.getProgress()));
@@ -379,14 +349,21 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mPresenter.onChangeMinVolume(seekBar.getProgress());
             }
         });
+    }
+
+    private static class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {}
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {}
     }
 }

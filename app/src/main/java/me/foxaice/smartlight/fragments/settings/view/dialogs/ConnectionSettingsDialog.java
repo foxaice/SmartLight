@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.settings.dialogs;
+package me.foxaice.smartlight.fragments.settings.view.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -26,14 +26,17 @@ public class ConnectionSettingsDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mSharedPreferencesController = SharedPreferencesController.getInstance(getContext());
+
         View view = View.inflate(getContext(), R.layout.fragment_settings_edit_text_dialog, null);
-        alertDialog = new AlertDialog.Builder(getContext()).setView(view).create();
-        editText = (EditText) view.findViewById(R.id.fragment_settings_dialog_edit_name);
+
         TextView textView = (TextView) view.findViewById(R.id.fragment_settings_dialog_text_name);
+        editText = (EditText) view.findViewById(R.id.fragment_settings_dialog_edit_name);
+        alertDialog = new AlertDialog.Builder(getContext()).setView(view).create();
 
         DialogInterface.OnClickListener onClickListener = null;
         String savedValue = null;
         TextWatcher textWatcher = null;
+
         switch (getTag()) {
             case TAG_IP: {
                 onClickListener = CustomDialogListener.getIPOnClickListener(this);

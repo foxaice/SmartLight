@@ -13,13 +13,13 @@ import java.util.Arrays;
 
 import me.foxaice.smartlight.R;
 
-public class RenamingZonesListAdapter extends ArrayAdapter<String> {
+class RenamingZonesListAdapter extends ArrayAdapter<String> {
     private final Context mContext;
     private final String[] mNamesItems;
     private final int[] mIdImages;
     private final String[] mDefaultNames;
 
-    public RenamingZonesListAdapter(Context context, String[] namesItems) {
+    RenamingZonesListAdapter(Context context, String[] namesItems) {
         super(context, R.layout.item_settings_list, namesItems);
         mContext = context;
         mDefaultNames = Arrays.copyOfRange(context.getResources().getStringArray(R.array.zone_names), 1, 5);
@@ -54,13 +54,13 @@ public class RenamingZonesListAdapter extends ArrayAdapter<String> {
         return convertView;
     }
 
-    public String[] getDefaultNames() {
+    String[] getDefaultNames() {
         return mDefaultNames;
     }
 
-    public static class ViewHolder {
-        public TextView header;
-        public TextView subHeader;
+    static class ViewHolder {
+        TextView header;
+        TextView subHeader;
         ImageView icon;
     }
 }

@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs;
 
 import android.animation.LayoutTransition;
 import android.app.Dialog;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Queue;
 
 import me.foxaice.smartlight.R;
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.custom_views.CheckMarkProgressView;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.custom_views.CheckMarkProgressView;
 import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.IControllerManagementView;
 import me.foxaice.smartlight.utils.AnimationUtils;
 
@@ -36,6 +36,13 @@ public class ExecutionTaskDialog extends DialogFragment {
     private DialogListener mDialogListener;
     private LinearLayout mRoot;
     private Handler mHandler;
+
+    public interface DialogListener {
+        void onTaskExecute(ExecutionTaskDialog dialog);
+        void onExecutionTaskCompleted(boolean successful);
+        void onStartNextSubTask();
+        void onDialogDismissed();
+    }
 
     @NonNull
     @Override
@@ -143,13 +150,6 @@ public class ExecutionTaskDialog extends DialogFragment {
                 return getResourceArrayId(IControllerManagementView.CONNECT_TO_NETWORK_TASK);
         }
         throw new IllegalArgumentException("Wrong the Task Name");
-    }
-
-    public interface DialogListener {
-        void onTaskExecute(ExecutionTaskDialog dialog);
-        void onExecutionTaskCompleted(boolean successful);
-        void onStartNextSubTask();
-        void onDialogDismissed();
     }
 
     private static class TaskHolder {

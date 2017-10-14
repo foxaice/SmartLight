@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.foxaice.smartlight.R;
-import me.foxaice.smartlight.fragments.modes.music_mode.MusicModeFragment;
+import me.foxaice.smartlight.fragments.modes.music_mode.view.MusicModeFragment;
 import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
 
 class ColorModesAdapter extends RecyclerView.Adapter<ColorModeHolder> {

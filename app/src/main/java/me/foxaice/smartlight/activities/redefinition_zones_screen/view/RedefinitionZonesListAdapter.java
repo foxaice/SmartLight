@@ -16,12 +16,12 @@ import java.util.Arrays;
 
 import me.foxaice.smartlight.R;
 
-public class RedefinitionZonesListAdapter extends ArrayAdapter<String> {
+class RedefinitionZonesListAdapter extends ArrayAdapter<String> {
     private final Context mContext;
     private final String[] mNamesItems;
     private final int[] mIdImages;
 
-    public RedefinitionZonesListAdapter(Context context, String[] namesItems, int[] idImages) {
+    RedefinitionZonesListAdapter(Context context, String[] namesItems, int[] idImages) {
         super(context, R.layout.item_settings_list, namesItems);
         mContext = context;
         mNamesItems = Arrays.copyOf(namesItems, namesItems.length);

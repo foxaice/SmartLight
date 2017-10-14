@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.foxaice.smartlight.R;
-import me.foxaice.smartlight.activities.controllers_screen.ControllersScreenActivity;
+import me.foxaice.smartlight.activities.controllers_screen.view.ControllersScreenActivity;
 import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.ControllerManagementFragment;
 import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.presenter.ControllerListPresenter;
 import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.presenter.IControllerListPresenter;
@@ -55,47 +55,14 @@ public class ControllerListFragment extends Fragment implements IControllerListV
         View view = inflater.inflate(R.layout.fragment_controllers_list, container, false);
         mPresenter.attach(this);
 
-        mControllersListView = (ListView) view.findViewById(R.id.fragment_controllers_list_list_controllers);
-        mBodyText = (TextView) view.findViewById(R.id.fragment_controllers_list_text_body);
-        mIntentSettingsButtonText = (TextView) view.findViewById(R.id.fragment_controllers_list_text_intent_settings);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_controllers_list_swipe_refresh);
-        mControllerListAdapter = new ControllerListAdapter(this, R.layout.item_controllers_list, mControllersList);
-        mControllersListView.setAdapter(mControllerListAdapter);
-        mControllersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (view != null) {
-                    ControllerListAdapter.ControllerViewHolder holder = (ControllerListAdapter.ControllerViewHolder) view.getTag();
-                    Fragment fragment = new ControllerManagementFragment();
-                    Bundle args = new Bundle();
-                    args.putString(ControllerManagementFragment.EXTRA_NAME, holder.nameController);
-                    args.putString(ControllerManagementFragment.EXTRA_MAC_WITH_COLONS, holder.macAddressWithColons);
-                    args.putString(ControllerManagementFragment.EXTRA_MAC, holder.macAddress);
-                    args.putString(ControllerManagementFragment.EXTRA_IP, holder.ipAddress);
-                    fragment.setArguments(args);
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_right, R.anim.no_trasition)
-                            .add(R.id.activity_controllers_screen_frame_layout, fragment)
-                            .commit();
-                    mHandler.sendEmptyMessage(ViewHandler.STOP_SEARCH);
-                }
-            }
-        });
-        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.CYAN, Color.MAGENTA, Color.YELLOW, Color.RED);
+        initViews(view);
+        initListView();
+        initSwipeRefreshLayout();
+
         mIntentSettingsButtonText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
-            }
-        });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                ControllerListFragment.this.sendMessageStopSearch();
-                mControllersList.clear();
-                mControllerListAdapter.notifyDataSetChanged();
-                ControllerListFragment.this.sendMessageStartSearch();
             }
         });
 
@@ -166,18 +133,14 @@ public class ControllerListFragment extends Fragment implements IControllerListV
 
     @Override
     public void showContent(boolean isEnabled, boolean isConnected) {
-        mIntentSettingsButtonText.setVisibility(View.VISIBLE);
-        mBodyText.setVisibility(View.VISIBLE);
+        setVisibility(View.VISIBLE, mIntentSettingsButtonText, mBodyText);
+        setVisibility(View.GONE, mSwipeRefreshLayout, mControllersListView);
         mSwipeRefreshLayout.setRefreshing(false);
-        mSwipeRefreshLayout.setVisibility(View.GONE);
-        mControllersListView.setVisibility(View.GONE);
         if (isEnabled) {
             if (isConnected) {
-                mIntentSettingsButtonText.setVisibility(View.GONE);
-                mBodyText.setVisibility(View.GONE);
+                setVisibility(View.GONE, mIntentSettingsButtonText, mBodyText);
+                setVisibility(View.VISIBLE, mSwipeRefreshLayout, mControllersListView);
                 mSwipeRefreshLayout.setRefreshing(true);
-                mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-                mControllersListView.setVisibility(View.VISIBLE);
             } else {
                 mBodyText.setText(R.string.wifi_not_connected);
             }
@@ -196,10 +159,8 @@ public class ControllerListFragment extends Fragment implements IControllerListV
 
     void showNoFindingControllersContent() {
         mBodyText.setText(null);
-        mBodyText.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-        mControllersListView.setVisibility(View.GONE);
-        mIntentSettingsButtonText.setVisibility(View.GONE);
+        setVisibility(View.VISIBLE, mBodyText, mSwipeRefreshLayout);
+        setVisibility(View.GONE, mControllersListView, mIntentSettingsButtonText);
     }
 
     IControllerListPresenter getPresenter() {
@@ -225,5 +186,57 @@ public class ControllerListFragment extends Fragment implements IControllerListV
 
     void stopSwipeRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void initViews(View root) {
+        mControllersListView = (ListView) root.findViewById(R.id.fragment_controllers_list_list_controllers);
+        mBodyText = (TextView) root.findViewById(R.id.fragment_controllers_list_text_body);
+        mIntentSettingsButtonText = (TextView) root.findViewById(R.id.fragment_controllers_list_text_intent_settings);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.fragment_controllers_list_swipe_refresh);
+    }
+
+    private void initListView() {
+        mControllerListAdapter = new ControllerListAdapter(this, R.layout.item_controllers_list, mControllersList);
+        mControllersListView.setAdapter(mControllerListAdapter);
+        mControllersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (view != null) {
+                    ControllerListAdapter.ControllerViewHolder holder = (ControllerListAdapter.ControllerViewHolder) view.getTag();
+                    Fragment fragment = new ControllerManagementFragment();
+                    Bundle args = new Bundle();
+                    args.putString(ControllerManagementFragment.EXTRA_NAME, holder.nameController);
+                    args.putString(ControllerManagementFragment.EXTRA_MAC_WITH_COLONS, holder.macAddressWithColons);
+                    args.putString(ControllerManagementFragment.EXTRA_MAC, holder.macAddress);
+                    args.putString(ControllerManagementFragment.EXTRA_IP, holder.ipAddress);
+                    fragment.setArguments(args);
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.no_trasition)
+                            .add(R.id.activity_controllers_screen_frame_layout, fragment)
+                            .commit();
+                    mHandler.sendEmptyMessage(ViewHandler.STOP_SEARCH);
+                }
+            }
+        });
+    }
+
+    private void initSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.CYAN, Color.MAGENTA, Color.YELLOW, Color.RED);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ControllerListFragment.this.sendMessageStopSearch();
+                mControllersList.clear();
+                mControllerListAdapter.notifyDataSetChanged();
+                ControllerListFragment.this.sendMessageStartSearch();
+            }
+        });
+    }
+
+    private void setVisibility(int visibility, View... views) {
+        for (View item : views) {
+            item.setVisibility(visibility);
+        }
     }
 }

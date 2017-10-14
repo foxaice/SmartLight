@@ -1,6 +1,7 @@
 package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Build;
@@ -25,11 +26,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.foxaice.smartlight.R;
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.EditTextDialog;
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.ExecutionTaskDialog;
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.wifilist.WifiListDialog;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.EditTextDialog;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.ExecutionTaskDialog;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifilist.WifiListDialog;
 import me.foxaice.smartlight.fragments.controllers_screen.controller_management.presenter.ControllerManagementPresenter;
 import me.foxaice.smartlight.fragments.controllers_screen.controller_management.presenter.IControllerManagementPresenter;
+
+import static me.foxaice.smartlight.utils.AnimationUtils.setDuration;
+import static me.foxaice.smartlight.utils.AnimationUtils.setInterpolator;
+import static me.foxaice.smartlight.utils.AnimationUtils.AnimationListenerAdapter;
 
 public class ControllerManagementFragment extends Fragment implements IControllerManagementView, EditTextDialog.DialogListener, WifiListDialog.DialogListener, ExecutionTaskDialog.DialogListener {
     public static final String EXTRA_IP = "EXTRA_IP";
@@ -58,16 +63,7 @@ public class ControllerManagementFragment extends Fragment implements IControlle
         View view = inflater.inflate(R.layout.fragment_controller_management, container, false);
         mPresenter.attachView(this);
 
-        mPortText = (TextView) view.findViewById(R.id.fragment_controller_management_text_port);
-        mStateText = (TextView) view.findViewById(R.id.fragment_controller_management_text_wifi_management_state);
-        mFailedToConnectText = (TextView) view.findViewById(R.id.fragment_controller_management_text_failed_to_connect);
-        mNameControllerText = (TextView) view.findViewById(R.id.fragment_controller_management_text_name);
-        mControllerImage = (ImageView) view.findViewById(R.id.fragment_controller_management_image_icon);
-        mIpAddressText = (TextView) view.findViewById(R.id.fragment_controller_management_text_ip);
-        mMacAddressText = (TextView) view.findViewById(R.id.fragment_controller_management_text_mac);
-        mChangeNameButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_change_name_controller);
-        mChangePasswordOrDisconnectButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_change_network_password_ap);
-        mConnectToAnotherNetworkButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_connect_to_another_network);
+        initViews(view);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -307,6 +303,19 @@ public class ControllerManagementFragment extends Fragment implements IControlle
         }
     }
 
+    private void initViews(View view) {
+        mPortText = (TextView) view.findViewById(R.id.fragment_controller_management_text_port);
+        mStateText = (TextView) view.findViewById(R.id.fragment_controller_management_text_wifi_management_state);
+        mFailedToConnectText = (TextView) view.findViewById(R.id.fragment_controller_management_text_failed_to_connect);
+        mNameControllerText = (TextView) view.findViewById(R.id.fragment_controller_management_text_name);
+        mControllerImage = (ImageView) view.findViewById(R.id.fragment_controller_management_image_icon);
+        mIpAddressText = (TextView) view.findViewById(R.id.fragment_controller_management_text_ip);
+        mMacAddressText = (TextView) view.findViewById(R.id.fragment_controller_management_text_mac);
+        mChangeNameButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_change_name_controller);
+        mChangePasswordOrDisconnectButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_change_network_password_ap);
+        mConnectToAnotherNetworkButtonText = (TextView) view.findViewById(R.id.fragment_controller_management_text_connect_to_another_network);
+    }
+
     private void showExecutionTaskDialog(int taskID) {
         if (taskID != CONNECT_TO_NETWORK_TASK
                 && taskID != DISCONNECT_TASK
@@ -357,12 +366,7 @@ public class ControllerManagementFragment extends Fragment implements IControlle
                 .alpha(0.0f)
                 .setInterpolator(interpolator)
                 .setDuration(duration / 2)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
+                .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mStateText.setX(-mStateText.getMeasuredWidth());
@@ -376,16 +380,6 @@ public class ControllerManagementFragment extends Fragment implements IControlle
                                 .setListener(null)
                                 .start();
                     }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 }).start();
     }
 
@@ -394,8 +388,6 @@ public class ControllerManagementFragment extends Fragment implements IControlle
         //noinspection deprecation
         float screenHeight = getActivity().getWindowManager().getDefaultDisplay().getHeight();
         final long animationTime = 1_000;
-        Interpolator buttonsInterpolator = new DecelerateInterpolator();
-        Interpolator stateInterpolator = new AnticipateOvershootInterpolator();
         int x = mChangeNameButtonText.getLeft();
 
         TranslateAnimation translate = new TranslateAnimation(-mStateText.getMeasuredWidth(), 0.0f, 0.0f, 0.0f);
@@ -404,26 +396,12 @@ public class ControllerManagementFragment extends Fragment implements IControlle
         stateSetAnimation.addAnimation(translate);
         stateSetAnimation.addAnimation(alpha);
         stateSetAnimation.setFillAfter(true);
-        stateSetAnimation.setInterpolator(stateInterpolator);
-        stateSetAnimation.setDuration(animationTime / 2);
         AlphaAnimation alphaReverse = new AlphaAnimation(1.0f, 0.0f);
-        alphaReverse.setDuration(animationTime / 2);
-        alphaReverse.setInterpolator(stateInterpolator);
-        alphaReverse.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
+        alphaReverse.setAnimationListener(new AnimationListenerAdapter() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mStateText.setText(connectionInfoState);
                 mStateText.startAnimation(stateSetAnimation);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
             }
         });
 
@@ -432,8 +410,11 @@ public class ControllerManagementFragment extends Fragment implements IControlle
         buttonsSetAnimation.addAnimation(alpha);
         buttonsSetAnimation.addAnimation(translate);
         buttonsSetAnimation.setFillAfter(true);
-        buttonsSetAnimation.setInterpolator(buttonsInterpolator);
-        buttonsSetAnimation.setDuration(animationTime);
+
+        setDuration(animationTime / 2, stateSetAnimation, alphaReverse);
+        setDuration(animationTime, buttonsSetAnimation);
+        setInterpolator(new AnticipateOvershootInterpolator(), stateSetAnimation, alphaReverse);
+        setInterpolator(new DecelerateInterpolator(), buttonsSetAnimation);
 
         mChangeNameButtonText.startAnimation(buttonsSetAnimation);
         mChangePasswordOrDisconnectButtonText.startAnimation(buttonsSetAnimation);

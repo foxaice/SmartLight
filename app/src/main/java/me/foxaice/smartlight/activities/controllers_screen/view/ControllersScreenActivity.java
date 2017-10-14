@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.activities.controllers_screen;
+package me.foxaice.smartlight.activities.controllers_screen.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.activities.controllers_screen.presenter.ControllerScreenPresenter;
 import me.foxaice.smartlight.activities.controllers_screen.presenter.IControllerScreenPresenter;
-import me.foxaice.smartlight.activities.controllers_screen.view.IControllerScreenView;
 import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.view.ControllerListFragment;
 
 

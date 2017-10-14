@@ -1,7 +1,8 @@
-package me.foxaice.smartlight.fragments.settings.dialogs;
+package me.foxaice.smartlight.fragments.settings.view.dialogs;
 
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.fragments.modes.IModeBaseView;
@@ -33,8 +34,7 @@ class CustomDialogListener {
                                 ((IModeBaseView) fragment).onChangedControllerSettings();
                             }
                         } else {
-                            dialog.editText.setError(INVALID_IP);
-                            dialog.alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                            Toast.makeText(dialog.getContext(), INVALID_IP, Toast.LENGTH_SHORT).show();
                         }
                         break;
                 }
@@ -54,16 +54,16 @@ class CustomDialogListener {
                         dialog.alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
                         break;
                     case DialogInterface.BUTTON_POSITIVE:
-                        int port = Integer.valueOf(dialog.editText.getText().toString());
-                        if (Validator.isPort(port)) {
+                        String temp = dialog.editText.getText().toString();
+                        Integer port = !temp.equals("") ? Integer.valueOf(temp) : null;
+                        if (port != null && Validator.isPort(port)) {
                             dialog.changeControllerPort(port);
                             Fragment fragment = dialog.getActivity().getSupportFragmentManager().findFragmentById(R.id.activity_main_screen_frame_layout_mode_content);
                             if (fragment instanceof IModeBaseView) {
                                 ((IModeBaseView) fragment).onChangedControllerSettings();
                             }
                         } else {
-                            dialog.editText.setError(INVALID_PORT);
-                            dialog.alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                            Toast.makeText(dialog.getContext(), INVALID_PORT, Toast.LENGTH_SHORT).show();
                         }
                         break;
                 }

@@ -13,12 +13,12 @@ import java.util.Arrays;
 
 import me.foxaice.smartlight.R;
 
-public class SettingsListAdapter extends ArrayAdapter<String> {
+class SettingsListAdapter extends ArrayAdapter<String> {
     private final Context mContext;
     private final String[] mNamesItems;
     private final int[] mIdImages;
 
-    public SettingsListAdapter(Context context, String[] namesItems, int[] idImages) {
+    SettingsListAdapter(Context context, String[] namesItems, int[] idImages) {
         super(context, R.layout.item_settings_list, namesItems);
         mContext = context;
         mNamesItems = Arrays.copyOf(namesItems, namesItems.length);
@@ -47,7 +47,7 @@ public class SettingsListAdapter extends ArrayAdapter<String> {
     }
 
     private static class SettingsViewHolder {
-        ImageView icon;
-        TextView text;
+        private ImageView icon;
+        private TextView text;
     }
 }

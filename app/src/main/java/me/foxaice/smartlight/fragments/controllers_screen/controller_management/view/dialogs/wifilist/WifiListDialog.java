@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.wifilist;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifilist;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -190,38 +190,30 @@ public class WifiListDialog extends DialogFragment {
 
     Drawable[] getWifiSignalLevelDrawables() {
         if (mDrawables == null) {
-            Drawable drawable0;
-            Drawable drawable1;
-            Drawable drawable2;
-            Drawable drawable3;
-            Drawable drawable4;
+            Drawable[] drawables = new Drawable[5];
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                drawable0 = AppCompatResources.getDrawable(getContext(), R.drawable.wifi_signal0);
-                drawable1 = AppCompatResources.getDrawable(getContext(), R.drawable.wifi_signal1);
-                drawable2 = AppCompatResources.getDrawable(getContext(), R.drawable.wifi_signal2);
-                drawable3 = AppCompatResources.getDrawable(getContext(), R.drawable.wifi_signal3);
-                drawable4 = AppCompatResources.getDrawable(getContext(), R.drawable.wifi_signal4);
+                int[] drawableIds = new int[]{
+                        R.drawable.wifi_signal0, R.drawable.wifi_signal1, R.drawable.wifi_signal2,
+                        R.drawable.wifi_signal3, R.drawable.wifi_signal4
+                };
+                for (int i = 0; i < drawables.length; i++) {
+                    drawables[i] = AppCompatResources.getDrawable(getContext(), drawableIds[i]);
+                }
             } else {
-                Resources.Theme theme = getResources().newTheme();
-                theme.applyStyle(R.style.WifiSignalStrength0, false);
-                drawable0 = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
-                theme = getResources().newTheme();
-                theme.applyStyle(R.style.WifiSignalStrength1, false);
-                drawable1 = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
-                theme = getResources().newTheme();
-                theme.applyStyle(R.style.WifiSignalStrength2, false);
-                drawable2 = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
-                theme = getResources().newTheme();
-                theme.applyStyle(R.style.WifiSignalStrength3, false);
-                drawable3 = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
-                theme = getResources().newTheme();
-                theme.applyStyle(R.style.WifiSignalStrength4, false);
-                drawable4 = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
+                int[] themeStyles = new int[]{
+                        R.style.WifiSignalStrength0, R.style.WifiSignalStrength1, R.style.WifiSignalStrength2,
+                        R.style.WifiSignalStrength3, R.style.WifiSignalStrength4,
+                };
+                Resources.Theme theme;
+                for (int i = 0; i < drawables.length; i++) {
+                    theme = getResources().newTheme();
+                    drawables[i] = ResourcesCompat.getDrawable(getResources(), R.drawable.wifi_signal, theme);
+                    theme.applyStyle(themeStyles[i], false);
+                }
             }
-            return new Drawable[]{drawable0, drawable1, drawable2, drawable3, drawable4};
-        } else {
-            return mDrawables;
+            mDrawables = drawables;
         }
+        return mDrawables;
     }
 
     public interface DialogListener {

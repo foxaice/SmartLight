@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.ExecutionTaskDialog;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.ExecutionTaskDialog;
 
 class ViewHandler extends Handler {
     static final int START_CONNECTION = 0x0001;

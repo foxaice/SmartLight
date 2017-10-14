@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.modes.bulb_mode;
+package me.foxaice.smartlight.fragments.modes.bulb_mode.view;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.fragments.modes.ModeBaseView;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.presenter.BulbModePresenter;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.presenter.IBulbModePresenter;
-import me.foxaice.smartlight.fragments.modes.bulb_mode.view.IBulbModeView;
 
 public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     public static final String TAG = "BULB_MODE_FRAGMENT";
@@ -25,112 +24,23 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     private float mAngle = 50;
     private float[] mColorTargetCoords;
     private float[] mBrightnessTargetCoords;
-    private ImageView mPowerButtonImage;
-    private ImageView mRGBCircleImage;
-    private ImageView mRGBTargetImage;
+    private View mRGBCircleView;
+    private View mRGBTargetView;
+    private View mPowerButtonView;
+    private View mWhiteColorButtonView;
     private BrightnessArcView mBrightnessArcImage;
     private ImageView mBrightnessTargetImage;
     private IBulbModePresenter mBulbModePresenter = new BulbModePresenter();
-    private int mDensityDpi;
+    private Integer mDensityDpi;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bulb_mode, container, false);
-
-        mDensityDpi = getResources().getDisplayMetrics().densityDpi;
-        mPowerButtonImage = (ImageView) view.findViewById(R.id.fragment_bulb_mode_image_power_button);
-        mRGBCircleImage = (ImageView) view.findViewById(R.id.fragment_bulb_mode_image_rgb_circle);
-        mRGBTargetImage = (ImageView) view.findViewById(R.id.fragment_bulb_mode_image_rgb_target_circle);
-        mBrightnessArcImage = (BrightnessArcView) view.findViewById(R.id.fragment_bulb_mode_image_brightness_arc);
-        mBrightnessTargetImage = (ImageView) view.findViewById(R.id.fragment_bulb_mode_image_brightness_target_arc);
-        View whiteColorButton = view.findViewById(R.id.fragment_bulb_mode_image_white_color_button);
-
-        if (savedInstanceState != null) {
-            mAngle = savedInstanceState.getFloat(EXTRA_ANGLE);
-            mColorTargetCoords = savedInstanceState.getFloatArray(EXTRA_COLOR_TARGET_COORDS);
-            mBrightnessTargetCoords = savedInstanceState.getFloatArray(EXTRA_BRIGHTNESS_TARGET_COORDS);
-        }
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mColorTargetCoords != null) {
-                    setColorCircleTargetCoords(mColorTargetCoords[0], mColorTargetCoords[1]);
-                }
-                if (mBrightnessTargetCoords != null) {
-                    setBrightnessArcTargetCoords(mBrightnessTargetCoords[0], mBrightnessTargetCoords[1]);
-                }
-                drawBrightnessArcBackground(mAngle);
-                mBrightnessArcImage.invalidate();
-            }
-        });
-
-        whiteColorButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBulbModePresenter.onTouchWhiteColorButton();
-            }
-        });
-
-        mPowerButtonImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBulbModePresenter.onTouchPowerButton();
-            }
-        });
-
-        mRGBCircleImage.setOnTouchListener(new BulbModeBaseOnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                @IBulbModePresenter.Events int action;
-                try {
-                    action = this.getAction(event);
-                } catch (IllegalArgumentException e) {
-                    return false;
-                }
-                float circleRadius = getCircleRadius();
-                float circleTargetRadius = getCircleTargetRadius();
-                if (!mBulbModePresenter.isPointWithinRGBCircle(event.getX(), event.getY(), circleTargetRadius, circleRadius)
-                        && action == IBulbModePresenter.Events.ACTION_DOWN) {
-                    return mBrightnessArcImage.onTouchEvent(event);
-                }
-                mBulbModePresenter.onTouchColorCircle(event.getX(), event.getY(), circleTargetRadius, circleRadius, action);
-                return true;
-            }
-
-            private float getCircleRadius() {
-                return mRGBCircleImage.getMeasuredHeight() / 2f;
-            }
-
-            private float getCircleTargetRadius() {
-                return mRGBTargetImage.getMeasuredHeight() / 2f;
-            }
-        });
-
-        mBrightnessArcImage.setOnTouchListener(new BulbModeBaseOnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                @IBulbModePresenter.Events int action;
-                try {
-                    action = this.getAction(event);
-                } catch (IllegalArgumentException e) {
-                    return false;
-                }
-                float arcRadius = getArcRadius();
-                float arcTargetRadius = getArcTargetRadius();
-                mBulbModePresenter.onTouchBrightnessArc(event.getX(), event.getY(), arcTargetRadius, arcRadius, action);
-                return true;
-            }
-
-            private float getArcTargetRadius() {
-                return mBrightnessTargetImage.getMeasuredWidth() / 2f;
-            }
-
-            private float getArcRadius() {
-                return mBrightnessArcImage.getMeasuredWidth() / 2f;
-            }
-        });
+        initViews(view);
+        restoreValues(view, savedInstanceState);
+        setListeners();
         return view;
     }
 
@@ -193,18 +103,21 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             y += 0.5;
             x += 0.5;
-            mRGBTargetImage.setX(x);
-            mRGBTargetImage.setY(y);
+            mRGBTargetView.setX(x);
+            mRGBTargetView.setY(y);
         } else {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mRGBTargetImage.getMeasuredHeight(), mRGBTargetImage.getMeasuredWidth());
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mRGBTargetView.getMeasuredHeight(), mRGBTargetView.getMeasuredWidth());
             params.leftMargin = (int) x + 1;
             params.topMargin = (int) y + 1;
-            mRGBTargetImage.setLayoutParams(params);
+            mRGBTargetView.setLayoutParams(params);
         }
     }
 
     @Override
     public int getScreenDpi() {
+        if (mDensityDpi == null) {
+            mDensityDpi = getResources().getDisplayMetrics().densityDpi;
+        }
         return mDensityDpi;
     }
 
@@ -225,6 +138,88 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
     @Override
     public void onChangedControllerSettings() {
         mBulbModePresenter.updateControllerSettings();
+    }
+
+    private void initViews(View root) {
+        mPowerButtonView = root.findViewById(R.id.fragment_bulb_mode_image_power_button);
+        mWhiteColorButtonView = root.findViewById(R.id.fragment_bulb_mode_image_white_color_button);
+        mRGBCircleView = root.findViewById(R.id.fragment_bulb_mode_image_rgb_circle);
+        mRGBTargetView = root.findViewById(R.id.fragment_bulb_mode_image_rgb_target_circle);
+        mBrightnessArcImage = (BrightnessArcView) root.findViewById(R.id.fragment_bulb_mode_image_brightness_arc);
+        mBrightnessTargetImage = (ImageView) root.findViewById(R.id.fragment_bulb_mode_image_brightness_target_arc);
+    }
+
+    private void restoreValues(View root, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mAngle = savedInstanceState.getFloat(EXTRA_ANGLE);
+            mColorTargetCoords = savedInstanceState.getFloatArray(EXTRA_COLOR_TARGET_COORDS);
+            mBrightnessTargetCoords = savedInstanceState.getFloatArray(EXTRA_BRIGHTNESS_TARGET_COORDS);
+        }
+        root.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mColorTargetCoords != null) {
+                    setColorCircleTargetCoords(mColorTargetCoords[0], mColorTargetCoords[1]);
+                }
+                if (mBrightnessTargetCoords != null) {
+                    setBrightnessArcTargetCoords(mBrightnessTargetCoords[0], mBrightnessTargetCoords[1]);
+                }
+                drawBrightnessArcBackground(mAngle);
+                mBrightnessArcImage.invalidate();
+            }
+        });
+    }
+
+    private void setListeners() {
+        mWhiteColorButtonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBulbModePresenter.onTouchWhiteColorButton();
+            }
+        });
+
+        mPowerButtonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBulbModePresenter.onTouchPowerButton();
+            }
+        });
+
+        mRGBCircleView.setOnTouchListener(new BulbModeBaseOnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                @IBulbModePresenter.Events int action;
+                try {
+                    action = this.getAction(event);
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+                float circleRadius = mRGBCircleView.getMeasuredHeight() / 2f;
+                float circleTargetRadius = mRGBTargetView.getMeasuredHeight() / 2f;
+                if (!mBulbModePresenter.isPointWithinRGBCircle(event.getX(), event.getY(), circleTargetRadius, circleRadius)
+                        && action == IBulbModePresenter.Events.ACTION_DOWN) {
+                    return mBrightnessArcImage.onTouchEvent(event);
+                }
+                mBulbModePresenter.onTouchColorCircle(event.getX(), event.getY(), circleTargetRadius, circleRadius, action);
+                return true;
+            }
+        });
+
+        mBrightnessArcImage.setOnTouchListener(new BulbModeBaseOnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                @IBulbModePresenter.Events int action;
+                try {
+                    action = this.getAction(event);
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+                float arcRadius = mBrightnessArcImage.getMeasuredWidth() / 2f;
+                float arcTargetRadius = mBrightnessTargetImage.getMeasuredWidth() / 2f;
+                mBulbModePresenter.onTouchBrightnessArc(event.getX(), event.getY(), arcTargetRadius, arcRadius, action);
+                return true;
+            }
+        });
     }
 
     private abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {

@@ -1,15 +1,53 @@
 package me.foxaice.smartlight.utils;
 
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Interpolator;
 import android.view.animation.Transformation;
 
-public abstract class AnimationUtils {
+public final class AnimationUtils {
     private AnimationUtils() {
     }
 
     public static Animation getChangeViewGroupHeightAnimation(ViewGroup viewGroup, float addedHeight) {
         return new ChangeViewGroupHeightAnimation(viewGroup, addedHeight);
+    }
+
+    public static void setInterpolator(Interpolator interpolator, Animation... anims) {
+        for (Animation item : anims) {
+            item.setInterpolator(interpolator);
+        }
+    }
+
+    public static void setDuration(long duration, Animation... anims) {
+        for (Animation item : anims) {
+            item.setDuration(duration);
+        }
+    }
+
+    public static void setEnabledViews(boolean isEnable, View... views) {
+        for (View item : views) {
+            item.setEnabled(isEnable);
+        }
+    }
+
+    public static void bringToFrontViews(View... views) {
+        for (View item : views) {
+            item.bringToFront();
+        }
+    }
+
+    public static class AnimationListenerAdapter implements Animation.AnimationListener {
+
+        @Override
+        public void onAnimationStart(Animation animation) {}
+
+        @Override
+        public void onAnimationEnd(Animation animation) {}
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
     }
 
     private static class ChangeViewGroupHeightAnimation extends Animation {
@@ -34,12 +72,9 @@ public abstract class AnimationUtils {
             super.initialize(width, height, parentWidth, parentHeight);
             mInitHeight = height;
         }
-
         @Override
         public boolean willChangeBounds() {
             return true;
         }
-
-
     }
 }

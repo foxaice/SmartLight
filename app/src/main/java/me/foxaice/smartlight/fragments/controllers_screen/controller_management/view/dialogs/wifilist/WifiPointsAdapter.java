@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs.wifilist;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifilist;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

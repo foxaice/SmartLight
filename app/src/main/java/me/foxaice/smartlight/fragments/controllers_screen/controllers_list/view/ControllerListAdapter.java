@@ -15,12 +15,12 @@ import java.util.List;
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.utils.Validator;
 
-public class ControllerListAdapter extends ArrayAdapter<String> {
+class ControllerListAdapter extends ArrayAdapter<String> {
     private IControllerListView mView;
     private List<String> mItemAddress;
     private int mResourceId;
 
-    public ControllerListAdapter(@NonNull IControllerListView view, @LayoutRes int resource, @NonNull List<String> objects) {
+    ControllerListAdapter(@NonNull IControllerListView view, @LayoutRes int resource, @NonNull List<String> objects) {
         super(view.getContext(), resource, objects);
         mView = view;
         mResourceId = resource;
@@ -71,11 +71,11 @@ public class ControllerListAdapter extends ArrayAdapter<String> {
         }
     }
 
-    public class ControllerViewHolder {
-        public String ipAddress;
-        public String macAddressWithColons;
-        public String nameController;
-        public String macAddress;
+    class ControllerViewHolder {
+        String ipAddress;
+        String macAddressWithColons;
+        String nameController;
+        String macAddress;
         TextView nameTextView;
         TextView addressTextView;
     }

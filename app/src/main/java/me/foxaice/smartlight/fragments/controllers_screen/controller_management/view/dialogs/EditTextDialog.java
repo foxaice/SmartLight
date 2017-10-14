@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.dialogs;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -44,12 +44,28 @@ public class EditTextDialog extends DialogFragment {
     private Spinner mSpinnerEncryptionMethod;
     private Spinner mSpinnerEncryptionType;
 
+    public interface DialogListener {
+        void onFinishChangeNameDialog(String name);
+        void onFinishChangePasswordDialog(CharSequence sequence, String tag);
+    }
+
+    @StringDef({SecurityTypes.HEX, SecurityTypes.ASCII, SecurityTypes.TKIP_OR_AES, SecurityTypes.AES, SecurityTypes.TKIP})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface SecurityTypes {
+        String HEX = "WEP-H";
+        String ASCII = "WEP-A";
+        String TKIP_OR_AES = "TKIPAES";
+        String AES = "AES";
+        String TKIP = "TKIP";
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = View.inflate(getActivity(), R.layout.fragment_controller_management_edit_text_dialog, null);
+
         mTextNameDialog = (TextView) view.findViewById(R.id.fragment_controller_management_dialog_text_name);
         mTextPasswordLength = (TextView) view.findViewById(R.id.fragment_controller_management_dialog_text_password_quantity_chars);
         mEditText = (EditText) view.findViewById(R.id.fragment_controller_management_dialog_edit_name);
@@ -60,8 +76,7 @@ public class EditTextDialog extends DialogFragment {
             switch (getTag()) {
                 case TAG_NAME:
                     prepareChangeNameContent();
-                    builder.setNegativeButton(R.string.dialog_negative_button_text, null)
-                            .setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeName(mEditText.getText().toString());
@@ -70,31 +85,28 @@ public class EditTextDialog extends DialogFragment {
                     break;
                 case TAG_PASS_AP:
                     prepareChangePassAPContent();
-                    builder.setNegativeButton(R.string.dialog_negative_button_text, null)
-                            .setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    im.hideSoftInputFromWindow(mEditText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                                    hideKeyboard();
                                     changePassword(mEditText.getText());
                                 }
                             });
                     break;
                 case TAG_PASS_STA:
                     prepareChangePassSTAContent(view);
-                    builder.setNegativeButton(R.string.dialog_negative_button_text, null)
-                            .setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.dialog_positive_button_text, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    im.hideSoftInputFromWindow(mEditText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                                    hideKeyboard();
                                     String params = String.format("%s|||%s,%s,%s", mSTASSID, mSTAEncryptionMethod, mSTAEncryptionType, mEditText.getText());
                                     changePassword(params);
                                 }
                             });
                     break;
             }
-            builder.setView(view);
+            builder.setNegativeButton(R.string.dialog_negative_button_text, null)
+                    .setView(view);
         }
 
         Dialog dialog = builder.create();
@@ -102,6 +114,11 @@ public class EditTextDialog extends DialogFragment {
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
         return dialog;
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        im.hideSoftInputFromWindow(mEditText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private void prepareChangeNameContent() {
@@ -153,34 +170,27 @@ public class EditTextDialog extends DialogFragment {
                 mSTAEncryptionMethod = "WPAPSK";
             } else if (mSTAEncryptionMethod.matches("^WEP$")) {
                 view.findViewById(R.id.fragment_controller_management_dialog_linear_wep_encryption).setVisibility(View.VISIBLE);
-                mSpinnerEncryptionMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                mSpinnerEncryptionMethod.setOnItemSelectedListener(new OnItemSelectedListenerAdapter() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         mSTAEncryptionMethod = parent.getItemAtPosition(position).toString();
                     }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
                 });
-                mSpinnerEncryptionType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                mSpinnerEncryptionType.setOnItemSelectedListener(new OnItemSelectedListenerAdapter() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         mSTAEncryptionType = "ASCII".equals(parent.getItemAtPosition(position)) ? SecurityTypes.ASCII : SecurityTypes.HEX;
                         ((CustomTextWatcher) mTextWatcher).changeType(mSTAEncryptionType);
                         mEditText.setText(null);
                     }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
                 });
             }
+
             if (mSTAEncryptionType.equals(SecurityTypes.TKIP_OR_AES)) {
                 mSTAEncryptionType = SecurityTypes.AES;
             }
+
             mTextWatcher = new CustomTextWatcher(mSTAEncryptionType, this, mTextPasswordLength, mEditText);
         }
         mEditText.addTextChangedListener(mTextWatcher);
@@ -204,19 +214,12 @@ public class EditTextDialog extends DialogFragment {
         dismiss();
     }
 
-    public interface DialogListener {
-        void onFinishChangeNameDialog(String name);
-        void onFinishChangePasswordDialog(CharSequence sequence, String tag);
-    }
+    private static class OnItemSelectedListenerAdapter implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {}
 
-    @StringDef({SecurityTypes.HEX, SecurityTypes.ASCII, SecurityTypes.TKIP_OR_AES, SecurityTypes.AES, SecurityTypes.TKIP})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface SecurityTypes {
-        String HEX = "WEP-H";
-        String ASCII = "WEP-A";
-        String TKIP_OR_AES = "TKIPAES";
-        String AES = "AES";
-        String TKIP = "TKIP";
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
     }
 
     private static class CustomTextWatcher implements TextWatcher {

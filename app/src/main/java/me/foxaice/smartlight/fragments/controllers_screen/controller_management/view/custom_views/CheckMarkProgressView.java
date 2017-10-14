@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.custom_views;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.custom_views;
 
 import android.content.Context;
 import android.graphics.Canvas;
