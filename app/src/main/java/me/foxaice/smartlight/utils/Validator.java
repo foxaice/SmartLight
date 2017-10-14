@@ -25,7 +25,7 @@ public final class Validator {
     }
 
     public static boolean isPort(int port) {
-        return port < 0 || port <= 0xFFFF;
+        return port >= 0 && port <= 0xFFFF;
     }
 
     public static boolean isCorrectResponseOnLinkWiFi(String response) {
