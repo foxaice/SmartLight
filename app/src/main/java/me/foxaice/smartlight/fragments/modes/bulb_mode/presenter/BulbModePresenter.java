@@ -2,7 +2,6 @@ package me.foxaice.smartlight.fragments.modes.bulb_mode.presenter;
 
 import android.support.annotation.IntDef;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -47,7 +46,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
     @Override
     public void onTouchPowerButton() {
-        bulbInfo.setCurrentBulbGroupState(!bulbInfo.isCurrentBulbGroupOn());
+        bulbInfo.setCurrentBulbGroupPowerOn(!bulbInfo.isCurrentBulbGroupOn());
         sendPowerCommand(bulbInfo.isCurrentBulbGroupOn());
         modeView.showBulbGroupStateMessage(bulbInfo.getCurrentBulbGroupName(), bulbInfo.isCurrentBulbGroupOn(), bulbInfo.getCurrentBulbGroup() == IBulbInfo.ALL_GROUP);
     }

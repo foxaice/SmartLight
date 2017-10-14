@@ -87,7 +87,7 @@ public class BulbInfo implements IBulbInfo, Parcelable {
     }
 
     @Override
-    public void setCurrentBulbGroupState(boolean isOn) {
+    public void setCurrentBulbGroupPowerOn(boolean isOn) {
         if (mCurrentBulb.getID() == ALL_GROUP) {
             for (Bulb bulb : mBulbsList) {
                 bulb.setOn(isOn);

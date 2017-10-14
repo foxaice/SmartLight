@@ -21,7 +21,7 @@ public interface IBulbInfo extends Parcelable {
     String getSpecificBulbGroupName(@GroupID int group);
     String[] getBulbGroupNames();
     void setBulbNames(String[] names);
-    void setCurrentBulbGroupState(boolean isOn);
+    void setCurrentBulbGroupPowerOn(boolean isOn);
     void setSpecificBulbGroupState(@GroupID int group, boolean isOn);
     @IntDef({ALL_GROUP, GROUP_1, GROUP_2, GROUP_3, GROUP_4})
     @Retention(RetentionPolicy.SOURCE)

@@ -19,6 +19,7 @@ public abstract class ModeBasePresenter<T extends IModeBaseView> implements IMod
     protected ExecutorService executorService;
     private String mIpAddress;
     private int mPort;
+    private int mCurrentBulbGroupID = BulbInfo.ALL_GROUP;
 
     @Override
     public void attachView(T view) {
@@ -64,8 +65,9 @@ public abstract class ModeBasePresenter<T extends IModeBaseView> implements IMod
     }
 
     protected void turnBulbOn() throws IOException, InterruptedException {
-        if (!bulbInfo.isCurrentBulbGroupOn()) {
-            bulbInfo.setCurrentBulbGroupState(true);
+        if (bulbInfo.getCurrentBulbGroup() != mCurrentBulbGroupID) {
+            bulbInfo.setCurrentBulbGroupPowerOn(true);
+            mCurrentBulbGroupID = bulbInfo.getCurrentBulbGroup();
             bulbControllerApi.powerOnGroup(bulbInfo.getCurrentBulbGroup());
             Thread.sleep(100L);
         }
