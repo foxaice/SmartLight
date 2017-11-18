@@ -6,8 +6,8 @@ public interface IControllerListView {
     void sendMessageStartSearch();
     void sendMessageStopSearch();
     void stopSwipeRefreshing();
-    void showContent(boolean isEnabled, boolean isConnected);
     void addToControllersList(String controllerResponse);
-    Context getContext();
+    void showContent(boolean isEnabled, boolean isConnected);
     String getControllerNameByMACAddress(String macAddress);
+    Context getContext();
 }

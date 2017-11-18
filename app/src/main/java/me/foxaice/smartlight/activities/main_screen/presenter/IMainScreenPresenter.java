@@ -5,15 +5,15 @@ import me.foxaice.smartlight.activities.main_screen.view.IMainScreenView;
 public interface IMainScreenPresenter {
     void attach(IMainScreenView view);
     void detach();
-    void onDrawerItemClick(int itemPosition, String itemText);
     void onTouchUpSettingsButton();
+    void onDrawerItemClick(int itemPosition, String itemText);
     void onDrawerSlide();
     void updateBulbInfoNames();
     void saveCurrentModeTagToSettings();
-    int getCurrentBulbGroup();
     void setCurrentBulbGroup(int group);
+    int getCurrentBulbGroup();
     String getBulbInfoKey();
-    Object getBulbInfoObject();
-    String[] getZonesNamesFromSettings(String[] names);
     String getFragmentTagFromSettings();
+    String[] getZonesNamesFromSettings(String[] names);
+    Object getBulbInfoObject();
 }

@@ -5,39 +5,47 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
 final class FFT {
-    private FFT() {
-    }
+    private FFT() {}
 
     static double[] getFFTArray(double[] buffer) {
-        double[] data = new double[CommonUtils.nextPowOf2(buffer.length) << 1];
-        for (int i = 0; i < buffer.length; i++) {
-            data[i << 1] = buffer[i];
-            data[(i << 1) + 1] = 0;
-        }
+        double[] data = FFT.createArrayOfComplexNumbers(buffer);
+        FFT.binaryInversion(data);
+        FFT.routineDanielsonLanczos(data);
+        return data;
+    }
 
-        //binary inversion
-        for (int i = 0, j = 0, size = data.length; i < size >> 1; i += 2) {
+    private static double[] createArrayOfComplexNumbers(double[] real) {
+        double[] complexData = new double[CommonUtils.nextPowOf2(real.length) << 1];
+        for (int i = 0; i < real.length; i++) {
+            complexData[i << 1] = real[i];
+            complexData[(i << 1) + 1] = 0;
+        }
+        return complexData;
+    }
+
+    private static void binaryInversion(double[] complexes) {
+        for (int i = 0, j = 0, size = complexes.length; i < size >> 1; i += 2) {
             if (j > i) {
                 //swap real part
-                double temp = data[i];
-                data[i] = data[j];
-                data[j] = temp;
+                double temp = complexes[i];
+                complexes[i] = complexes[j];
+                complexes[j] = temp;
                 //swap imaginary part
-                temp = data[i + 1];
-                data[i + 1] = data[j + 1];
-                data[j + 1] = temp;
+                temp = complexes[i + 1];
+                complexes[i + 1] = complexes[j + 1];
+                complexes[j + 1] = temp;
 
                 //checks if the changes occurs in the first half
                 //and use the mirrored effect on the second half
                 if ((j >> 1) < (size >> 2)) {
                     //swap real part
-                    temp = data[size - (i + 2)];
-                    data[size - (i + 2)] = data[size - (j + 2)];
-                    data[size - (j + 2)] = temp;
+                    temp = complexes[size - (i + 2)];
+                    complexes[size - (i + 2)] = complexes[size - (j + 2)];
+                    complexes[size - (j + 2)] = temp;
                     //swap imaginary part
-                    temp = data[size - (i + 2) + 1];
-                    data[size - (i + 2) + 1] = data[size - (j + 2) + 1];
-                    data[size - (j + 2) + 1] = temp;
+                    temp = complexes[size - (i + 2) + 1];
+                    complexes[size - (i + 2) + 1] = complexes[size - (j + 2) + 1];
+                    complexes[size - (j + 2) + 1] = temp;
                 }
             }
             int m = size >> 1;
@@ -47,9 +55,10 @@ final class FFT {
             }
             j += m;
         }
+    }
 
-        //the Danielson - Lanczos section of the routine
-        for (int N = 2; N < data.length; N <<= 1) {
+    private static void routineDanielsonLanczos(double[] complexes) {
+        for (int N = 2; N < complexes.length; N <<= 1) {
             double theta = -2.0 * PI / N;
             double tempW = sin(0.5 * theta);
             double wPRe = -2.0 * pow(tempW, 2);
@@ -58,19 +67,18 @@ final class FFT {
             double wIm = 0.0;
 
             for (int m = 1; m < N; m += 2) {
-                for (int i = m; i <= data.length; i += N << 1) {
+                for (int i = m; i <= complexes.length; i += N << 1) {
                     int j = i + N;
-                    double tempRe = wRe * data[j - 1] - wIm * data[j];
-                    double tempIm = wRe * data[j] + wIm * data[j - 1];
-                    data[j - 1] = data[i - 1] - tempRe;
-                    data[j] = data[i] - tempIm;
-                    data[i - 1] += tempRe;
-                    data[i] += tempIm;
+                    double tempRe = wRe * complexes[j - 1] - wIm * complexes[j];
+                    double tempIm = wRe * complexes[j] + wIm * complexes[j - 1];
+                    complexes[j - 1] = complexes[i - 1] - tempRe;
+                    complexes[j] = complexes[i] - tempIm;
+                    complexes[i - 1] += tempRe;
+                    complexes[i] += tempIm;
                 }
                 wRe = (tempW = wRe) * wPRe - wIm * wPIm + wRe;
                 wIm = wIm * wPRe + tempW * wPIm + wIm;
             }
         }
-        return data;
     }
 }

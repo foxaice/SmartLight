@@ -6,14 +6,14 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.ExecutionTaskDialog;
+import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.execution_task.ExecutionTaskDialog;
 
 class ViewHandler extends Handler {
-    static final int START_CONNECTION = 0x0001;
-    static final int IS_CONNECTED = 0x0002;
-    static final int FAILED_CONNECTION = 0x0004;
-    static final int SUB_TASK_COMPLETED = 0x0005;
-    static final int EXECUTION_TASK_COMPLETED = 0x0006;
+    private static final int START_CONNECTION = 0x0001;
+    private static final int IS_CONNECTED = 0x0002;
+    private static final int FAILED_CONNECTION = 0x0004;
+    private static final int SUB_TASK_COMPLETED = 0x0005;
+    private static final int EXECUTION_TASK_COMPLETED = 0x0006;
     private static final int DELAY = 150;
     private static final int MAX_SEARCHING_SECONDS = 10000;
     private static final int IS_CONNECTING = 0x0003;
@@ -48,6 +48,31 @@ class ViewHandler extends Handler {
                     onReceivedMessageExecutionTaskCompleted(msg);
             }
         }
+    }
+
+    void removeAllCallbacksAndMessages() {
+        removeCallbacksAndMessages(null);
+    }
+
+    void sendStartConnectionMessage() {
+        sendEmptyMessage(START_CONNECTION);
+    }
+
+    void sendIsConnectingMessage() {
+        sendEmptyMessage(IS_CONNECTED);
+    }
+
+    void sendSubTaskCompletedMessage(int taskPosition) {
+        sendMessage(obtainMessage(SUB_TASK_COMPLETED, taskPosition, taskPosition));
+    }
+
+    void sendExecutionTaskCompletedMessage(boolean successful) {
+        int successId = successful ? 1 : 0;
+        sendMessage(obtainMessage(EXECUTION_TASK_COMPLETED, successId, successId));
+    }
+
+    void sendFailedConnectionMessage() {
+        sendEmptyMessage(FAILED_CONNECTION);
     }
 
     private void onReceivedMessageExecutionTaskCompleted(Message msg) {

@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifilist;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifi_list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,19 +15,20 @@ import me.foxaice.smartlight.R;
 class WifiPointsAdapter extends RecyclerView.Adapter<WifiPointHolder> {
     private List<WifiPoint> mWifiPointsList;
     private WifiListDialog mWifiListDialog;
-    private Comparator<WifiPoint> mComparator = new Comparator<WifiPoint>() {
-        @Override
-        public int compare(WifiPoint o1, WifiPoint o2) {
-            return o1.getSignal() == o2.getSignal() ? 0 : o1.getSignal() > o2.getSignal() ? 1 : -1;
-        }
-    };
+    private Comparator<WifiPoint> mComparator;
 
     WifiPointsAdapter(WifiListDialog dialog) {
         mWifiPointsList = new ArrayList<>();
         mWifiListDialog = dialog;
+        mComparator = new Comparator<WifiPoint>() {
+            @Override
+            public int compare(WifiPoint o1, WifiPoint o2) {
+                return o1.getSignal() == o2.getSignal() ? 0 : o1.getSignal() > o2.getSignal() ? 1 : -1;
+            }
+        };
     }
 
-    static int getIndexDrawableBySignal(WifiPoint wifiPoint) {
+    static int getIndexDrawableByWifiPointSignal(WifiPoint wifiPoint) {
         return wifiPoint.getSignal() < 0 ?
                 0 : wifiPoint.getSignal() >= 0 && wifiPoint.getSignal() < 25 ?
                 1 : wifiPoint.getSignal() >= 25 && wifiPoint.getSignal() < 50 ?
@@ -44,11 +45,11 @@ class WifiPointsAdapter extends RecyclerView.Adapter<WifiPointHolder> {
     @Override
     public void onBindViewHolder(WifiPointHolder holder, int position) {
         final WifiPoint wifiPoint = mWifiPointsList.get(position);
-        int indexDrawable = getIndexDrawableBySignal(wifiPoint);
-        holder.signalImage.setImageDrawable(mWifiListDialog.getWifiSignalLevelDrawables()[indexDrawable]);
-        holder.BSSIDText.setText(wifiPoint.getBSSID());
-        holder.SSIDText.setText(wifiPoint.getSSID());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        int indexDrawable = WifiPointsAdapter.getIndexDrawableByWifiPointSignal(wifiPoint);
+        holder.setImageDrawable(mWifiListDialog.getWifiSignalLevelDrawable(indexDrawable));
+        holder.setBSSID(wifiPoint.getBSSID());
+        holder.setSSID(wifiPoint.getSSID());
+        holder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWifiListDialog.onWifiPointClick(wifiPoint);

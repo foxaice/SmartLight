@@ -9,14 +9,16 @@ public abstract class ModeBaseView extends Fragment implements IModeBaseView {
 
     @Override
     public Parcelable loadParcelable(String objectKey) {
-        return args.getParcelable(objectKey);
+        return args != null ? args.getParcelable(objectKey) : null;
     }
 
     @Override
     public void setArguments(Bundle args) {
-        if (getArguments() == null) {
-            super.setArguments(args);
+        if (args != null) {
+            if (getArguments() == null) {
+                super.setArguments(args);
+            }
+            this.args = args;
         }
-        this.args = args;
     }
 }

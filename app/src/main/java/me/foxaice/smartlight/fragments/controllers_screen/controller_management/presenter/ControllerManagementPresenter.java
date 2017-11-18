@@ -1,6 +1,7 @@
 package me.foxaice.smartlight.fragments.controllers_screen.controller_management.presenter;
 
 import android.content.Context;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 import java.util.concurrent.ExecutorService;
@@ -33,10 +34,13 @@ public class ControllerManagementPresenter implements IControllerManagementPrese
         mView = view;
         if (mDeviceInfo == null) {
             mDeviceInfo = new DeviceInfo();
-            mDeviceInfo.setNetwork(
-                    ((WifiManager) mView.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                            .getConnectionInfo()
-                            .getSSID());
+            WifiManager wifiManager = (WifiManager) mView.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if (wifiManager != null) {
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                if (wifiInfo != null) {
+                    mDeviceInfo.setNetwork(wifiInfo.getSSID());
+                }
+            }
         }
         if (mSharedPreferencesController == null) {
             mSharedPreferencesController = SharedPreferencesController.getInstance(mView.getContext());

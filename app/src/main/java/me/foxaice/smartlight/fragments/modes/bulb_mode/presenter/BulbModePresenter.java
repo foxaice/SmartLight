@@ -1,13 +1,10 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode.presenter;
 
-import android.support.annotation.IntDef;
 import android.util.DisplayMetrics;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 import me.foxaice.smartlight.activities.main_screen.model.IBulbInfo;
 import me.foxaice.smartlight.fragments.modes.ModeBasePresenter;
+import me.foxaice.smartlight.fragments.modes.bulb_mode.model.BrightnessArcInfo;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.view.IBulbModeView;
 
 public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implements IBulbModePresenter {
@@ -18,7 +15,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     public void onTouchColorCircle(float coordX, float coordY, float circleTargetRadius, float circleRadius, @Events int action) {
         float deltaX = coordX - circleRadius;
         float deltaY = coordY - circleRadius;
-        float angle = getAngle(deltaX, deltaY);
+        float angle = BulbModePresenter.getAngle(deltaX, deltaY);
         boolean isPointWithinRGBCircle = isPointWithinRGBCircle(coordX, coordY, circleTargetRadius, circleRadius);
 
         if (((action == Events.ACTION_DOWN) && isPointWithinRGBCircle) || (mIsInRGBCircle && (action == Events.ACTION_MOVE))) {
@@ -26,7 +23,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
 
             this.setColorByAngle(angle);
 
-            float[] targetCoords = getPointsForRGBTarget(deltaX, deltaY, circleTargetRadius, circleRadius);
+            float[] targetCoords = BulbModePresenter.getPointsForRGBTarget(deltaX, deltaY, circleTargetRadius, circleRadius);
             modeView.setColorCircleTargetCoords(targetCoords[0], targetCoords[1]);
         }
 
@@ -48,7 +45,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     public void onTouchPowerButton() {
         bulbInfo.setCurrentBulbGroupPowerOn(!bulbInfo.isCurrentBulbGroupOn());
         sendPowerCommand(bulbInfo.isCurrentBulbGroupOn());
-        modeView.showBulbGroupStateMessage(bulbInfo.getCurrentBulbGroupName(), bulbInfo.isCurrentBulbGroupOn(), bulbInfo.getCurrentBulbGroup() == IBulbInfo.ALL_GROUP);
+        modeView.showBulbGroupStateMessage(bulbInfo.getCurrentBulbGroupName(), bulbInfo.isCurrentBulbGroupOn(), bulbInfo.getCurrentBulbGroup() == IBulbInfo.GroupID.ALL_GROUP);
     }
 
     @Override
@@ -60,14 +57,14 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
     public void onTouchBrightnessArc(float coordX, float coordY, float arcTargetRadius, float arcRadius, @Events int action) {
         float deltaX = coordX - arcRadius;
         float deltaY = coordY - arcRadius;
-        float angle = getAngle(deltaX, deltaY);
-        boolean isPointWithinArc = isPointWithinArc(deltaX, deltaY, arcTargetRadius, arcRadius);
+        float angle = BulbModePresenter.getAngle(deltaX, deltaY);
+        boolean isPointWithinArc = BulbModePresenter.isPointWithinArc(deltaX, deltaY, arcTargetRadius, arcRadius);
 
         mBrightnessArcInfo.updateBrightnessArcInfo(action, deltaX, deltaY);
 
-        if (((action == Events.ACTION_DOWN) && isPointWithinArc) || (action == Events.ACTION_MOVE && !mBrightnessArcInfo.isProhibition && mBrightnessArcInfo.isWithinArc)) {
-            mBrightnessArcInfo.isWithinArc = true;
-            if (checkAngleOutOfRange(angle)) {
+        if (((action == Events.ACTION_DOWN) && isPointWithinArc) || (action == Events.ACTION_MOVE && !mBrightnessArcInfo.isProhibition() && mBrightnessArcInfo.isWithinArc())) {
+            mBrightnessArcInfo.setWithinArc();
+            if (BulbModePresenter.checkAngleOutOfRange(angle)) {
                 if (angle < 142f && angle > 90) {
                     angle = 142f;
                 } else {
@@ -76,7 +73,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
             }
             float[] targetCoords = getCoordsForBrightnessTarget(angle, arcTargetRadius, arcRadius);
             modeView.setBrightnessArcTargetCoords(targetCoords[0], targetCoords[1]);
-            angle = getReformedAngle(angle);
+            angle = BulbModePresenter.getReformedAngle(angle);
             this.setBrightnessByAngle(angle);
             modeView.drawBrightnessArcBackground(angle);
         }
@@ -96,16 +93,6 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
         float index = 1.40625f;
         int color = (int) (angle / index);
         sendColorCommand(color);
-    }
-
-    private float getReformedAngle(float angle) {
-        float reformedAngle = 0;
-        if (angle >= 142f && angle <= 360) {
-            reformedAngle = angle - 142f;
-        } else if (angle >= 0 && angle <= 38f) {
-            reformedAngle = angle + 218f;
-        }
-        return reformedAngle;
     }
 
     private float[] getCoordsForBrightnessTarget(float angle, float arcTargetRadius, float arcRadius) {
@@ -159,7 +146,7 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
         return new float[]{x, y};
     }
 
-    private float[] getPointsForRGBTarget(float deltaX, float deltaY, float circleTargetRadius, float circleRadius) {
+    private static float[] getPointsForRGBTarget(float deltaX, float deltaY, float circleTargetRadius, float circleRadius) {
         double hypotenuse = Math.hypot(deltaX, deltaY);
         double cosine = deltaX / hypotenuse;
         double sine = deltaY / hypotenuse;
@@ -168,18 +155,18 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
         return new float[]{x, y};
     }
 
-    private boolean checkAngleOutOfRange(float angle) {
+    private static boolean checkAngleOutOfRange(float angle) {
         return angle >= 38f && angle <= 142f;
     }
 
-    private boolean isPointWithinArc(float deltaX, float deltaY, float arcTargetRadius, float arcRadius) {
+    private static boolean isPointWithinArc(float deltaX, float deltaY, float arcTargetRadius, float arcRadius) {
         boolean inner = deltaX * deltaX + deltaY * deltaY >= (arcRadius - arcTargetRadius * 2) * (arcRadius - arcTargetRadius * 2);
         boolean outer = deltaX * deltaX + deltaY * deltaY <= arcRadius * arcRadius;
         boolean outsideArc = deltaX > -120 && deltaY > 119 && deltaX < 120;
         return inner && outer && !outsideArc;
     }
 
-    private float getAngle(float x, float y) {
+    private static float getAngle(float x, float y) {
         float deg = 0;
         if (x != 0) deg = y / x;
         deg = (float) Math.toDegrees(Math.atan(deg));
@@ -188,64 +175,13 @@ public class BulbModePresenter extends ModeBasePresenter<IBulbModeView> implemen
         return deg;
     }
 
-    @IntDef({Quarter.LEFT_TOP, Quarter.LEFT_BOTTOM, Quarter.RIGHT_TOP, Quarter.RIGHT_BOTTOM})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface Quarter {
-        int LEFT_TOP = 1;
-        int LEFT_BOTTOM = 2;
-        int RIGHT_TOP = 3;
-        int RIGHT_BOTTOM = 4;
-    }
-
-    private static final class BrightnessArcInfo {
-        private boolean isWithinArc;
-        private boolean isProhibition;
-        @Quarter
-        private Integer prevQuarter;
-        @Quarter
-        private Integer curQuarter;
-
-        @Quarter
-        private int getQuarter(float x, float y) {
-            if (x >= 0 && y >= 0) return Quarter.RIGHT_BOTTOM;
-            else if (x >= 0 && y < 0) return Quarter.RIGHT_TOP;
-            else if (x < 0 && y >= 0) return Quarter.LEFT_BOTTOM;
-            else return Quarter.LEFT_TOP;
+    private static float getReformedAngle(float angle) {
+        float reformedAngle = 0;
+        if (angle >= 142f && angle <= 360) {
+            reformedAngle = angle - 142f;
+        } else if (angle >= 0 && angle <= 38f) {
+            reformedAngle = angle + 218f;
         }
-
-        private void clearInfo() {
-            isWithinArc = false;
-            isProhibition = false;
-            prevQuarter = null;
-            curQuarter = null;
-        }
-
-        private void updateBrightnessArcInfo(@Events int eventAction, float deltaX, float deltaY) {
-            if (eventAction == Events.ACTION_DOWN) {
-                this.prevQuarter = this.getQuarter(deltaX, deltaY);
-                this.isProhibition = false;
-            }
-            if (eventAction == Events.ACTION_MOVE) {
-                this.curQuarter = this.getQuarter(deltaX, deltaY);
-                if (this.prevQuarter != null) {
-                    @Quarter int preQ = this.prevQuarter;
-                    @Quarter int curQ = this.curQuarter;
-                    if (this.isProhibition) {
-                        if ((preQ == Quarter.LEFT_BOTTOM && curQ != Quarter.RIGHT_BOTTOM)
-                                || (preQ == Quarter.RIGHT_BOTTOM && curQ != Quarter.LEFT_BOTTOM)) {
-                            this.isProhibition = false;
-                        }
-                    } else {
-                        if ((preQ == Quarter.LEFT_BOTTOM && curQ == Quarter.RIGHT_BOTTOM)
-                                || (preQ == Quarter.RIGHT_BOTTOM && curQ == Quarter.LEFT_BOTTOM)) {
-                            this.isProhibition = true;
-                        }
-                    }
-                    if (!this.isProhibition && curQ != preQ) {
-                        this.prevQuarter = curQ;
-                    }
-                }
-            }
-        }
+        return reformedAngle;
     }
 }

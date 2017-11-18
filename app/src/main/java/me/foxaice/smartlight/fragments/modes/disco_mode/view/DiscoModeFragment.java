@@ -1,15 +1,7 @@
 package me.foxaice.smartlight.fragments.modes.disco_mode.view;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,7 +27,7 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     private ImageView mSpeedDownIconImage;
     private ImageView mNextModeTextImage;
     private ImageView mNextModeIconImage;
-    private Handler mVinylDrawerHandler = new VinylDrawHandler(this);
+    private ViewHandler mViewHandler = new ViewHandler(this);
     private IDiscoModePresenter mDiscoModePresenter = new DiscoModePresenter();
     private Animation[] mAnimationsOfVinylImage;
 
@@ -58,7 +50,7 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
     @Override
     public void onStop() {
         super.onStop();
-        mVinylDrawerHandler.removeCallbacksAndMessages(null);
+        mViewHandler.removeAllCallbacksAndMessages();
         mDiscoModePresenter.stopExecutorService();
         mDiscoModePresenter.detachView();
     }
@@ -106,12 +98,12 @@ public class DiscoModeFragment extends ModeBaseView implements IDiscoModeView {
         mAnimationsOfVinylImage[1].setAnimationListener(new AnimationListenerAdapter() {
             @Override
             public void onAnimationStart(Animation animation) {
-                mVinylDrawerHandler.sendEmptyMessage(VinylDrawHandler.START_DRAWING);
+                mViewHandler.sendStartDrawingMessage();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mVinylDrawerHandler.sendEmptyMessage(VinylDrawHandler.STOP_DRAWING);
+                mViewHandler.sendStopDrawingMessage();
             }
         });
     }

@@ -1,5 +1,6 @@
 package me.foxaice.smartlight.fragments.modes.bulb_mode.view;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -206,6 +207,7 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
         });
 
         mBrightnessArcImage.setOnTouchListener(new BulbModeBaseOnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 @IBulbModePresenter.Events int action;
@@ -222,7 +224,7 @@ public class BulbModeFragment extends ModeBaseView implements IBulbModeView {
         });
     }
 
-    private abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {
+    private static abstract class BulbModeBaseOnTouchListener implements View.OnTouchListener {
         int getAction(MotionEvent e) throws IllegalArgumentException {
             int action = e.getAction();
             if (MotionEvent.ACTION_UP == action) {

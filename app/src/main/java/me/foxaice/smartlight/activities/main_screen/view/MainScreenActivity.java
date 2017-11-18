@@ -6,12 +6,8 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,10 +31,12 @@ import java.util.List;
 import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.activities.main_screen.presenter.IMainScreenPresenter;
 import me.foxaice.smartlight.activities.main_screen.presenter.MainScreenPresenter;
+import me.foxaice.smartlight.fragments.modes.ModeFragmentManager;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.view.BulbModeFragment;
 import me.foxaice.smartlight.fragments.modes.disco_mode.view.DiscoModeFragment;
 import me.foxaice.smartlight.fragments.modes.music_mode.view.MusicModeFragment;
 import me.foxaice.smartlight.fragments.settings.view.SettingsFragment;
+import me.foxaice.smartlight.utils.ViewUtils;
 
 public class MainScreenActivity extends AppCompatActivity implements IMainScreenView {
 
@@ -60,7 +58,6 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
     private View mModeContent;
     private View mSettingsContent;
     private boolean mIsSettingsOpen = false;
-    private SettingsFragment mSettingsFragment;
     private SettingsImageAnimation mSettingsImageAnimation;
     private ImageView mSettingsImage;
     private ListView mDrawerListView;
@@ -73,23 +70,24 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
         mPresenter.attach(this);
-
-        if (savedInstanceState != null) {
-            mPresenter.setCurrentBulbGroup(savedInstanceState.getInt(KEY_BULB_GROUP));
-            mIsSettingsOpen = savedInstanceState.getBoolean(KEY_IS_SETTINGS_OPEN);
-            mSettingsFragment = (SettingsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_screen_fragment_settings);
-            if (mSettingsFragment != null) {
-                mSettingsImageAnimation = new SettingsImageAnimation(
-                        AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_in),
-                        AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_out)
-                );
-            }
-        }
-
+        loadFromSavedInstanceState(savedInstanceState);
         initViews();
         initToolbarAndDrawer();
+        loadSettingsImageAnimations();
         setClickAndTouchListeners();
         setDefaultFragment();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateZoneNames();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPresenter.saveCurrentModeTagToSettings();
     }
 
     @Override
@@ -100,29 +98,15 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mZoneNamesList.clear();
-        mZoneNamesList.addAll(Arrays.asList(getGroupNamesFromSettings()));
-        mDrawerListAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mPresenter.saveCurrentModeTagToSettings();
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -138,13 +122,41 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
     }
 
     @Override
-    public Context getContext() {
-        return this;
+    public void updateNavigationDrawerData(String[] data) {
+        mDrawerListAdapter.clear();
+        for (String item : data) {
+            mDrawerListAdapter.add(item);
+        }
+        mDrawerListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public String getCurrentFragmentTag() {
-        return getSupportFragmentManager().findFragmentById(mModeContent.getId()).getTag();
+    public void hideSettingsFragment() {
+        mIsSettingsOpen = false;
+        SettingsFragment.detachFragment(this);
+        mSettingsImage.startAnimation(mSettingsImageAnimation.animOut);
+    }
+
+    @Override
+    public void showSettingsFragment() {
+        mIsSettingsOpen = true;
+        SettingsFragment.attachFragment(this, mSettingsContent.getId());
+        mSettingsImage.startAnimation(mSettingsImageAnimation.animIn);
+    }
+
+    @Override
+    public void showBulbModeFragment() {
+        showFragmentByTag(BulbModeFragment.TAG);
+    }
+
+    @Override
+    public void showMusicModeFragment() {
+        showFragmentByTag(MusicModeFragment.TAG);
+    }
+
+    @Override
+    public void showDiscoModeFragment() {
+        showFragmentByTag(DiscoModeFragment.TAG);
     }
 
     @Override
@@ -174,63 +186,25 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
     }
 
     @Override
-    public void showBulbModeFragment() {
-        showFragmentByTag(BulbModeFragment.TAG);
+    public String getCurrentFragmentTag() {
+        return ModeFragmentManager.getFragmentTag(this, mModeContent.getId());
     }
 
     @Override
-    public void showMusicModeFragment() {
-        showFragmentByTag(MusicModeFragment.TAG);
-    }
-
-    @Override
-    public void showDiscoModeFragment() {
-        showFragmentByTag(DiscoModeFragment.TAG);
-    }
-
-    @Override
-    public void showSettingsFragment() {
-        mIsSettingsOpen = true;
-        if (mSettingsFragment == null) {
-            mSettingsFragment = new SettingsFragment();
-            mSettingsImageAnimation = new SettingsImageAnimation(
-                    AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_in),
-                    AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_out)
-            );
-            beginSettingsFragmentTransaction()
-                    .add(mSettingsContent.getId(), mSettingsFragment)
-                    .commit();
-        } else {
-            beginSettingsFragmentTransaction()
-                    .attach(mSettingsFragment)
-                    .commit();
-        }
-        mSettingsImage.startAnimation(mSettingsImageAnimation.animIn);
-    }
-
-    @Override
-    public void hideSettingsFragment() {
-        mIsSettingsOpen = false;
-        if (mSettingsFragment != null) {
-            beginSettingsFragmentTransaction()
-                    .detach(mSettingsFragment)
-                    .commit();
-            mSettingsImage.startAnimation(mSettingsImageAnimation.animOut);
-        }
-    }
-
-    @Override
-    public void updateNavigationDrawerData(String[] data) {
-        mDrawerListAdapter.clear();
-        for (String item : data) {
-            mDrawerListAdapter.add(item);
-        }
-        mDrawerListAdapter.notifyDataSetChanged();
+    public Context getContext() {
+        return this;
     }
 
     void setModeFragmentByTag(String tag) {
         detachPreviousModeFragment();
         setNewModeFragmentByTag(tag);
+    }
+
+    private void loadFromSavedInstanceState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mPresenter.setCurrentBulbGroup(savedInstanceState.getInt(KEY_BULB_GROUP));
+            mIsSettingsOpen = savedInstanceState.getBoolean(KEY_IS_SETTINGS_OPEN);
+        }
     }
 
     private void initViews() {
@@ -264,12 +238,22 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
         mDrawer.addDrawerListener(mDrawerToggle);
     }
 
+    private void loadSettingsImageAnimations() {
+        if (mSettingsImageAnimation == null) {
+            mSettingsImageAnimation = new SettingsImageAnimation(
+                    AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_in),
+                    AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_rotate_out)
+            );
+        }
+    }
+
     private void setClickAndTouchListeners() {
-        mSettingsImage.setOnTouchListener(new View.OnTouchListener() {
+        //Upcasting is needed here because AndroidLint went  crazy
+        ((View) mSettingsImage).setOnTouchListener(new View.OnTouchListener() {
             private ImageView backgroundImage = (ImageView) findViewById(R.id.partial_toolbar_image_settings_background);
 
-            @Override
             @SuppressLint("ClickableViewAccessibility")
+            @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     backgroundImage.setPressed(false);
@@ -308,55 +292,47 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
         }
         switch (currentFragmentTag) {
             case MusicModeFragment.TAG: {
-                setDrawable(mMusicModeButton, R.drawable.button_mode_music_disabled);
+                ViewUtils.setImageDrawable(mMusicModeButton, R.drawable.button_mode_music_disabled);
                 mMusicModeButton.setEnabled(false);
                 setModeFragmentByTag(MusicModeFragment.TAG);
                 break;
             }
             case DiscoModeFragment.TAG: {
-                setDrawable(mDiscoModeButton, R.drawable.button_mode_disco_disabled);
+                ViewUtils.setImageDrawable(mDiscoModeButton, R.drawable.button_mode_disco_disabled);
                 mDiscoModeButton.setEnabled(false);
                 setModeFragmentByTag(DiscoModeFragment.TAG);
                 break;
             }
             default: {
-                setDrawable(mBulbModeButton, R.drawable.button_mode_bulb_disabled);
+                ViewUtils.setImageDrawable(mBulbModeButton, R.drawable.button_mode_bulb_disabled);
                 mBulbModeButton.setEnabled(false);
                 setModeFragmentByTag(BulbModeFragment.TAG);
             }
         }
     }
 
-    private void setDrawable(View view, @DrawableRes int id) {
-        ((ImageView) view).setImageDrawable(ContextCompat.getDrawable(view.getContext(), id));
+    private void updateZoneNames() {
+        mZoneNamesList.clear();
+        mZoneNamesList.addAll(Arrays.asList(getGroupNamesFromSettings()));
+        mDrawerListAdapter.notifyDataSetChanged();
     }
 
-    @SuppressLint("CommitTransaction")
-    private FragmentTransaction beginSettingsFragmentTransaction() {
-        return getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+    private String[] getGroupNamesFromSettings() {
+        String[] groupNamesFromResources = getResources().getStringArray(R.array.zone_names);
+        return mPresenter.getZonesNamesFromSettings(groupNamesFromResources);
     }
 
-    private Bundle formArgumentBundleWithBulbInfo() {
-        String key = mPresenter.getBulbInfoKey();
-        Object data = mPresenter.getBulbInfoObject();
-        Bundle bundle = new Bundle();
-        if (data instanceof Parcelable) {
-            bundle.putParcelable(key, (Parcelable) data);
-        } else {
-            throw new IllegalArgumentException("data IS NOT instanceof Parcelable");
-        }
-        return bundle;
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(mContentView, message, Snackbar.LENGTH_SHORT).show();
     }
 
     private void showFragmentByTag(String tag) {
-        String preFragmentTag = getSupportFragmentManager().findFragmentById(mModeContent.getId()).getTag();
+        String preFragmentTag = ModeFragmentManager.getFragmentTag(this, mModeContent.getId());
         View preView = getViewButtonByFragmentTag(preFragmentTag);
         View postView = getViewButtonByFragmentTag(tag);
-        View otherView = (mBulbModeButton != preView && mBulbModeButton != postView)
-                ? mBulbModeButton
-                : (mMusicModeButton != preView && mMusicModeButton != postView)
-                ? mMusicModeButton
-                : mDiscoModeButton;
+        View otherView = (mBulbModeButton != preView && mBulbModeButton != postView) ?
+                mBulbModeButton : (mMusicModeButton != preView && mMusicModeButton != postView) ?
+                mMusicModeButton : mDiscoModeButton;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             new ButtonsAnimation.PostLollipop(this, mWaveBackground, mContentView, mModeContent, mSettingsContent, postView, preView, otherView).startAnimation();
         } else {
@@ -371,40 +347,31 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
     }
 
     private void detachPreviousModeFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(mModeContent.getId());
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .detach(fragment)
-                    .commit();
-        }
+        ModeFragmentManager.detachFragmentById(this, mModeContent.getId());
     }
 
     private void setNewModeFragmentByTag(String tag) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if (fragment == null) {
-            fragment = tag.equals(BulbModeFragment.TAG) ?
-                    new BulbModeFragment() : tag.equals(MusicModeFragment.TAG) ?
-                    new MusicModeFragment() : tag.equals(DiscoModeFragment.TAG) ?
-                    new DiscoModeFragment() : null;
-            if (fragment == null) {
-                throw new IllegalArgumentException("The TAG is NOT found!!!");
-            }
-            fragment.setArguments(formArgumentBundleWithBulbInfo());
-            getSupportFragmentManager().beginTransaction().add(mModeContent.getId(), fragment, tag).commit();
+        Bundle args = formArgumentBundleWithBulbInfo();
+        ModeFragmentManager.attachFragment(this, mModeContent.getId(), tag, args);
+    }
+
+    private Bundle formArgumentBundleWithBulbInfo() {
+        String key = mPresenter.getBulbInfoKey();
+        Object data = mPresenter.getBulbInfoObject();
+        Bundle bundle = new Bundle();
+        if (data instanceof Parcelable) {
+            bundle.putParcelable(key, (Parcelable) data);
         } else {
-            fragment.setArguments(formArgumentBundleWithBulbInfo());
-            getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+            throw new IllegalArgumentException("data IS NOT instanceof Parcelable");
         }
+        return bundle;
     }
 
-    private void showSnackbarMessage(String message) {
-        Snackbar.make(mContentView, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    private String[] getGroupNamesFromSettings() {
-        String[] groupNamesFromResources = getResources().getStringArray(R.array.zone_names);
-        return mPresenter.getZonesNamesFromSettings(groupNamesFromResources);
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mPresenter.onDrawerItemClick(position, ((TextView) view).getText().toString());
+        }
     }
 
     private static class SettingsImageAnimation {
@@ -414,13 +381,6 @@ public class MainScreenActivity extends AppCompatActivity implements IMainScreen
         private SettingsImageAnimation(Animation animIn, Animation animOut) {
             this.animIn = animIn;
             this.animOut = animOut;
-        }
-    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mPresenter.onDrawerItemClick(position, ((TextView) view).getText().toString());
         }
     }
 }

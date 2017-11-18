@@ -35,22 +35,29 @@ public class RenamingZonesScreenActivity extends AppCompatActivity implements IR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_renaming_zones_screen);
         mPresenter.attach(this);
+        initHeader();
+        initBackArrow();
+        initListView();
+    }
+
+    private void initHeader() {
+        ((TextView) findViewById(R.id.toolbar_settings_text_header_settings)).setText(R.string.redefinition_zones);
+    }
+
+    private void initBackArrow() {
+        findViewById(R.id.toolbar_settings_image_back_arrow)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
+    }
+
+    private void initListView() {
         mNamesOfZones = mPresenter.getZonesNames();
         mAdapter = new RenamingZonesListAdapter(this, mNamesOfZones);
-
-        TextView header = (TextView) findViewById(R.id.toolbar_settings_text_header_settings);
-        ImageView backArrow = (ImageView) findViewById(R.id.toolbar_settings_image_back_arrow);
         ListView listView = (ListView) findViewById(R.id.activity_redefinition_zones_screen_list_of_zone_connection);
-
-        header.setText(R.string.redefinition_zones);
-
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new ItemClickListener());
     }

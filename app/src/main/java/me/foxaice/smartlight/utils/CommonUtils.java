@@ -1,8 +1,7 @@
 package me.foxaice.smartlight.utils;
 
 final class CommonUtils {
-    private CommonUtils() {
-    }
+    private CommonUtils() {}
 
     static int nextPowOf2(int value) {
         if (isPowOf2(value)) {

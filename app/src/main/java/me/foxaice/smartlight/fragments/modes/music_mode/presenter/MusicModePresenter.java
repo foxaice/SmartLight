@@ -3,7 +3,6 @@ package me.foxaice.smartlight.fragments.modes.music_mode.presenter;
 import me.foxaice.smartlight.fragments.modes.ModeBasePresenter;
 import me.foxaice.smartlight.fragments.modes.music_mode.model.IMusicInfo;
 import me.foxaice.smartlight.fragments.modes.music_mode.view.IMusicModeView;
-import me.foxaice.smartlight.utils.FrequencyCalculator;
 
 public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implements IMusicModePresenter {
     private RecordThread mAudioRecord;
@@ -51,9 +50,9 @@ public class MusicModePresenter extends ModeBasePresenter<IMusicModeView> implem
     void updateView(int color, int frequency, double dbSPL, double max, double[] data) {
         if (dbSPL > musicInfo.getMinVolumeThreshold()) {
             modeView.drawWaveFormView(data, mBytesColors[color], max, musicInfo.getSoundViewType());
-            modeView.setFrequencyText(frequency);
+            modeView.sendFrequencyTextMessage(frequency);
         }
-        modeView.setCurrentVolumeText(dbSPL);
+        modeView.sendCurrentVolumeTextMessage(dbSPL);
     }
 
     private void turnOnBulbGroup() {

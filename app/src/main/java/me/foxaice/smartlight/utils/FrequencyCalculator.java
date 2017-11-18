@@ -11,8 +11,26 @@ public class FrequencyCalculator {
         mSampleRate = sampleRate;
     }
 
+    private static double[] applyHannWindow(short[] pcm) {
+        double[] res = new double[pcm.length];
+        for (int i = 0; i < pcm.length; i++) {
+            double window = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (pcm.length - 1)));
+            res[i] = pcm[i] * window;
+        }
+        return res;
+    }
+
+    private static double[] applyHammingWindow(short[] pcm) {
+        double[] res = new double[pcm.length];
+        for (int i = 0; i < pcm.length; i++) {
+            double window = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (pcm.length - 1));
+            res[i] = pcm[i] * window;
+        }
+        return res;
+    }
+
     public void calculateFrequencies(short[] pcm) {
-        mPCMArray = applyHammingWindow(pcm);
+        mPCMArray = FrequencyCalculator.applyHammingWindow(pcm);
         double[] fftData = FFT.getFFTArray(mPCMArray);
         double[] magnitudes = new double[fftData.length >> 1];
 
@@ -35,10 +53,6 @@ public class FrequencyCalculator {
         mDominantFrequency = maxMagnitudeIndex * mSampleRate / magnitudes.length;
     }
 
-    public double[] getArrayOfPCM() {
-        return mPCMArray;
-    }
-
     public double getDominantFrequency() {
         return mDominantFrequency;
     }
@@ -51,21 +65,7 @@ public class FrequencyCalculator {
         return mFrequenciesMagnitudes;
     }
 
-    private double[] applyHannWindow(short[] pcm) {
-        double[] res = new double[pcm.length];
-        for (int i = 0; i < pcm.length; i++) {
-            double window = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (pcm.length - 1)));
-            res[i] = pcm[i] * window;
-        }
-        return res;
-    }
-
-    private double[] applyHammingWindow(short[] pcm) {
-        double[] res = new double[pcm.length];
-        for (int i = 0; i < pcm.length; i++) {
-            double window = 0.54 - 0.46 * Math.cos((2 * Math.PI * i) / (pcm.length - 1));
-            res[i] = pcm[i] * window;
-        }
-        return res;
+    public double[] getArrayOfPCM() {
+        return mPCMArray;
     }
 }

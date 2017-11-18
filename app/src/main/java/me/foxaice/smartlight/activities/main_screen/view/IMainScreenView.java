@@ -4,8 +4,8 @@ import android.content.Context;
 
 public interface IMainScreenView {
     void updateNavigationDrawerData(String[] data);
-    void showSettingsFragment();
     void hideSettingsFragment();
+    void showSettingsFragment();
     void showBulbModeFragment();
     void showMusicModeFragment();
     void showDiscoModeFragment();

@@ -8,14 +8,14 @@ import java.lang.ref.WeakReference;
 import me.foxaice.smartlight.R;
 
 class ViewHandler extends Handler {
-    static final int START_SEARCH = 0x0001;
-    static final int STOP_SEARCH = 0x0002;
-    static final int UPDATE_LIST_VIEW = 0x0003;
-    private static final int DELAY = 1000;
-    private static final int MAX_MILLISECONDS_FOR_IDLE = 5000;
-    private static final int MAX_MILLISECONDS_FOR_SEARCHING = 10000;
+    private static final int START_SEARCH = 0x0001;
+    private static final int STOP_SEARCH = 0x0002;
+    private static final int UPDATE_LIST_VIEW = 0x0003;
     private static final int WORKING_SEARCH = 0x0004;
     private static final int IDLE_SEARCH = 0x0005;
+    private static final int MAX_MILLISECONDS_FOR_IDLE = 5000;
+    private static final int MAX_MILLISECONDS_FOR_SEARCHING = 10000;
+    private static final int DELAY = 1000;
     private final WeakReference<ControllerListFragment> wrFragment;
     private boolean isSearching;
     private ControllerListFragment mFragment;
@@ -42,9 +42,21 @@ class ViewHandler extends Handler {
         }
     }
 
+    void sendStartSearchMessage() {
+        sendEmptyMessage(START_SEARCH);
+    }
+
+    void sendStopSearchMessage() {
+        sendEmptyMessage(STOP_SEARCH);
+    }
+
+    void sendUpdateListViewMessage(String item) {
+        sendMessage(obtainMessage(UPDATE_LIST_VIEW, item));
+    }
+
     void removeAllCallbacksAndMessages() {
         mFragment = wrFragment.get();
-        if (mFragment != null) mFragment.getPresenter().stopSearch();
+        if (mFragment != null) mFragment.stopSearch();
         this.removeCallbacksAndMessages(null);
     }
 
@@ -66,7 +78,7 @@ class ViewHandler extends Handler {
             isSearching = true;
             this.removeMessages(IDLE_SEARCH);
             mFragment.showWifiIsConnected();
-            mFragment.getPresenter().startSearch();
+            mFragment.startSearch();
             this.sendMessageDelayed(this.obtainMessage(WORKING_SEARCH, 0, DELAY), DELAY);
         }
     }
@@ -76,7 +88,7 @@ class ViewHandler extends Handler {
             isSearching = false;
             this.removeMessages(WORKING_SEARCH);
             mFragment.stopSwipeRefresh();
-            mFragment.getPresenter().stopSearch();
+            mFragment.stopSearch();
             if (mFragment.isControllersListEmpty()) {
                 mFragment.showNoFindingControllersContent();
                 this.sendMessage(this.obtainMessage(IDLE_SEARCH, 0, DELAY));

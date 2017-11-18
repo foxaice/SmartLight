@@ -97,4 +97,9 @@ public class BrightnessArcView extends android.support.v7.widget.AppCompatImageV
 
         return bitmap;
     }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
 }

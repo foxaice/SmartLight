@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifilist;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.wifi_list;
 
 class WifiPoint {
     private String mChannel;

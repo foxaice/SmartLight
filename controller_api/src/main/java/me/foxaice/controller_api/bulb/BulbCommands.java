@@ -5,8 +5,7 @@ package me.foxaice.controller_api.bulb;
  */
 public final class BulbCommands {
 
-    private BulbCommands() {
-    }
+    private BulbCommands() {}
 
     /**
      * This method forms array of bytes to be sent the command for set brightness level to LimitlessLedWiFiBridge

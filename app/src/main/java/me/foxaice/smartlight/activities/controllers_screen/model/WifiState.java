@@ -5,8 +5,9 @@ public class WifiState implements IWifiState {
     private boolean mIsWifiConnected;
 
     @Override
-    public boolean isWifiEnabled() {
-        return mIsWifiEnabled;
+    public void updateWifiState(boolean isEnabled, boolean isConnected) {
+        mIsWifiEnabled = isEnabled;
+        mIsWifiConnected = isConnected;
     }
 
     @Override
@@ -18,18 +19,17 @@ public class WifiState implements IWifiState {
     }
 
     @Override
-    public boolean isWifiConnected() {
-        return mIsWifiConnected;
-    }
-
-    @Override
     public void setWifiConnected(boolean isConnected) {
         mIsWifiConnected = isConnected;
     }
 
     @Override
-    public void updateWifiState(boolean isEnabled, boolean isConnected) {
-        mIsWifiEnabled = isEnabled;
-        mIsWifiConnected = isConnected;
+    public boolean isWifiEnabled() {
+        return mIsWifiEnabled;
+    }
+
+    @Override
+    public boolean isWifiConnected() {
+        return mIsWifiConnected;
     }
 }

@@ -1,5 +1,6 @@
 package me.foxaice.smartlight.fragments.controllers_screen.controllers_list.view;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +10,10 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,61 +25,91 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.foxaice.smartlight.R;
-import me.foxaice.smartlight.activities.controllers_screen.view.ControllersScreenActivity;
 import me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.ControllerManagementFragment;
 import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.presenter.ControllerListPresenter;
 import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.presenter.IControllerListPresenter;
+import me.foxaice.smartlight.utils.ViewUtils;
 
 
-public class ControllerListFragment extends Fragment implements IControllerListView {
-    public static final String TAG = "CONTROLLERS_LIST_FRAGMENT";
-
-    private IControllerListPresenter mPresenter = new ControllerListPresenter();
+public class ControllerListFragment extends Fragment implements IControllerListView, AdapterView.OnItemClickListener {
+    private static final String TAG = "CONTROLLERS_LIST_FRAGMENT";
+    private static final String NOTIFY_NETWORK_CHANGE = "NOTIFY_NETWORK_CHANGE";
+    private static final String EXTRA_IS_CONNECTED = "EXTRA_IS_CONNECTED";
+    private static final String EXTRA_IS_WIFI_ENABLED = "EXTRA_IS_WIFI_ENABLED";
     private List<String> mControllersList = new ArrayList<>();
-    private ListView mControllersListView;
     private ControllerListAdapter mControllerListAdapter;
+    private ListView mControllersListView;
     private TextView mBodyText;
     private TextView mIntentSettingsButtonText;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private IControllerListPresenter mPresenter = new ControllerListPresenter();
     private ViewHandler mHandler = new ViewHandler(this);
 
     private BroadcastReceiver mLocalBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean isWifiEnabled = intent.getBooleanExtra(ControllersScreenActivity.EXTRA_IS_WIFI_ENABLED, false);
-            boolean isConnected = intent.getBooleanExtra(ControllersScreenActivity.EXTRA_IS_CONNECTED, false);
+            boolean isWifiEnabled = intent.getBooleanExtra(EXTRA_IS_WIFI_ENABLED, false);
+            boolean isConnected = intent.getBooleanExtra(EXTRA_IS_CONNECTED, false);
             mPresenter.onUpdateWifiState(isWifiEnabled, isConnected);
         }
     };
+
+    public static void attachFragment(AppCompatActivity activity, int containerId, boolean networkIsEnabled, boolean networkIsConnected) {
+        Fragment fragment = ControllerListFragment.findFragment(activity);
+        FragmentTransaction transaction = ControllerListFragment.beginTransaction(activity);
+        if (fragment == null) {
+            fragment = new ControllerListFragment();
+            Bundle args = ControllerListFragment.formNetworkArgs(networkIsEnabled, networkIsConnected);
+            fragment.setArguments(args);
+            transaction.add(containerId, fragment, ControllerListFragment.TAG);
+        } else if (!networkIsConnected && !(ControllerListFragment.isInContainer(activity, containerId))) {
+            transaction.replace(containerId, fragment);
+        }
+        transaction.commit();
+    }
+
+    public static Intent getNetworkChangeIntent(boolean networkIsEnabled, boolean networkIsConnected) {
+        return new Intent(NOTIFY_NETWORK_CHANGE).putExtras(
+                ControllerListFragment.formNetworkArgs(networkIsEnabled, networkIsConnected)
+        );
+    }
+
+    private static Bundle formNetworkArgs(boolean isEnabled, boolean isConnected) {
+        return new Intent()
+                .putExtra(EXTRA_IS_WIFI_ENABLED, isEnabled)
+                .putExtra(EXTRA_IS_CONNECTED, isConnected)
+                .getExtras();
+    }
+
+    private static Fragment findFragment(AppCompatActivity activity) {
+        return activity.getSupportFragmentManager().findFragmentByTag(ControllerListFragment.TAG);
+    }
+
+    private static boolean isInContainer(AppCompatActivity activity, int containerId) {
+        return activity.getSupportFragmentManager()
+                .findFragmentById(containerId) instanceof ControllerListFragment;
+    }
+
+    @SuppressLint("CommitTransaction")
+    private static FragmentTransaction beginTransaction(AppCompatActivity activity) {
+        return activity.getSupportFragmentManager().beginTransaction();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_controllers_list, container, false);
         mPresenter.attach(this);
-
         initViews(view);
         initListView();
         initSwipeRefreshLayout();
-
+        loadArguments(getArguments());
         mIntentSettingsButtonText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
             }
         });
-
-        boolean isWifiEnabled = false;
-        boolean isConnected = false;
-
-        Bundle args = getArguments();
-        if (args != null
-                && args.containsKey(ControllersScreenActivity.EXTRA_IS_WIFI_ENABLED)
-                && args.containsKey(ControllersScreenActivity.EXTRA_IS_CONNECTED)) {
-            isWifiEnabled = args.getBoolean(ControllersScreenActivity.EXTRA_IS_WIFI_ENABLED);
-            isConnected = args.getBoolean(ControllersScreenActivity.EXTRA_IS_CONNECTED);
-        }
-        mPresenter.onUpdateWifiState(isWifiEnabled, isConnected);
         return view;
     }
 
@@ -84,7 +117,7 @@ public class ControllerListFragment extends Fragment implements IControllerListV
     public void onResume() {
         super.onResume();
         mPresenter.attach(this);
-        IntentFilter filter = new IntentFilter(ControllersScreenActivity.NOTIFY_NETWORK_CHANGE);
+        IntentFilter filter = new IntentFilter(NOTIFY_NETWORK_CHANGE);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(mLocalBroadcastReceiver, filter);
     }
 
@@ -98,13 +131,28 @@ public class ControllerListFragment extends Fragment implements IControllerListV
     }
 
     @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (view != null) {
+            ControllerListAdapter.ViewHolder holder = (ControllerListAdapter.ViewHolder) view.getTag();
+            ControllerManagementFragment.attachFragment((AppCompatActivity) getActivity(),
+                    getId(),
+                    holder.nameController,
+                    holder.ipAddress,
+                    holder.macAddress,
+                    holder.macAddressWithColons
+            );
+            mHandler.sendStopSearchMessage();
+        }
+    }
+
+    @Override
     public void sendMessageStartSearch() {
-        mHandler.sendEmptyMessage(ViewHandler.START_SEARCH);
+        mHandler.sendStartSearchMessage();
     }
 
     @Override
     public void sendMessageStopSearch() {
-        mHandler.sendEmptyMessage(ViewHandler.STOP_SEARCH);
+        mHandler.sendStopSearchMessage();
     }
 
     @Override
@@ -122,24 +170,19 @@ public class ControllerListFragment extends Fragment implements IControllerListV
     @Override
     public void addToControllersList(final String controllerResponse) {
         if (!mControllersList.contains(controllerResponse)) {
-            mHandler.sendMessage(mHandler.obtainMessage(ViewHandler.UPDATE_LIST_VIEW, controllerResponse));
+            mHandler.sendUpdateListViewMessage(controllerResponse);
         }
     }
 
     @Override
-    public String getControllerNameByMACAddress(String macAddress) {
-        return mPresenter.getControllerNameByMACAddress(macAddress);
-    }
-
-    @Override
     public void showContent(boolean isEnabled, boolean isConnected) {
-        setVisibility(View.VISIBLE, mIntentSettingsButtonText, mBodyText);
-        setVisibility(View.GONE, mSwipeRefreshLayout, mControllersListView);
+        ViewUtils.setVisibility(View.VISIBLE, mIntentSettingsButtonText, mBodyText);
+        ViewUtils.setVisibility(View.GONE, mSwipeRefreshLayout, mControllersListView);
         mSwipeRefreshLayout.setRefreshing(false);
         if (isEnabled) {
             if (isConnected) {
-                setVisibility(View.GONE, mIntentSettingsButtonText, mBodyText);
-                setVisibility(View.VISIBLE, mSwipeRefreshLayout, mControllersListView);
+                ViewUtils.setVisibility(View.GONE, mIntentSettingsButtonText, mBodyText);
+                ViewUtils.setVisibility(View.VISIBLE, mSwipeRefreshLayout, mControllersListView);
                 mSwipeRefreshLayout.setRefreshing(true);
             } else {
                 mBodyText.setText(R.string.wifi_not_connected);
@@ -152,19 +195,35 @@ public class ControllerListFragment extends Fragment implements IControllerListV
         }
     }
 
+    @Override
+    public String getControllerNameByMACAddress(String macAddress) {
+        return mPresenter.getControllerNameByMACAddress(macAddress);
+    }
+
+    boolean isControllersListEmpty() {
+        return mControllersList.isEmpty();
+    }
+
+    boolean controllersListContains(String item) {
+        return mControllersList.contains(item);
+    }
+
     void showWifiIsConnected() {
         showContent(true, true);
     }
 
-
     void showNoFindingControllersContent() {
-        mBodyText.setText(null);
-        setVisibility(View.VISIBLE, mBodyText, mSwipeRefreshLayout);
-        setVisibility(View.GONE, mControllersListView, mIntentSettingsButtonText);
+        setBodyText(null);
+        ViewUtils.setVisibility(View.VISIBLE, mBodyText, mSwipeRefreshLayout);
+        ViewUtils.setVisibility(View.GONE, mControllersListView, mIntentSettingsButtonText);
     }
 
-    IControllerListPresenter getPresenter() {
-        return mPresenter;
+    void startSearch() {
+        mPresenter.startSearch();
+    }
+
+    void stopSearch() {
+        mPresenter.stopSearch();
     }
 
     void setBodyText(String text) {
@@ -174,14 +233,6 @@ public class ControllerListFragment extends Fragment implements IControllerListV
     void addItemToControllersList(String item) {
         mControllersList.add(item);
         mControllerListAdapter.notifyDataSetChanged();
-    }
-
-    boolean isControllersListEmpty() {
-        return mControllersList.isEmpty();
-    }
-
-    boolean controllersListContains(String item) {
-        return mControllersList.contains(item);
     }
 
     void stopSwipeRefresh() {
@@ -196,29 +247,9 @@ public class ControllerListFragment extends Fragment implements IControllerListV
     }
 
     private void initListView() {
-        mControllerListAdapter = new ControllerListAdapter(this, R.layout.item_controllers_list, mControllersList);
+        mControllerListAdapter = new ControllerListAdapter(this, mControllersList);
         mControllersListView.setAdapter(mControllerListAdapter);
-        mControllersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (view != null) {
-                    ControllerListAdapter.ControllerViewHolder holder = (ControllerListAdapter.ControllerViewHolder) view.getTag();
-                    Fragment fragment = new ControllerManagementFragment();
-                    Bundle args = new Bundle();
-                    args.putString(ControllerManagementFragment.EXTRA_NAME, holder.nameController);
-                    args.putString(ControllerManagementFragment.EXTRA_MAC_WITH_COLONS, holder.macAddressWithColons);
-                    args.putString(ControllerManagementFragment.EXTRA_MAC, holder.macAddress);
-                    args.putString(ControllerManagementFragment.EXTRA_IP, holder.ipAddress);
-                    fragment.setArguments(args);
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_right, R.anim.no_trasition)
-                            .add(R.id.activity_controllers_screen_frame_layout, fragment)
-                            .commit();
-                    mHandler.sendEmptyMessage(ViewHandler.STOP_SEARCH);
-                }
-            }
-        });
+        mControllersListView.setOnItemClickListener(this);
     }
 
     private void initSwipeRefreshLayout() {
@@ -234,9 +265,13 @@ public class ControllerListFragment extends Fragment implements IControllerListV
         });
     }
 
-    private void setVisibility(int visibility, View... views) {
-        for (View item : views) {
-            item.setVisibility(visibility);
+    private void loadArguments(Bundle args) {
+        boolean isWifiEnabled = false;
+        boolean isConnected = false;
+        if (args != null && args.containsKey(EXTRA_IS_WIFI_ENABLED) && args.containsKey(EXTRA_IS_CONNECTED)) {
+            isWifiEnabled = args.getBoolean(EXTRA_IS_WIFI_ENABLED);
+            isConnected = args.getBoolean(EXTRA_IS_CONNECTED);
         }
+        mPresenter.onUpdateWifiState(isWifiEnabled, isConnected);
     }
 }

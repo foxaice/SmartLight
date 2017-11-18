@@ -28,38 +28,19 @@ public class MainScreenPresenter implements IMainScreenPresenter {
     }
 
     @Override
-    public String[] getZonesNamesFromSettings(String[] names) {
-        String[] namesFromSettings = new String[]{
-                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_1),
-                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_2),
-                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_3),
-                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_4)
-        };
-
-        for (int i = 1, j = names.length; i < j; i++) {
-            if (i > namesFromSettings.length) break;
-            if (namesFromSettings[i - 1] != null) {
-                names[i] = namesFromSettings[i - 1];
-            }
-        }
-        mBulbInfo.setBulbNames(names);
-        return names;
-    }
-
-    @Override
-    public String getFragmentTagFromSettings() {
-        if (mSharedPreferences != null) {
-            return mSharedPreferences.getFragmentTag();
-        } else return null;
-    }
-
-    @Override
     public void onTouchUpSettingsButton() {
         if (mView.isSettingsOpen()) {
             mView.hideSettingsFragment();
         } else {
             mView.showSettingsFragment();
         }
+        mView.closeNavigationDrawer();
+    }
+
+    @Override
+    public void onDrawerItemClick(int position, String itemText) {
+        mBulbInfo.setCurrentBulbGroup(position);
+        mView.showMessageOfSelectedGroup(position == 0 ? null : itemText);
         mView.closeNavigationDrawer();
     }
 
@@ -77,20 +58,8 @@ public class MainScreenPresenter implements IMainScreenPresenter {
     }
 
     @Override
-    public void onDrawerItemClick(int position, String itemText) {
-        mBulbInfo.setCurrentBulbGroup(position);
-        mView.showMessageOfSelectedGroup(position == 0 ? null : itemText);
-        mView.closeNavigationDrawer();
-    }
-
-    @Override
     public void saveCurrentModeTagToSettings() {
         mSharedPreferences.setFragmentTag(mView.getCurrentFragmentTag());
-    }
-
-    @Override
-    public int getCurrentBulbGroup() {
-        return mBulbInfo.getCurrentBulbGroup();
     }
 
     @Override
@@ -99,8 +68,39 @@ public class MainScreenPresenter implements IMainScreenPresenter {
     }
 
     @Override
+    public int getCurrentBulbGroup() {
+        return mBulbInfo.getCurrentBulbGroup();
+    }
+
+    @Override
     public String getBulbInfoKey() {
         return IBulbInfo.KEY_BULB_INFO;
+    }
+
+    @Override
+    public String getFragmentTagFromSettings() {
+        if (mSharedPreferences != null) {
+            return mSharedPreferences.getFragmentTag();
+        } else return null;
+    }
+
+    @Override
+    public String[] getZonesNamesFromSettings(String[] names) {
+        String[] namesFromSettings = new String[]{
+                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_1),
+                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_2),
+                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_3),
+                mSharedPreferences.getGroupName(ISharedPreferencesController.NameZone.ZONE_4)
+        };
+
+        for (int i = 1, j = names.length; i < j; i++) {
+            if (i > namesFromSettings.length) break;
+            if (namesFromSettings[i - 1] != null) {
+                names[i] = namesFromSettings[i - 1];
+            }
+        }
+        mBulbInfo.setBulbNames(names);
+        return names;
     }
 
     @Override

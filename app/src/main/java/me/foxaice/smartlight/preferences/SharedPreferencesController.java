@@ -14,14 +14,22 @@ public class SharedPreferencesController implements ISharedPreferencesController
     private static final String SHARED_PREFERENCE_FILE_NAME = "SmartLightSettings";
     private static final String KEY_IP = "IP";
     private static final String KEY_PORT = "PORT";
-    private static final String ADMIN_PORT = "ADMIN_PORT";
-    private static final String DEFAULT_IP_ADDRESS = "255.255.255.255";
-    private static final int DEFAULT_PORT = 8899;
+    private static final String KEY_FRAGMENT_TAG = "TAG";
     private static final String DEFAULT_NAME_DEVICE = "Unnamed Device";
     private static final String DEFAULT_NAME_ZONE = "Zone %s";
-    private static final String KEY_FRAGMENT_TAG = "TAG";
+    private static final String DEFAULT_IP_ADDRESS = "255.255.255.255";
+    private static final int DEFAULT_PORT = 8899;
     private volatile static SharedPreferencesController mInstance;
     private SharedPreferences mSharedPreferences;
+
+    private interface MusicInfoKeys {
+        String COLOR_MODE = "MUSIC_INFO_COLOR_MODE";
+        String VIEW_TYPE = "MUSIC_INFO_VIEW_TYPE";
+        String MAX_FREQUENCY_TYPE = "MUSIC_INFO_MAX_FREQ_TYPE";
+        String MAX_FREQUENCY = "MUSIC_INFO_MAX_FREQ";
+        String MAX_VOLUME = "MUSIC_INFO_MAX_VOL";
+        String MIN_VOLUME = "MUSIC_INFO_MIN_VOL";
+    }
 
     private SharedPreferencesController(Context context) {
         mSharedPreferences = context.getApplicationContext().getSharedPreferences(SHARED_PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
@@ -37,24 +45,6 @@ public class SharedPreferencesController implements ISharedPreferencesController
     }
 
     @Override
-    public String getIpAddress() {
-        if (mSharedPreferences != null) {
-            if (!mSharedPreferences.contains(KEY_IP)) {
-                putValue(KEY_IP, DEFAULT_IP_ADDRESS);
-            }
-            return mSharedPreferences.getString(KEY_IP, DEFAULT_IP_ADDRESS);
-        }
-        return DEFAULT_IP_ADDRESS;
-    }
-
-    @Override
-    public void setIpAddress(String ipAddress) {
-        if (Validator.isIpAddress(ipAddress)) {
-            putValue(KEY_IP, ipAddress);
-        }
-    }
-
-    @Override
     public int getPort() {
         if (mSharedPreferences != null) {
             if (!mSharedPreferences.contains(KEY_PORT)) {
@@ -66,10 +56,14 @@ public class SharedPreferencesController implements ISharedPreferencesController
     }
 
     @Override
-    public void setPort(int port) {
-        if (Validator.isPort(port)) {
-            putValue(KEY_PORT, port);
+    public String getIpAddress() {
+        if (mSharedPreferences != null) {
+            if (!mSharedPreferences.contains(KEY_IP)) {
+                putValue(KEY_IP, DEFAULT_IP_ADDRESS);
+            }
+            return mSharedPreferences.getString(KEY_IP, DEFAULT_IP_ADDRESS);
         }
+        return DEFAULT_IP_ADDRESS;
     }
 
     @Override
@@ -128,21 +122,14 @@ public class SharedPreferencesController implements ISharedPreferencesController
     }
 
     @Override
-    public void setFragmentTag(String tag) {
-        if (tag != null) {
-            putValue(KEY_FRAGMENT_TAG, tag);
-        }
-    }
-
-    @Override
     public IMusicInfo getMusicInfo() {
         if (mSharedPreferences != null) {
-            @IMusicInfo.ColorMode int colorMode = mSharedPreferences.getInt(MusicInfoKey.COLOR_MODE, IMusicInfo.DefaultValues.COLOR_MODE);
-            @IMusicInfo.ViewType int viewType = mSharedPreferences.getInt(MusicInfoKey.VIEW_TYPE, IMusicInfo.DefaultValues.VIEW_TYPE);
-            @IMusicInfo.MaxFrequencyType int maxFrequencyType = mSharedPreferences.getInt(MusicInfoKey.MAX_FREQUENCY_TYPE, IMusicInfo.DefaultValues.MAX_FREQUENCY_TYPE);
-            int maxFrequency = mSharedPreferences.getInt(MusicInfoKey.MAX_FREQUENCY, IMusicInfo.DefaultValues.MAX_FREQUENCY);
-            int maxVolume = mSharedPreferences.getInt(MusicInfoKey.MAX_VOLUME, IMusicInfo.DefaultValues.MAX_VOLUME);
-            int minVolume = mSharedPreferences.getInt(MusicInfoKey.MIN_VOLUME, IMusicInfo.DefaultValues.MIN_VOLUME);
+            @IMusicInfo.ColorMode int colorMode = mSharedPreferences.getInt(MusicInfoKeys.COLOR_MODE, IMusicInfo.DefaultValues.COLOR_MODE);
+            @IMusicInfo.ViewType int viewType = mSharedPreferences.getInt(MusicInfoKeys.VIEW_TYPE, IMusicInfo.DefaultValues.VIEW_TYPE);
+            @IMusicInfo.MaxFrequencyType int maxFrequencyType = mSharedPreferences.getInt(MusicInfoKeys.MAX_FREQUENCY_TYPE, IMusicInfo.DefaultValues.MAX_FREQUENCY_TYPE);
+            int maxFrequency = mSharedPreferences.getInt(MusicInfoKeys.MAX_FREQUENCY, IMusicInfo.DefaultValues.MAX_FREQUENCY);
+            int maxVolume = mSharedPreferences.getInt(MusicInfoKeys.MAX_VOLUME, IMusicInfo.DefaultValues.MAX_VOLUME);
+            int minVolume = mSharedPreferences.getInt(MusicInfoKeys.MIN_VOLUME, IMusicInfo.DefaultValues.MIN_VOLUME);
             return new MusicInfo(colorMode, viewType, maxFrequencyType, maxFrequency, maxVolume, minVolume);
         } else {
             return null;
@@ -150,14 +137,35 @@ public class SharedPreferencesController implements ISharedPreferencesController
     }
 
     @Override
+    public void setPort(int port) {
+        if (Validator.isPort(port)) {
+            putValue(KEY_PORT, port);
+        }
+    }
+
+    @Override
+    public void setIpAddress(String ipAddress) {
+        if (Validator.isIpAddress(ipAddress)) {
+            putValue(KEY_IP, ipAddress);
+        }
+    }
+
+    @Override
+    public void setFragmentTag(String tag) {
+        if (tag != null) {
+            putValue(KEY_FRAGMENT_TAG, tag);
+        }
+    }
+
+    @Override
     public void setMusicInfo(IMusicInfo musicInfo) {
         Map<String, Integer> values = new HashMap<>();
-        values.put(MusicInfoKey.COLOR_MODE, musicInfo.getColorMode());
-        values.put(MusicInfoKey.VIEW_TYPE, musicInfo.getSoundViewType());
-        values.put(MusicInfoKey.MAX_FREQUENCY_TYPE, musicInfo.getMaxFrequencyType());
-        values.put(MusicInfoKey.MAX_FREQUENCY, musicInfo.getMaxFrequency());
-        values.put(MusicInfoKey.MAX_VOLUME, musicInfo.getMaxVolumeThreshold());
-        values.put(MusicInfoKey.MIN_VOLUME, musicInfo.getMinVolumeThreshold());
+        values.put(MusicInfoKeys.COLOR_MODE, musicInfo.getColorMode());
+        values.put(MusicInfoKeys.VIEW_TYPE, musicInfo.getSoundViewType());
+        values.put(MusicInfoKeys.MAX_FREQUENCY_TYPE, musicInfo.getMaxFrequencyType());
+        values.put(MusicInfoKeys.MAX_FREQUENCY, musicInfo.getMaxFrequency());
+        values.put(MusicInfoKeys.MAX_VOLUME, musicInfo.getMaxVolumeThreshold());
+        values.put(MusicInfoKeys.MIN_VOLUME, musicInfo.getMinVolumeThreshold());
         putValues(values);
     }
 
@@ -209,14 +217,4 @@ public class SharedPreferencesController implements ISharedPreferencesController
             editor.apply();
         }
     }
-
-    private interface MusicInfoKey {
-        String COLOR_MODE = "MUSIC_INFO_COLOR_MODE";
-        String VIEW_TYPE = "MUSIC_INFO_VIEW_TYPE";
-        String MAX_FREQUENCY_TYPE = "MUSIC_INFO_MAX_FREQ_TYPE";
-        String MAX_FREQUENCY = "MUSIC_INFO_MAX_FREQ";
-        String MAX_VOLUME = "MUSIC_INFO_MAX_VOL";
-        String MIN_VOLUME = "MUSIC_INFO_MIN_VOL";
-    }
-
 }

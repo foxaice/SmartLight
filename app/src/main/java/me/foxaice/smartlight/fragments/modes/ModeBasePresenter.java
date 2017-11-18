@@ -19,13 +19,13 @@ public abstract class ModeBasePresenter<T extends IModeBaseView> implements IMod
     protected ExecutorService executorService;
     private String mIpAddress;
     private int mPort;
-    private int mCurrentBulbGroupID = BulbInfo.ALL_GROUP;
+    private int mCurrentBulbGroupID;
 
     @Override
     public void attachView(T view) {
         modeView = view;
         bulbInfo = (IBulbInfo) this.modeView.loadParcelable(BulbInfo.KEY_BULB_INFO);
-
+        mCurrentBulbGroupID = bulbInfo.getCurrentBulbGroup();
         if (sharedPreferences == null) {
             sharedPreferences = SharedPreferencesController.getInstance(this.modeView.getContext());
         }

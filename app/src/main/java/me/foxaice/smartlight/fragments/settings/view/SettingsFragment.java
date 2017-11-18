@@ -1,10 +1,15 @@
 package me.foxaice.smartlight.fragments.settings.view;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +20,66 @@ import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.activities.controllers_screen.view.ControllersScreenActivity;
 import me.foxaice.smartlight.activities.redefinition_zones_screen.view.RedefinitionZonesScreenActivity;
 import me.foxaice.smartlight.activities.renaming_zones_screen.view.RenamingZonesScreenActivity;
-import me.foxaice.smartlight.fragments.settings.view.dialogs.ConnectionSettingsDialog;
 import me.foxaice.smartlight.fragments.settings.presenter.ISettingsPresenter;
 import me.foxaice.smartlight.fragments.settings.presenter.SettingsPresenter;
+import me.foxaice.smartlight.fragments.settings.view.dialogs.ConnectionSettingsDialog;
+import me.foxaice.smartlight.utils.TextUtils;
 
 public class SettingsFragment extends Fragment implements ISettingsView {
     public static final String TAG = "SETTING_FRAGMENT";
     private ISettingsPresenter mSettingsPresenter = new SettingsPresenter();
+
+    public static void attachFragment(AppCompatActivity activity, int containerId) {
+        Fragment fragment = findSettingsFragment(activity);
+        FragmentTransaction transaction = beginTransactionWithAnimations(activity);
+        if (fragment == null) {
+            fragment = new SettingsFragment();
+            transaction.add(containerId, fragment, TAG);
+        } else {
+            transaction.attach(fragment);
+        }
+        transaction.commit();
+    }
+
+    public static void detachFragment(AppCompatActivity activity) {
+        Fragment fragment = findSettingsFragment(activity);
+        if (fragment != null) {
+            beginTransactionWithAnimations(activity)
+                    .detach(fragment)
+                    .commit();
+        }
+    }
+
+    private static Fragment findSettingsFragment(AppCompatActivity activity) {
+        return activity.getSupportFragmentManager().findFragmentByTag(TAG);
+    }
+
+    @SuppressLint("CommitTransaction")
+    private static FragmentTransaction beginTransactionWithAnimations(AppCompatActivity activity) {
+        return activity.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private static String[] getItemsNames(Context context) {
+        return TextUtils.getStringArrayFromResources(context,
+                R.string.controllers_settings,
+                R.string.redefinition_zones,
+                R.string.renaming_zones,
+                R.string.setting_ip,
+                R.string.setting_port
+        );
+    }
+
+    private static int[] getItemsDrawableIds() {
+        return new int[]{
+                R.drawable.settings_image_router_wireless,
+                R.drawable.settings_image_bulb,
+                R.drawable.settings_image_pencil,
+                R.drawable.settings_image_ip,
+                R.drawable.settings_image_port
+        };
+    }
 
     @Nullable
     @Override
@@ -72,8 +130,8 @@ public class SettingsFragment extends Fragment implements ISettingsView {
     }
 
     private void initListView(View root) {
-        String[] itemNames = getItemsNames();
-        int[] idIMG = getItemsDrawableIds();
+        String[] itemNames = SettingsFragment.getItemsNames(getContext());
+        int[] idIMG = SettingsFragment.getItemsDrawableIds();
         SettingsListAdapter adapter = new SettingsListAdapter(this.getContext(), itemNames, idIMG);
         ListView listView = (ListView) root.findViewById(R.id.fragment_settings_list_of_settings);
         listView.setAdapter(adapter);
@@ -83,25 +141,5 @@ public class SettingsFragment extends Fragment implements ISettingsView {
                 mSettingsPresenter.onListViewItemClick(position);
             }
         });
-    }
-
-    private String[] getItemsNames() {
-        return new String[]{
-                getResources().getString(R.string.controllers_settings),
-                getResources().getString(R.string.redefinition_zones),
-                getResources().getString(R.string.renaming_zones),
-                getResources().getString(R.string.setting_ip),
-                getResources().getString(R.string.setting_port)
-        };
-    }
-
-    private int[] getItemsDrawableIds() {
-        return new int[]{
-                R.drawable.settings_image_router_wireless,
-                R.drawable.settings_image_bulb,
-                R.drawable.settings_image_pencil,
-                R.drawable.settings_image_ip,
-                R.drawable.settings_image_port
-        };
     }
 }

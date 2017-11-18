@@ -29,7 +29,6 @@ class SettingsListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         SettingsViewHolder holder;
-
         if (convertView == null) {
             holder = new SettingsViewHolder();
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class BulbInfo implements IBulbInfo, Parcelable {
-
     public static final Creator<BulbInfo> CREATOR;
     private static final int BULB_QUANTITY = 5;
     private Bulb mCurrentBulb;
@@ -31,13 +30,13 @@ public class BulbInfo implements IBulbInfo, Parcelable {
 
     public BulbInfo() {
         mBulbsList = new ArrayList<>(Arrays.asList(
-                new Bulb(ALL_GROUP),
-                new Bulb(GROUP_1),
-                new Bulb(GROUP_2),
-                new Bulb(GROUP_3),
-                new Bulb(GROUP_4))
-        );
-        mCurrentBulb = mBulbsList.get(ALL_GROUP);
+                new Bulb(GroupID.ALL_GROUP),
+                new Bulb(GroupID.GROUP_1),
+                new Bulb(GroupID.GROUP_2),
+                new Bulb(GroupID.GROUP_3),
+                new Bulb(GroupID.GROUP_4)
+        ));
+        mCurrentBulb = mBulbsList.get(GroupID.ALL_GROUP);
     }
 
     public BulbInfo(@GroupID int currentGroupBulb, boolean isCurrentOn) {
@@ -46,7 +45,7 @@ public class BulbInfo implements IBulbInfo, Parcelable {
             mCurrentBulb = mBulbsList.get(currentGroupBulb);
             mCurrentBulb.setOn(isCurrentOn);
         } else {
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Must be between 0 and %d inclusive", BULB_QUANTITY - 1));
+            throw new IllegalArgumentException(BulbInfo.getMessageRangeOutQuantityError());
         }
     }
 
@@ -60,6 +59,16 @@ public class BulbInfo implements IBulbInfo, Parcelable {
         }
     }
 
+    private static String getMessageRangeOutQuantityError() {
+        return String.format(Locale.ENGLISH, "Must be between 0 and %d inclusive", BULB_QUANTITY - 1);
+    }
+
+    @Override
+    public void setCurrentBulbGroup(@GroupID int group) {
+        checkGroupNumberIntoRange(group);
+        mCurrentBulb = mBulbsList.get(group);
+    }
+
     @Override
     public void setBulbNames(String[] names) {
         for (int i = 0, j = names.length; i < j; i++) {
@@ -68,27 +77,8 @@ public class BulbInfo implements IBulbInfo, Parcelable {
     }
 
     @Override
-    public String getCurrentBulbGroupName() {
-        return mCurrentBulb.getName();
-    }
-
-    @Override
-    public String[] getBulbGroupNames() {
-        List<String> names = new ArrayList<>(mBulbsList.size());
-        for (Bulb b : mBulbsList) {
-            names.add(b.getName());
-        }
-        return names.toArray(new String[0]);
-    }
-
-    @Override
-    public String getSpecificBulbGroupName(@GroupID int group) {
-        return mBulbsList.get(group).getName();
-    }
-
-    @Override
     public void setCurrentBulbGroupPowerOn(boolean isOn) {
-        if (mCurrentBulb.getID() == ALL_GROUP) {
+        if (mCurrentBulb.getID() == GroupID.ALL_GROUP) {
             for (Bulb bulb : mBulbsList) {
                 bulb.setOn(isOn);
             }
@@ -109,9 +99,22 @@ public class BulbInfo implements IBulbInfo, Parcelable {
     }
 
     @Override
-    public void setCurrentBulbGroup(@GroupID int group) {
-        checkGroupNumberIntoRange(group);
-        mCurrentBulb = mBulbsList.get(group);
+    public String[] getBulbGroupNames() {
+        List<String> names = new ArrayList<>(mBulbsList.size());
+        for (Bulb b : mBulbsList) {
+            names.add(b.getName());
+        }
+        return names.toArray(new String[0]);
+    }
+
+    @Override
+    public String getCurrentBulbGroupName() {
+        return mCurrentBulb.getName();
+    }
+
+    @Override
+    public String getSpecificBulbGroupName(@GroupID int group) {
+        return mBulbsList.get(group).getName();
     }
 
     @Override
@@ -123,12 +126,6 @@ public class BulbInfo implements IBulbInfo, Parcelable {
     public boolean isSpecificBulbGroupOn(@GroupID int group) {
         checkGroupNumberIntoRange(group);
         return mBulbsList.get(group).isOn();
-    }
-
-    private void checkGroupNumberIntoRange(@GroupID int group) {
-        if (group < 0 || group >= BULB_QUANTITY) {
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Must be between 0 and %d inclusive", BULB_QUANTITY - 1));
-        }
     }
 
     @Override
@@ -144,6 +141,12 @@ public class BulbInfo implements IBulbInfo, Parcelable {
         } else {
             dest.writeByte((byte) (0x01));
             dest.writeList(mBulbsList);
+        }
+    }
+
+    private void checkGroupNumberIntoRange(@GroupID int group) {
+        if (group < 0 || group >= BULB_QUANTITY) {
+            throw new IllegalArgumentException(BulbInfo.getMessageRangeOutQuantityError());
         }
     }
 }

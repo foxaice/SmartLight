@@ -42,7 +42,7 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     private static final String KEY_IS_PLAYING = "KEY_IS_PLAYING";
     private static final int REQUEST_CODE = 300;
     private final IMusicModePresenter mMusicModePresenter = new MusicModePresenter();
-    private Handler mHandler;
+    private MusicModeHandler mHandler = new MusicModeHandler(this);
     private ImageView mPlayStopButtonImage;
     private ImageView mSettingsButtonImage;
     private TextView mMaxVolumeText;
@@ -94,7 +94,6 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_music_mode, container, false);
         mMusicModePresenter.attachView(this);
-        mHandler = new MusicModeHandler(this);
         mIsLandscapeOrientation = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         initViews(view);
         setListeners();
@@ -248,13 +247,13 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     }
 
     @Override
-    public void setCurrentVolumeText(double value) {
-        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_VOLUME, value));
+    public void sendCurrentVolumeTextMessage(double value) {
+        mHandler.sendVolumeValueMessage(value);
     }
 
     @Override
-    public void setFrequencyText(int value) {
-        mHandler.sendMessage(Message.obtain(mHandler, MusicModeHandler.SET_FREQUENCY, value));
+    public void sendFrequencyTextMessage(int value) {
+        mHandler.sendFrequencyValueMessage(value);
     }
 
     @Override
@@ -281,6 +280,14 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
     @Override
     public void onChangedControllerSettings() {
         mMusicModePresenter.updateControllerSettings();
+    }
+
+    void setCurrentVolumeText(String text) {
+        mCurrentVolumeText.setText(text);
+    }
+
+    void setCurrentFrequencyText(String text) {
+        mCurrentFrequencyText.setText(text);
     }
 
     private void initViews(View root) {
@@ -371,36 +378,6 @@ public class MusicModeFragment extends ModeBaseView implements IMusicModeView {
                         mPlayStopButtonImage.performClick();
                     }
                 });
-            }
-        }
-    }
-
-    private static class MusicModeHandler extends Handler {
-        private static final int SET_FREQUENCY = 0x0001;
-        private static final int SET_VOLUME = 0x0002;
-        private final WeakReference<MusicModeFragment> wrFragment;
-        private final String mFrequencyText;
-        private final String mVolumeText;
-
-        MusicModeHandler(MusicModeFragment fragment) {
-            this.wrFragment = new WeakReference<>(fragment);
-            mFrequencyText = fragment.getString(R.string.frequency_with_param);
-            mVolumeText = fragment.getString(R.string.volume_with_param);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MusicModeFragment fragment = wrFragment.get();
-            if (fragment != null) {
-                if (msg.what == SET_FREQUENCY) {
-                    fragment.mCurrentFrequencyText.setText(
-                            String.format(mFrequencyText, msg.obj)
-                    );
-                } else if (msg.what == SET_VOLUME) {
-                    fragment.mCurrentVolumeText.setText(
-                            String.format(mVolumeText, msg.obj)
-                    );
-                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.custom_views;
+package me.foxaice.smartlight.fragments.controllers_screen.controller_management.view.dialogs.execution_task;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -134,8 +134,9 @@ public class CheckMarkProgressView extends View {
                 circleDrawn(canvas);
             }
         }
-        if (!mIsDone) postInvalidateDelayed(1000 / FRAMES_PER_SECONDS);
-        else {
+        if (!mIsDone) {
+            postInvalidateDelayed(1000 / FRAMES_PER_SECONDS);
+        } else {
             float x = mPercent * 27.5f;
             float y = mPercent * 52.5f;
             float x1 = x + 15 * mPercent;

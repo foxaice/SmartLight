@@ -22,287 +22,329 @@ import me.foxaice.smartlight.R;
 import me.foxaice.smartlight.fragments.modes.bulb_mode.view.BulbModeFragment;
 import me.foxaice.smartlight.fragments.modes.disco_mode.view.DiscoModeFragment;
 import me.foxaice.smartlight.fragments.modes.music_mode.view.MusicModeFragment;
+import me.foxaice.smartlight.utils.AnimationUtils;
+import me.foxaice.smartlight.utils.ViewUtils;
 
 import static me.foxaice.smartlight.utils.AnimationUtils.AnimationListenerAdapter;
-import static me.foxaice.smartlight.utils.AnimationUtils.bringToFrontViews;
-import static me.foxaice.smartlight.utils.AnimationUtils.setDuration;
-import static me.foxaice.smartlight.utils.AnimationUtils.setEnabledViews;
-import static me.foxaice.smartlight.utils.AnimationUtils.setInterpolator;
 
-class ButtonsAnimation {
-    private ButtonsAnimation() {
+abstract class ButtonsAnimation {
+    View newView;
+    View oldView;
+    View otherView;
+    View modeContent;
+    View settingsContent;
+    Drawable oldViewDrawable;
+    Drawable newViewDrawable;
+    Animation startAnimation;
+    MainScreenActivity activity;
+    String modeTag;
+
+    private ButtonsAnimation(MainScreenActivity activity, View modeContent, View settingsContent, View newView, View oldView, View otherView) {
+        this.modeContent = modeContent;
+        this.settingsContent = settingsContent;
+        this.newView = newView;
+        this.oldView = oldView;
+        this.otherView = otherView;
+        this.activity = activity;
+        modeTag = ButtonsAnimation.getModeTagFromModeButton(newView);
+        Drawable[] drawables = ButtonsAnimation.getDrawables(newView, oldView);
+        newViewDrawable = drawables[0];
+        oldViewDrawable = drawables[1];
     }
 
     private static Drawable[] getDrawables(View postView, View preView) {
         Context context = postView.getContext();
-        int postViewId = postView.getId();
-        int preViewId = preView.getId();
+        int postId = postView.getId();
+        int preId = preView.getId();
         return new Drawable[]{
                 ContextCompat.getDrawable(context,
-                        postViewId == R.id.activity_main_screen_image_bulb_mode
-                                ? R.drawable.button_mode_bulb_disabled
-                                : postViewId == R.id.activity_main_screen_image_music_mode
-                                ? R.drawable.button_mode_music_disabled
-                                : R.drawable.button_mode_disco_disabled),
+                        postId == R.id.activity_main_screen_image_bulb_mode ?
+                                R.drawable.button_mode_bulb_disabled : postId == R.id.activity_main_screen_image_music_mode ?
+                                R.drawable.button_mode_music_disabled : R.drawable.button_mode_disco_disabled),
                 ContextCompat.getDrawable(context,
-                        preViewId == R.id.activity_main_screen_image_bulb_mode
-                                ? R.drawable.button_mode_bulb_enabled
-                                : preViewId == R.id.activity_main_screen_image_music_mode
-                                ? R.drawable.button_mode_music_enabled
-                                : R.drawable.button_mode_disco_enabled)
+                        preId == R.id.activity_main_screen_image_bulb_mode ?
+                                R.drawable.button_mode_bulb_enabled : preId == R.id.activity_main_screen_image_music_mode ?
+                                R.drawable.button_mode_music_enabled : R.drawable.button_mode_disco_enabled)
         };
     }
 
-    static class PreLollipop {
-        private View mNewView;
-        private View mOldView;
-        private View mModeContent;
-        private View mOtherView;
-        private View mSettingsContent;
-        private Drawable mNewViewDrawable;
-        private Drawable mOldViewDrawable;
-        private Animation mStartAnimation;
-        private MainScreenActivity mActivity;
+    private static String getModeTagFromModeButton(View modeButtonView) {
+        int id = modeButtonView.getId();
+        return id == R.id.activity_main_screen_image_bulb_mode ?
+                BulbModeFragment.TAG : id == R.id.activity_main_screen_image_music_mode ?
+                MusicModeFragment.TAG : DiscoModeFragment.TAG;
+    }
 
+    private static void setModeFragmentOnActivity(MainScreenActivity activity, String modeTag) {
+        activity.setModeFragmentByTag(modeTag);
+    }
+
+    void startAnimation() {
+        newView.startAnimation(startAnimation);
+    }
+
+    static class PreLollipop extends ButtonsAnimation {
         PreLollipop(MainScreenActivity activity, View modeContent, View settingsContent, View newView, View oldView, View otherView) {
-            mModeContent = modeContent;
-            mSettingsContent = settingsContent;
-            mNewView = newView;
-            mOldView = oldView;
-            mOtherView = otherView;
-            mActivity = activity;
-            Drawable[] drawables = getDrawables(mNewView, mOldView);
-            mNewViewDrawable = drawables[0];
-            mOldViewDrawable = drawables[1];
+            super(activity, modeContent, settingsContent, newView, oldView, otherView);
             prepareAnimations();
         }
 
         private void prepareAnimations() {
-            final String tag = mNewView.getId() == R.id.activity_main_screen_image_bulb_mode
-                    ? BulbModeFragment.TAG
-                    : mNewView.getId() == R.id.activity_main_screen_image_music_mode
-                    ? MusicModeFragment.TAG
-                    : DiscoModeFragment.TAG;
-            final Animation downScalePreView = new ScaleAnimation(1, 0, 1, 0, mOldView.getWidth() / 2, mOldView.getHeight() / 2);
-            final Animation upScalePreView = new ScaleAnimation(0, 1, 0, 1, mOldView.getWidth() / 2, mOldView.getHeight() / 2);
-            final Animation firstUpScaleCurView = new ScaleAnimation(1, 2, 1, 2, mNewView.getWidth() / 2, mNewView.getHeight() / 2);
-            final Animation downScaleCurView = new ScaleAnimation(2, 0, 2, 0, mNewView.getWidth() / 2, mNewView.getHeight() / 2);
-            final Animation secondUpScaleCurView = new ScaleAnimation(0, 1, 0, 1, mNewView.getWidth() / 2, mNewView.getHeight() / 2);
-            final Animation downScaleModeContent = new ScaleAnimation(1, 0, 1, 0, mModeContent.getWidth() / 2, mModeContent.getHeight() / 2);
-            final Animation translateModeContent = new TranslateAnimation(
+            Animation downScalePreView =
+                    new ScaleAnimation(1, 0, 1, 0, oldView.getWidth() / 2, oldView.getHeight() / 2);
+            Animation upScalePreView =
+                    new ScaleAnimation(0, 1, 0, 1, oldView.getWidth() / 2, oldView.getHeight() / 2);
+            Animation firstUpScaleCurView =
+                    new ScaleAnimation(1, 2, 1, 2, newView.getWidth() / 2, newView.getHeight() / 2);
+            Animation downScaleCurView =
+                    new ScaleAnimation(2, 0, 2, 0, newView.getWidth() / 2, newView.getHeight() / 2);
+            Animation secondUpScaleCurView =
+                    new ScaleAnimation(0, 1, 0, 1, newView.getWidth() / 2, newView.getHeight() / 2);
+            Animation downScaleModeContent =
+                    new ScaleAnimation(1, 0, 1, 0, modeContent.getWidth() / 2, modeContent.getHeight() / 2);
+            Animation translateModeContent = new TranslateAnimation(
                     TranslateAnimation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0,
                     Animation.RELATIVE_TO_SELF, 1, Animation.RELATIVE_TO_SELF, 0
             );
 
-            mStartAnimation = firstUpScaleCurView;
+            AnimationUtils.setDuration(300,
+                    downScalePreView, upScalePreView, firstUpScaleCurView, downScaleCurView, downScaleModeContent);
+            AnimationUtils.setDuration(1000,
+                    secondUpScaleCurView, translateModeContent);
 
-            setDuration(300, downScalePreView, upScalePreView, firstUpScaleCurView, downScaleCurView, downScaleModeContent);
-            setDuration(1000, secondUpScaleCurView, translateModeContent);
+            AnimationUtils.setInterpolator(new AnticipateInterpolator(),
+                    downScaleModeContent);
+            AnimationUtils.setInterpolator(new OvershootInterpolator(),
+                    downScalePreView, upScalePreView, firstUpScaleCurView, downScaleCurView, secondUpScaleCurView, translateModeContent);
 
-            setInterpolator(new OvershootInterpolator(), downScalePreView, upScalePreView, firstUpScaleCurView, downScaleCurView, secondUpScaleCurView, translateModeContent);
-            setInterpolator(new AnticipateInterpolator(), downScaleModeContent);
+            setAnimationListeners(
+                    firstUpScaleCurView,
+                    downScalePreView,
+                    downScaleCurView,
+                    upScalePreView,
+                    downScaleModeContent,
+                    secondUpScaleCurView,
+                    translateModeContent
+            );
 
-            //Animation Listeners
-            downScalePreView.setAnimationListener(new AnimationListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mOldView.startAnimation(upScalePreView);
-                }
-            });
-            upScalePreView.setAnimationListener(new AnimationListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    ((ImageView) mOldView).setImageDrawable(mOldViewDrawable);
-                }
-            });
-            firstUpScaleCurView.setAnimationListener(new AnimationListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    setEnabledViews(false, mNewView, mOldView, mOtherView);
-                    bringToFrontViews(mNewView, mOldView, mOtherView, mSettingsContent);
-                    mOldView.startAnimation(downScalePreView);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mNewView.startAnimation(downScaleCurView);
-                }
-            });
-            downScaleCurView.setAnimationListener(new AnimationListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    mModeContent.startAnimation(downScaleModeContent);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mNewView.startAnimation(secondUpScaleCurView);
-                }
-            });
-            secondUpScaleCurView.setAnimationListener(new AnimationListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    mActivity.setModeFragmentByTag(tag);
-                    ((ImageView) mNewView).setImageDrawable(mNewViewDrawable);
-                    mModeContent.startAnimation(translateModeContent);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    setEnabledViews(false, mNewView);
-                    setEnabledViews(true, mOldView, mOtherView);
-                }
-            });
+            startAnimation = firstUpScaleCurView;
         }
 
-        void startAnimation() {
-            mNewView.startAnimation(mStartAnimation);
+        /* Sequence of Animations
+         *  *start----->end*
+         *
+         * an1------------->an1
+         *   |                |
+         *   |                an3------------------->an3
+         *   |                  |                      |
+         *   |                  an5------------>an5    |
+         *   |                                         |
+         *   |                                         an6----------->an6
+         *   |                                         |
+         *   |                                         an7----------->an7
+         *   an2----------------->an2
+         *                          |
+         *                          an4------------>an4
+         */
+        private void setAnimationListeners(final Animation an1, final Animation an2, final Animation an3, final Animation an4, final Animation an5, final Animation an6, final Animation an7) {
+            an1.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    ViewUtils.setEnabled(false, newView, oldView, otherView);
+                    ViewUtils.bringToFront(newView, oldView, otherView, settingsContent);
+                    oldView.startAnimation(an2);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    newView.startAnimation(an3);
+                }
+            });
+            an2.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldView.startAnimation(an4);
+                }
+            });
+            an3.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    modeContent.startAnimation(an5);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    newView.startAnimation(an6);
+                }
+            });
+            an4.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    ((ImageView) oldView).setImageDrawable(oldViewDrawable);
+                }
+            });
+            an6.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    ButtonsAnimation.setModeFragmentOnActivity(activity, modeTag);
+                    ((ImageView) newView).setImageDrawable(newViewDrawable);
+                    modeContent.startAnimation(an7);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    ViewUtils.setEnabled(false, newView);
+                    ViewUtils.setEnabled(true, oldView, otherView);
+                }
+            });
+            an7.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    ViewUtils.bringToFront(newView, modeContent, oldView, otherView);
+                }
+            });
         }
     }
 
-    static class PostLollipop {
-        private View mNewView;
-        private View mOldView;
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    static class PostLollipop extends ButtonsAnimation {
         private View mContentView;
-        private View mOtherView;
-        private View mSettingsContent;
         private View mWaveBackground;
-        private Drawable mNewViewDrawable;
-        private Drawable mOldViewDrawable;
-        private Animation mStartAnimation;
-        private View mModeContent;
-        private MainScreenActivity mActivity;
+        private int mWaveColor;
+        private int mFinalColor;
 
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         PostLollipop(MainScreenActivity activity, View waveBackground, View contentView, View modeContent, View settingsContent, View newView, View oldView, View otherView) {
+            super(activity, modeContent, settingsContent, newView, oldView, otherView);
             mContentView = contentView;
-            mSettingsContent = settingsContent;
             mWaveBackground = waveBackground;
-            mNewView = newView;
-            mOldView = oldView;
-            mOtherView = otherView;
-            mActivity = activity;
-            mModeContent = modeContent;
-            Drawable[] drawables = getDrawables(mNewView, mOldView);
-            mNewViewDrawable = drawables[0];
-            mOldViewDrawable = drawables[1];
+            mFinalColor = ContextCompat.getColor(activity, R.color.backgroundActivity);
+            mWaveColor = ContextCompat.getColor(activity,
+                    modeTag.equals(BulbModeFragment.TAG) ?
+                            R.color.backgroundBulbButton : modeTag.equals(MusicModeFragment.TAG) ?
+                            R.color.backgroundMusicButton : R.color.backgroundDiscoButton
+            );
             prepareAnimations();
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         private void prepareAnimations() {
-            final String tag = mNewView.getId() == R.id.activity_main_screen_image_bulb_mode
-                    ? BulbModeFragment.TAG
-                    : mNewView.getId() == R.id.activity_main_screen_image_music_mode
-                    ? MusicModeFragment.TAG
-                    : DiscoModeFragment.TAG;
-
-            final int waveColor = ContextCompat.getColor(mActivity,
-                    tag.equals(BulbModeFragment.TAG) ?
-                            R.color.backgroundBulbButton : tag.equals(MusicModeFragment.TAG) ?
-                            R.color.backgroundMusicButton : R.color.backgroundDiscoButton
-            );
-            final int finalColor = ContextCompat.getColor(mActivity, R.color.backgroundActivity);
-
             int[] coords = new int[]{0, 0};
-            mNewView.getLocationInWindow(coords);
-
-            int revealX = coords[0] + mNewView.getWidth() / 2;
-            int revealY = (int) (coords[1] - mNewView.getHeight() * 1.4f);
+            newView.getLocationInWindow(coords);
+            int revealX = coords[0] + newView.getWidth() / 2;
+            int revealY = (int) (coords[1] - newView.getHeight() * 1.4f);
             int radius = (int) (Math.max(mWaveBackground.getHeight(), mWaveBackground.getWidth()) * 1.1);
 
-            final Animator firstAnim = ViewAnimationUtils.createCircularReveal(mWaveBackground, revealX, revealY, mNewView.getWidth() / 2, radius);
-            final Animator secondAnim = ViewAnimationUtils.createCircularReveal(mContentView, revealX, revealY, mNewView.getWidth() / 2, radius);
-            Animation scaleUp = new ScaleAnimation(1, 2, 1, 2, mNewView.getPivotX(), mNewView.getPivotY());
-            Animation scaleDown = new ScaleAnimation(1, 0.5f, 1, 0.5f, mNewView.getPivotX(), mNewView.getPivotY());
+            final Animator firstAnim =
+                    ViewAnimationUtils.createCircularReveal(mWaveBackground, revealX, revealY, newView.getWidth() / 2, radius);
+            final Animator secondAnim =
+                    ViewAnimationUtils.createCircularReveal(mContentView, revealX, revealY, newView.getWidth() / 2, radius);
+            final Animation firstScaleUp =
+                    new ScaleAnimation(1, 2, 1, 2, newView.getPivotX(), newView.getPivotY());
+            final Animation firstScaleDown =
+                    new ScaleAnimation(1, 0.5f, 1, 0.5f, newView.getPivotX(), newView.getPivotY());
+            final Animation secondScaleDown =
+                    new ScaleAnimation(1, 0.1f, 1, 0.1f, newView.getPivotX(), newView.getPivotY());
+            final Animation secondScaleUp =
+                    new ScaleAnimation(0.1f, 1, 0.1f, 1, newView.getPivotX(), newView.getPivotY());
+
             AnimationSet animationSet = new AnimationSet(true);
-            animationSet.addAnimation(scaleUp);
-            animationSet.addAnimation(scaleDown);
+            animationSet.addAnimation(firstScaleUp);
+            animationSet.addAnimation(firstScaleDown);
 
-            scaleDown.setStartOffset(100);
-            firstAnim.setDuration(300);
-            setDuration(200, scaleDown);
-            setDuration(100, scaleUp);
-            setInterpolator(new OvershootInterpolator(), animationSet);
+            firstScaleDown.setStartOffset(100);
 
-            mStartAnimation = animationSet;
+            AnimationUtils.setDuration(100, firstScaleUp, secondScaleUp);
+            AnimationUtils.setDuration(200, firstScaleDown);
+            AnimationUtils.setDuration(250, secondScaleDown);
+            AnimationUtils.setDuration(300, firstAnim);
+            AnimationUtils.setDuration(400, secondAnim);
 
-            //Animation Listeners
-            firstAnim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    setEnabledViews(false, mNewView, mOldView, mOtherView);
-                    mWaveBackground.setBackgroundColor(waveColor);
-                    bringToFrontViews(mWaveBackground, mNewView, mSettingsContent);
-                }
+            AnimationUtils.setInterpolator(new OvershootInterpolator(), animationSet, secondScaleDown, secondScaleUp);
+            AnimationUtils.setInterpolator(new AccelerateInterpolator(), secondAnim);
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    Animation scaleDown = new ScaleAnimation(1, 0.1f, 1, 0.1f, mNewView.getPivotX(), mNewView.getPivotY());
-                    final Animation scaleUp = new ScaleAnimation(0.1f, 1, 0.1f, 1, mNewView.getPivotX(), mNewView.getPivotY());
-                    setDuration(250, scaleDown);
-                    setDuration(100, scaleUp);
-                    setInterpolator(new OvershootInterpolator(), scaleDown, scaleUp);
+            setAnimationListeners(
+                    firstAnim,
+                    secondAnim,
+                    animationSet,
+                    secondScaleDown,
+                    secondScaleUp
+            );
 
-                    scaleUp.setAnimationListener(new AnimationListenerAdapter() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            ((ImageView) mNewView).setImageDrawable(mNewViewDrawable);
-                            ((ImageView) mOldView).setImageDrawable(mOldViewDrawable);
-                        }
+            startAnimation = animationSet;
+        }
 
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            secondAnim.setDuration(400);
-                            secondAnim.setInterpolator(new AccelerateInterpolator());
-                            secondAnim.start();
-                        }
-                    });
-
-                    scaleDown.setAnimationListener(new AnimationListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            mNewView.startAnimation(scaleUp);
-                        }
-                    });
-
-                    mNewView.startAnimation(scaleDown);
-                }
-            });
-
-            secondAnim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    ((View) mContentView.getParent()).setBackgroundColor(waveColor);
-                    mWaveBackground.setBackgroundColor(finalColor);
-                    bringToFrontViews(mNewView, mOldView, mOtherView, mModeContent, mSettingsContent);
-                    mActivity.setModeFragmentByTag(tag);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    setEnabledViews(false, mNewView);
-                    setEnabledViews(true, mOldView, mOtherView);
-                    mContentView.setBackgroundColor(finalColor);
-                }
-            });
-
-            animationSet.setAnimationListener(new AnimationListenerAdapter() {
+        /* Sequence of Animations
+         *  *start----->end*
+         *
+         * animation1-->animation1
+         *                       |
+         *                       animator1-->animator1
+         *                                           |
+         *                                           animation2-->animation2
+         *                                                    |
+         *                                                    animation3-->animation3
+         *                                                                          |
+         *                                                                          animator2-->animator2
+         */
+        private void setAnimationListeners(final Animator animator1, final Animator animator2, Animation animation1, final Animation animation2, final Animation animation3) {
+            animation1.setAnimationListener(new AnimationListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    bringToFrontViews(mNewView);
-                    setEnabledViews(false, mNewView, mOldView, mOtherView);
+                    ViewUtils.bringToFront(newView);
+                    ViewUtils.setEnabled(false, newView, oldView, otherView);
                 }
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    firstAnim.start();
+                    animator1.start();
                 }
             });
-        }
+            animator1.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    ViewUtils.setEnabled(false, newView, oldView, otherView);
+                    mWaveBackground.setBackgroundColor(mWaveColor);
+                    ViewUtils.bringToFront(mWaveBackground, newView, settingsContent);
+                }
 
-        void startAnimation() {
-            mNewView.startAnimation(mStartAnimation);
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    newView.startAnimation(animation2);
+                }
+            });
+            animation2.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    newView.startAnimation(animation3);
+                }
+            });
+            animation3.setAnimationListener(new AnimationListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    ((ImageView) newView).setImageDrawable(newViewDrawable);
+                    ((ImageView) oldView).setImageDrawable(oldViewDrawable);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    animator2.start();
+                }
+            });
+            animator2.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    ((View) mContentView.getParent()).setBackgroundColor(mWaveColor);
+                    mWaveBackground.setBackgroundColor(mFinalColor);
+                    ViewUtils.bringToFront(newView, oldView, otherView, modeContent, settingsContent);
+                    ButtonsAnimation.setModeFragmentOnActivity(activity, modeTag);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ViewUtils.setEnabled(false, newView);
+                    ViewUtils.setEnabled(true, oldView, otherView);
+                    mContentView.setBackgroundColor(mFinalColor);
+                }
+            });
         }
     }
 }

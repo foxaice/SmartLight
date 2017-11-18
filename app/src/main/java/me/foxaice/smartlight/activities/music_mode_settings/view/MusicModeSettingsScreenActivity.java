@@ -58,36 +58,8 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
 
         mPresenter.attach(this);
         mPresenter.loadMusicInfoFromPreferences();
-
-        mColorModeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_color_mode);
-        mColorModeRecycler = (RecyclerView) findViewById(R.id.activity_music_mode_settings_recycler_color_mode);
-        mMaxFrequencyText = (TextView) findViewById(R.id.activity_music_mode_settings_text_max_frequency);
-        mMaxVolumeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_max_volume);
-        mMinVolumeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_min_volume);
-        mMaxFrequencySeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_max_frequency);
-        mMaxVolumeSeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_max_volume);
-        mMinVolumeSeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_min_volume);
-        mMaxFrequencyRootView = (ViewGroup) findViewById(R.id.activity_music_mode_settings_rl_max_frequency_type);
-        mMaxFrequencyStaticTypeRadioButton = (RadioButton) findViewById(R.id.activity_music_mode_settings_radio_button_max_frequency_type_static);
-        mMaxFrequencyTypeRadioGroup = (RadioGroup) findViewById(R.id.activity_music_mode_settings_radio_group_max_frequency_type);
-        mSoundViewTypeRadioGroup = (RadioGroup) findViewById(R.id.activity_music_mode_settings_radio_group_plot_type);
-        ImageView closeButtonImage = (ImageView) findViewById(R.id.activity_music_mode_settings_image_close);
-        ImageView resetButtonImage = (ImageView) findViewById(R.id.activity_music_mode_settings_image_reset);
-
-        closeButtonImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        resetButtonImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.resetMusicInfo();
-            }
-        });
-
+        initViews();
+        setClickListeners();
         prepareColorModeView();
         prepareSoundViewTypeView();
         prepareMaxFrequencyTypeView();
@@ -164,49 +136,38 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
         mPresenter.onChangeColorMode(colorMode);
     }
 
-    private void setColorModeByPosition(int position) {
-        if (mColorModeRecycler != null) {
-            int size = mColorModeRecycler.getChildCount();
-            if (position < size) {
-                for (int i = 0; i < size; i++) {
-                    ColorModeHolder holder = (ColorModeHolder) mColorModeRecycler.findViewHolderForAdapterPosition(i);
-                    if (i == position) {
-                        Spanned spans = holder.getColorModeSpannedText();
-                        spans = (Spanned) TextUtils.concat(getString(R.string.color_mode), spans);
-                        mColorModeText.setText(spans);
+    private void initViews() {
+        mColorModeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_color_mode);
+        mColorModeRecycler = (RecyclerView) findViewById(R.id.activity_music_mode_settings_recycler_color_mode);
+        mMaxFrequencyText = (TextView) findViewById(R.id.activity_music_mode_settings_text_max_frequency);
+        mMaxVolumeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_max_volume);
+        mMinVolumeText = (TextView) findViewById(R.id.activity_music_mode_settings_text_min_volume);
+        mMaxFrequencySeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_max_frequency);
+        mMaxVolumeSeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_max_volume);
+        mMinVolumeSeekBar = (SeekBar) findViewById(R.id.activity_music_mode_settings_seekbar_min_volume);
+        mMaxFrequencyRootView = (ViewGroup) findViewById(R.id.activity_music_mode_settings_rl_max_frequency_type);
+        mMaxFrequencyStaticTypeRadioButton = (RadioButton) findViewById(R.id.activity_music_mode_settings_radio_button_max_frequency_type_static);
+        mMaxFrequencyTypeRadioGroup = (RadioGroup) findViewById(R.id.activity_music_mode_settings_radio_group_max_frequency_type);
+        mSoundViewTypeRadioGroup = (RadioGroup) findViewById(R.id.activity_music_mode_settings_radio_group_plot_type);
+    }
 
-                        holder.itemView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            holder.itemView.setBackground(ContextCompat.getDrawable(this, R.drawable.selector_button_background_without_frame_gray));
-                        } else {
-                            //noinspection deprecation
-                            holder.itemView.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.selector_button_background_without_frame_gray));
-                        }
-                    }
-                }
+    private void setClickListeners() {
+        ImageView closeButtonImage = (ImageView) findViewById(R.id.activity_music_mode_settings_image_close);
+        ImageView resetButtonImage = (ImageView) findViewById(R.id.activity_music_mode_settings_image_reset);
+
+        closeButtonImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
-        }
-    }
+        });
 
-    private void showMaxFrequencySeekBar() {
-        if (mMaxFrequencySeekBar.getVisibility() == View.GONE) {
-            mMaxFrequencyRootView.startAnimation(mMaxFrequencySeekBarShowAnimation);
-        }
-    }
-
-    private void hideMaxFrequencySeekBar() {
-        if (mMaxFrequencySeekBar.getVisibility() == View.VISIBLE) {
-            mMaxFrequencyRootView.startAnimation(mMaxFrequencySeekBarHideAnimation);
-        }
-    }
-
-    private int convertProgressToHzValue(int progress) {
-        return progress * 100 + 1000;
-    }
-
-    private int convertHzValueToProgress(int hz) {
-        return hz / 100 - 10;
+        resetButtonImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.resetMusicInfo();
+            }
+        });
     }
 
     private void prepareColorModeView() {
@@ -291,8 +252,7 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
         float addedHeight = getResources().getDimension(R.dimen.additional_height_for_seekbar);
         mMaxFrequencySeekBarShowAnimation = AnimationUtils.getChangeViewGroupHeightAnimation(mMaxFrequencyRootView, addedHeight);
         mMaxFrequencySeekBarHideAnimation = AnimationUtils.getChangeViewGroupHeightAnimation(mMaxFrequencyRootView, -addedHeight);
-        mMaxFrequencySeekBarShowAnimation.setDuration(200);
-        mMaxFrequencySeekBarHideAnimation.setDuration(200);
+        AnimationUtils.setDuration(200, mMaxFrequencySeekBarShowAnimation, mMaxFrequencySeekBarHideAnimation);
         mMaxFrequencySeekBarShowAnimation.setAnimationListener(new AnimationUtils.AnimationListenerAdapter() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -355,8 +315,52 @@ public class MusicModeSettingsScreenActivity extends AppCompatActivity implement
         });
     }
 
-    private static class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
+    private void setColorModeByPosition(int position) {
+        if (mColorModeRecycler != null) {
+            int size = mColorModeRecycler.getChildCount();
+            if (position < size) {
+                for (int i = 0; i < size; i++) {
+                    ColorModeHolder holder = (ColorModeHolder) mColorModeRecycler.findViewHolderForAdapterPosition(i);
+                    if (i == position) {
+                        Spanned spans = holder.getColorModeSpannedText();
+                        spans = (Spanned) TextUtils.concat(getString(R.string.color_mode), spans);
+                        mColorModeText.setText(spans);
 
+                        holder.itemView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            holder.itemView.setBackground(ContextCompat.getDrawable(this, R.drawable.selector_button_background_without_frame_gray));
+                        } else {
+                            //noinspection deprecation
+                            holder.itemView.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.selector_button_background_without_frame_gray));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void showMaxFrequencySeekBar() {
+        if (mMaxFrequencySeekBar.getVisibility() == View.GONE) {
+            mMaxFrequencyRootView.startAnimation(mMaxFrequencySeekBarShowAnimation);
+        }
+    }
+
+    private void hideMaxFrequencySeekBar() {
+        if (mMaxFrequencySeekBar.getVisibility() == View.VISIBLE) {
+            mMaxFrequencyRootView.startAnimation(mMaxFrequencySeekBarHideAnimation);
+        }
+    }
+
+    private int convertProgressToHzValue(int progress) {
+        return progress * 100 + 1000;
+    }
+
+    private int convertHzValueToProgress(int hz) {
+        return hz / 100 - 10;
+    }
+
+    private static class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
 

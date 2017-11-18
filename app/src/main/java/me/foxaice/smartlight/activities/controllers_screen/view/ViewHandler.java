@@ -1,7 +1,6 @@
 package me.foxaice.smartlight.activities.controllers_screen.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -11,6 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+
+import me.foxaice.smartlight.fragments.controllers_screen.controllers_list.view.ControllerListFragment;
 
 class ViewHandler extends Handler {
     private final WeakReference<ControllersScreenActivity> wrActivity;
@@ -38,16 +39,23 @@ class ViewHandler extends Handler {
                     Log.d(getClass().getSimpleName(), "en: " + tempIsWifiEnabled + " cn: " + tempIsWifiConnected);
                     mIsWifiEnabled = tempIsWifiEnabled;
                     mIsWifiConnected = tempIsWifiConnected;
-                    Intent intent = new Intent(ControllersScreenActivity.NOTIFY_NETWORK_CHANGE);
-                    intent.putExtra(ControllersScreenActivity.EXTRA_IS_CONNECTED, mIsWifiConnected);
-                    intent.putExtra(ControllersScreenActivity.EXTRA_IS_WIFI_ENABLED, mIsWifiEnabled);
-                    LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance(activity).sendBroadcast(
+                            ControllerListFragment.getNetworkChangeIntent(mIsWifiEnabled, mIsWifiConnected)
+                    );
                     activity.getPresenter().onChangeWifiState(mIsWifiEnabled, mIsWifiConnected);
                 }
             }
             this.sendEmptyMessageDelayed(0, 2000);
             Log.d(getClass().getSimpleName(), "handleMessage: I'm looking for...");
         }
+    }
+
+    void removeAllCallbacksAndMessages() {
+        removeCallbacksAndMessages(null);
+    }
+
+    void sendEmptyMessage(){
+        sendEmptyMessage(0);
     }
 
     private boolean isWifiEnabled() {

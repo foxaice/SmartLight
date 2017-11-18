@@ -96,92 +96,12 @@ class CommandSender implements Runnable {
         this.mRemainingTasks.decrementAndGet();
     }
 
-    private void changeSTAInfoRun(boolean isSwitchToSTA) throws InterruptedException, IOException {
-        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
-        while (mRemainingTasks.get() != 0 && isRun()) {
-            switch (mRemainingTasks.get()) {
-                case 3:
-                    if (!isConditionDone(SubTasks.CONNECT_TO_DEVICE)) {
-                        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
-                        mPresenter.subTaskCompleted(3);
-                    }
-                    break;
-                case 2:
-                    if (!isConditionDone(SubTasks.CHANGE_STA_SSID) || !isConditionDone(SubTasks.CHANGE_STA_KEY)) {
-                        if (isSwitchToSTA && !isConditionDone(SubTasks.SWITCH_MODE_TO_STA)) {
-                            startSubTask(SubTasks.SWITCH_MODE_TO_STA, responseReceiver);
-                        }
-                        if (!isConditionDone(SubTasks.CHANGE_STA_SSID)) {
-                            startSubTask(SubTasks.CHANGE_STA_SSID, responseReceiver);
-                        }
-                        if (!isConditionDone(SubTasks.CHANGE_STA_KEY)) {
-                            startSubTask(SubTasks.CHANGE_STA_KEY, responseReceiver);
-                        }
-                        if (isConditionDone(SubTasks.CHANGE_STA_SSID) && isConditionDone(SubTasks.CHANGE_STA_KEY)) {
-                            mPresenter.subTaskCompleted(2);
-                        }
-                    }
-                    break;
-                case 1:
-                    if (!isConditionDone(SubTasks.RESTART)) {
-                        startSubTask(SubTasks.RESTART, responseReceiver);
-                        mPresenter.subTaskCompleted(1);
-                    }
-                    break;
-            }
-        }
-    }
-
-    private void forgetNetworkRun() throws InterruptedException, IOException {
-        mSSIDSTA = FORGET_STA_SSID;
-        mPass = FORGET_STA_KEY;
-        changeSTAInfoRun(false);
-    }
-
-    private void connectToSavedNetworkRun() throws InterruptedException, IOException {
-        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
-        while (mRemainingTasks.get() != 0 && isRun()) {
-            switch (mRemainingTasks.get()) {
-                case 3:
-                    if (!isConditionDone(SubTasks.CONNECT_TO_DEVICE)) {
-                        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
-                        mPresenter.subTaskCompleted(3);
-                    }
-                    break;
-                case 2:
-                    if (!isConditionDone(SubTasks.SWITCH_MODE_TO_STA)) {
-                        startSubTask(SubTasks.SWITCH_MODE_TO_STA, responseReceiver);
-                        mPresenter.subTaskCompleted(2);
-                    }
-                    break;
-                case 1:
-                    if (!isConditionDone(SubTasks.RESTART)) {
-                        startSubTask(SubTasks.RESTART, responseReceiver);
-                        mPresenter.subTaskCompleted(1);
-                    }
-                    break;
-            }
-        }
-    }
-
-    private void connectToNetworkRun() throws InterruptedException, IOException {
-        changeSTAInfoRun(true);
-    }
-
     private void searchDeviceRun() throws InterruptedException, IOException {
         ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
         startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
         startSubTask(SubTasks.GET_PORT, responseReceiver);
         startSubTask(SubTasks.GET_MODE, responseReceiver);
         mPresenter.searchDeviceTaskIsDone();
-    }
-
-    private void scanNetworksRun() throws InterruptedException, IOException {
-        mAdminControllerApi.initSocket(48899);
-        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
-        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
-        startSubTask(SubTasks.GET_SSID, responseReceiver);
-        startSubTask(SubTasks.SCAN_NETWORKS, responseReceiver);
     }
 
     private void disconnectFromNetworkRun() throws InterruptedException, IOException {
@@ -224,6 +144,86 @@ class CommandSender implements Runnable {
                     if (!isConditionDone(SubTasks.CHANGE_AP_KEY)) {
                         startSubTask(SubTasks.CHANGE_AP_KEY, responseReceiver);
                         mPresenter.subTaskCompleted(2);
+                    }
+                    break;
+                case 1:
+                    if (!isConditionDone(SubTasks.RESTART)) {
+                        startSubTask(SubTasks.RESTART, responseReceiver);
+                        mPresenter.subTaskCompleted(1);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void connectToNetworkRun() throws InterruptedException, IOException {
+        changeSTAInfoRun(true);
+    }
+
+    private void scanNetworksRun() throws InterruptedException, IOException {
+        mAdminControllerApi.initSocket(48899);
+        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
+        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
+        startSubTask(SubTasks.GET_SSID, responseReceiver);
+        startSubTask(SubTasks.SCAN_NETWORKS, responseReceiver);
+    }
+
+    private void connectToSavedNetworkRun() throws InterruptedException, IOException {
+        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
+        while (mRemainingTasks.get() != 0 && isRun()) {
+            switch (mRemainingTasks.get()) {
+                case 3:
+                    if (!isConditionDone(SubTasks.CONNECT_TO_DEVICE)) {
+                        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
+                        mPresenter.subTaskCompleted(3);
+                    }
+                    break;
+                case 2:
+                    if (!isConditionDone(SubTasks.SWITCH_MODE_TO_STA)) {
+                        startSubTask(SubTasks.SWITCH_MODE_TO_STA, responseReceiver);
+                        mPresenter.subTaskCompleted(2);
+                    }
+                    break;
+                case 1:
+                    if (!isConditionDone(SubTasks.RESTART)) {
+                        startSubTask(SubTasks.RESTART, responseReceiver);
+                        mPresenter.subTaskCompleted(1);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void forgetNetworkRun() throws InterruptedException, IOException {
+        mSSIDSTA = FORGET_STA_SSID;
+        mPass = FORGET_STA_KEY;
+        changeSTAInfoRun(false);
+    }
+
+    private void changeSTAInfoRun(boolean isSwitchToSTA) throws InterruptedException, IOException {
+        ResponseReceiver responseReceiver = new ResponseReceiver(mPresenter.getExecutorService(), mAdminControllerApi);
+        while (mRemainingTasks.get() != 0 && isRun()) {
+            switch (mRemainingTasks.get()) {
+                case 3:
+                    if (!isConditionDone(SubTasks.CONNECT_TO_DEVICE)) {
+                        startSubTask(SubTasks.CONNECT_TO_DEVICE, responseReceiver);
+                        mPresenter.subTaskCompleted(3);
+                    }
+                    break;
+                case 2:
+                    if (!isConditionDone(SubTasks.CHANGE_STA_SSID) || !isConditionDone(SubTasks.CHANGE_STA_KEY)) {
+                        if (isSwitchToSTA && !isConditionDone(SubTasks.SWITCH_MODE_TO_STA)) {
+                            startSubTask(SubTasks.SWITCH_MODE_TO_STA, responseReceiver);
+                        }
+                        if (!isConditionDone(SubTasks.CHANGE_STA_SSID)) {
+                            startSubTask(SubTasks.CHANGE_STA_SSID, responseReceiver);
+                        }
+                        if (!isConditionDone(SubTasks.CHANGE_STA_KEY)) {
+                            startSubTask(SubTasks.CHANGE_STA_KEY, responseReceiver);
+                        }
+                        if (isConditionDone(SubTasks.CHANGE_STA_SSID) && isConditionDone(SubTasks.CHANGE_STA_KEY)) {
+                            mPresenter.subTaskCompleted(2);
+                        }
                     }
                     break;
                 case 1:
@@ -439,10 +439,6 @@ class CommandSender implements Runnable {
         }
     }
 
-    private boolean isRun() {
-        return !mPresenter.getExecutorService().isShutdown();
-    }
-
     private void sendCommand(int command) throws InterruptedException, IOException {
         switch (command) {
             case Commands.OK:
@@ -492,6 +488,10 @@ class CommandSender implements Runnable {
                 break;
         }
         Thread.sleep(100L);
+    }
+
+    private boolean isRun() {
+        return !mPresenter.getExecutorService().isShutdown();
     }
 
     private interface Commands {
